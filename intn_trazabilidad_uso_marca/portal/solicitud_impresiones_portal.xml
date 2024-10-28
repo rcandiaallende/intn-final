@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <!--template id="portal_breadcrumbs" name="Portal layout : solicitudes de impresion" inherit_id="portal.portal_breadcrumbs" >
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'solicitud_impresion' or solicitud_impresion and solicitud_impresion.state in ('draft','verificado', 'cancel')" t-attf-class="breadcrumb-item #{'active ' if not solicitud_impresion else ''}">
+                <a t-if="solicitud_impresion" t-attf-href="/my/solicitud-impresiones?{{ keep_query() }}">Solicitudes de Servicio</a>
+                <t t-else="">Solicitudes de Impresión de Etiquetas</t>
+            </li>
+        </xpath>
+    </template-->
+
+    <template id="portal_my_solicitud_impresion" name="Mis Solicitudes de Impresion">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Solicitudes de Impresión</t>
+            </t>
+            <a role="button" class="btn btn-primary" href="/new/solicitud-impresion"><i class="fa fa-plus-square-o"/> Nueva Solicitud</a>
+            <t t-if="not solicitud_impresion">
+                <p>Actualmente no tiene Solicitudes de Impresión.</p>
+            </t>
+            <t t-if="solicitud_impresion" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Solicitud de Impresión #</th>
+                        <th class="text-right">Fecha de solicitud</th>
+                        <th class="text-center"/>
+                        <!--                        <th class="text-right">Total</th>-->
+                    </tr>
+                </thead>
+                <t t-foreach="solicitud_impresion" t-as="solicitud">
+                    <tr>
+                        <td><a t-att-href="solicitud.get_portal_url()"><t t-esc="solicitud.name"/></a></td>
+                        <td class="text-right"><span t-field="solicitud.fecha_solicitud"/></td>
+                        <td class="text-center">
+                            <span t-if="solicitud.state == 'cancel'" class="badge badge-pill badge-secondary"><i class="fa fa-fw fa-remove"/> Cancelado</span>
+                            <span t-if="solicitud.state == 'verificado'" class="badge badge-pill badge-success"><i class="fa fa-fw fa-check-square-o"/> Verificado</span>
+                            <span t-if="solicitud.state == 'draft'" class="badge badge-pill badge-primary"><i class="fa fa-fw fa-clock-o"/> Nuevo</span>
+                        </td>
+                        <!--                        <td class="text-right">-->
+                        <!--                            <span t-field="quotation.amount_total"/>-->
+                        <!--                        </td>-->
+                    </tr>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="solicitud_impresion_portal_template" name="Solicitudes de Impresión Portal Template" inherit_id="portal.portal_sidebar" primary="True">
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <!--t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#return_label=Website&amp;model=%s&amp;id=%s&amp;action=%s&amp;view_type=form' % (solicitud_impresion.name, solicitud_impresion.id, solicitud_impresion.env.ref('intn_trazabilidad_uso_marca.solicitud_impresiones_view').id)"/>
+                </t>
+            </t-->
+
+            <div class="row mt16 o_portal_sale_sidebar">
+                <!-- Sidebar -->
+                <t t-call="portal.portal_record_sidebar">
+                    <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
+
+                    <!--                    <t t-set="title">-->
+                    <!--                        <h2 class="mb-0"><b t-field="sale_order.amount_total" data-id="total_amount"/> </h2>-->
+                    <!--                    </t>-->
+                    <t t-set="entries">
+                        <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                            <t t-if="solicitud_impresion.state in ['draft', 'verificado','cancel']">
+                                <li class="list-group-item">
+                                    <div class="card-body text-center pb-2 pt-3">
+
+                                        <h3><t t-esc="solicitud_impresion.name"/> </h3>
+
+                                        <p>
+                                            Fecha de Solicitud
+                                        </p>
+                                        <p>
+                                            <i class="fa fa-clock-o" aria-title="Fecha de Solicitud" title="Fecha de solicitud"></i>
+                                            <t t-esc="solicitud_impresion.fecha_solicitud"/>
+                                        </p>
+                                        <span t-if="solicitud_impresion.state == 'cancel'" class="badge badge-pill badge-secondary"><i class="fa fa-fw fa-remove"/> Cancelado</span>
+                                        <span t-if="solicitud_impresion.state == 'verificado'" class="badge badge-pill badge-success"><i class="fa fa-fw fa-check-square-o"/> Verificado</span>
+                                        <span t-if="solicitud_impresion.state == 'draft'" class="badge badge-pill badge-primary"><i class="fa fa-fw fa-clock-o"/> Vuevo</span>
+                                    </div>
+                                </li>
+                            </t>
+
+                            <li class="list-group-item flex-grow-1">
+                                <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
+                                    <div class="btn-group flex-grow-1 mr-1 mb-1">
+                                        <a class="btn btn-secondary btn-block o_download_btn" t-att-href="solicitud_impresion.get_portal_url(report_type='pdf', download=True)" title="Download"><i class="fa fa-download"/> Descargar</a>
+                                    </div>
+                                    <div class="btn-group flex-grow-1 mb-1">
+                                        <a class="btn btn-secondary btn-block o_print_btn o_portal_invoice_print" t-att-href="solicitud_impresion.get_portal_url(report_type='pdf')" id="print_invoice_report" title="Print" target="_blank"><i class="fa fa-print"/> Imprimir</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="navspy list-group-item pl-0 flex-grow-1" t-ignore="true" role="complementary">
+                                <ul class="nav flex-column bs-sidenav"></ul>
+                            </li>
+
+
+                            <li t-if="solicitud_impresion.user_id" class="list-group-item flex-grow-1">
+                                <div class="small mb-1"><strong class="text-muted">Su Contacto</strong></div>
+                                <div class="row flex-nowrap">
+                                    <div class="col flex-grow-0 pr-2">
+                                        <img class="rounded-circle mr4 float-left o_portal_contact_img" t-if="solicitud_impresion.user_id.image" t-att-src="image_data_uri(solicitud_impresion.user_id.image)" alt="Contacto"/>
+                                        <img class="rounded-circle mr4 float-left o_portal_contact_img" t-if="not solicitud_impresion.user_id.image" src="/web/static/src/img/placeholder.png" alt="Contacto"/>
+                                    </div>
+                                    <div class="col pl-0" style="min-width: user_id">
+                                        <span t-field="solicitud_impresion.user_id" t-options='{"widget": "contact", "fields": ["name", "phone"], "no_marker": True}'/>
+                                        <a href="#discussion" class="small"><i class="fa fa-comment"></i> Enviar mensaje</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </t>
+                </t>
+
+                <!-- Page Content -->
+                <div id="invoice_content" class="o_portal_page_content col-12 col-lg d-flex flex-column align-items-end">
+                    <div class="o_portal_page_size">
+                        <t t-if="error or warning" t-call="account.portal_invoice_error"/>
+                        <t t-if="success and (not error and not warning)" t-call="account.portal_invoice_success"/>
+
+                        <div class="o_portal_html_view shadow">
+                            <div class="o_portal_html_loader text-center">
+                                <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw text-black-50"/>
+                            </div>
+                            <iframe style="min-height:800px;" id="invoice_html" class="mt8 mb8" width="100%" height="100%" frameborder="0" scrolling="no" t-att-src="solicitud_impresion.get_portal_url(report_type='html')"/>
+
+                        </div>
+
+                        <div id="sale_order_communication" class="mt-4">
+                            <h2>Comunicación</h2>
+                            <t t-call="portal.message_thread">
+                                <t t-set="object" t-value="solicitud_impresion"/>
+                            </t>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </xpath>
+    </template>
+
+    <template id="nueva_solicitud_impresion" name="Nueva Solicitud de Impresión">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Solicitudes</t>
+            </t>
+
+            <div class="o_portal_page_content col-12 col-lg d-flex flex-column shadow" style="padding:0 !important;background:white;">
+                <div class="o_portal_page_size">
+                    <div class="container" style="padding:15px !important;margin-left:auto;margin-right:auto;">
+                        <form action="/save/solicitud-impresion" id="formImpresion">
+                            <h1 style="text-align:center">Nueva Solicitud de Impresión</h1>
+                            <br></br>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <label for="cliente">Cliente:</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="text" id="cliente" name="cliente" t-att-value="partner.name" disabled="disabled" style="width:100%" required="required"/>
+                                </div>
+                                <t t-if="sucursales">
+                                    <div class="col-md-2">
+                                        <label for="sucursal">Sucursal</label>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <select name="sucursal" id="sucursal" class="sucursal" onchange="getCamiones()">
+                                            <option value="0" t-att-value="partner.id"></option>
+                                            <t t-foreach="sucursales" t-as="o">
+                                                <option t-att-value="o.id" t-esc="o.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </t>
+                                <t t-if="not sucursales">
+                                    <input type="text" readonly="1" style="display:none" value="0" name="sucursal" id="sucursal"/>
+                                </t>
+                                <div class="col-md-2">
+                                    <label for="fecha_actual">Fecha Actual:</label>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="datetime" t-att-value="fecha_actual" id="fecha_actual" name="fecha_actual"/>
+                                </div>
+                            </div>
+
+                            <br></br>
+
+                            <input type="text" readonly="1" style="display:none" t-att-value="partner.id" name="partner" id="partner"/>
+                            <input type="text" readonly="1" name="lines" id="lines" style="display:block"/>
+                            <div class="table-responsive">
+                                <div class="container">
+                                    <script>
+                                        $(document).ready(function() {
+                                        $(".add-row").click(function() {
+                                        var product = $("#etiquetas option:selected").val();
+                                        var name = $("#etiquetas option:selected").text();
+                                        var qty = $("#qty").val();
+                                        var markup = "&lt;tr&gt;" +
+                                        "&lt;td&gt;" + product + "&lt;/td&gt;" +
+                                        "&lt;td&gt;" + name + "&lt;/td&gt;" +
+                                        "&lt;td&gt;" + qty + "&lt;/td&gt;" +
+                                        +"&lt;td&gt;&lt;a class='remCF'&gt;&lt;i class='fa fa-times fa-2x text-danger'&gt;&lt;/i&gt;&lt;/a&gt;&lt;/td&gt;&lt;td>&lt;/tr>";
+                                        $("table tbody").append(markup);
+                                        });
+
+                                        // Find and remove selected table rows
+                                        $("#customFields").on('click', '.remCF', function() {
+                                        $(this).parent().parent().remove();
+                                        });
+
+
+                                        $('#formImpresion').submit(function() {
+                                        var source = [];
+                                        var product;
+                                        var qty;
+                                        var data = Array();
+
+                                        $("table tr").each(function(i, v) {
+                                        data[i] = Array();
+
+                                        if (i > 0) {
+                                        $(this).children('td').each(function(ii, vv) {
+                                        data[i][ii] = $(this).text();
+
+                                        if (ii == 0) {
+                                        product = data[i][ii] = $(this).text();
+                                        }
+                                        if (ii == 2) {
+                                        qty = data[i][ii] = $(this).text();
+                                        }
+                                        });
+                                        source.push({
+                                        'product': product,
+                                        'qty': qty
+                                        })
+                                        }
+
+                                        })
+                                        console.log(source);
+                                        $("#lines").val(JSON.stringify(source));
+                                        return true;
+                                        });
+                                        });
+
+
+                                    </script>
+                                    <style>
+                                        *{
+                                        -webkit-font-smoothing: antialiased;
+                                        -moz-osx-font-smoothing: grayscale;
+                                        }
+                                        .card{
+                                        border-radius : 10px;
+                                        padding : 10px;
+                                        }
+                                        input[type="text"], input[type="date"], input[type="number"], select {
+                                        width: 100% !important;
+                                        padding: 12px 20px;
+                                        margin: 8px 0;
+                                        display: inline-block;
+                                        border: 1px solid #ccc;
+                                        border-radius: 4px;
+                                        box-sizing: border-box;
+
+                                    </style>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 text-center">
+                                            <div class="card">
+                                                <h5 class="card-header">Etiquetas</h5>
+                                                <div class="card-body">
+                                                    <table id="customFields" style="width:100%">
+                                                        <thead>
+                                                            <tr style="text-align:center;font-weight:bold">
+                                                                <th colspan="2">Etiqueta</th>
+                                                                <th>Cantidad</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="detalle">
+                                                            <tr>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <hr/>
+                                                    <h5 class="card-title"> Agregar Item</h5>
+                                                    <form action="" id="addItem">
+                                                        <div class="form-row">
+                                                            <div class="col">
+                                                                <select name="etiquetas" id="etiquetas">
+                                                                    <option value="0">Etiqueta</option>
+                                                                    <t t-foreach="etiquetas" t-as="s">
+                                                                        <option t-att-value="s.id" t-esc="s.determinacion"/>
+                                                                    </t>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col">
+                                                                <input type="number" class="form-control" name="qty" placeholder="Cantidad" step="1" id="qty" required=""/>
+                                                            </div>
+                                                            <div class="col">
+                                                                <input type="button" class="add-row btn-success" value="Agregar"/>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="padding-top:20px">
+                                    <button id="guardarSolicitud" name="guardarSolicitud" type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="solicitud_impresion_creada" name="Solicitud de Impresion Creada">
+        <t t-call="portal.portal_layout"><t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Solicitudes</t>
+            </t>
+
+            <div class="o_portal_page_content col-12 col-lg d-flex flex-column shadow" style="padding:0 !important;background:white;">
+                <div class="o_portal_page_size">
+                    <div class="container" style="padding:15px !important;margin-left:auto;margin-right:auto;">
+
+                        <h3 style="text-align:center">SE HA CREADO CORRECTAMENTE LA SOLICITUD DE IMPRESIÓN
+                            <a t-att-href="solicitud.get_portal_url()">
+                                <t t-esc="solicitud.name"/>
+                            </a>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+</odoo>

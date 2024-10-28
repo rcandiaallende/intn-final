@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.actions.act_window" id="intn_trazabilidad_uso_marca.impresion_etiquetas_view">
+        <field name="name">Impresión de Etiquetas
+        </field>
+        <field name="res_model">impresion.etiquetas</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_mis_impresiones': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Cree una nueva Impresión de Etiquetas
+            </p>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="intn_trazabilidad_uso_marca.impresion_etiquetas_tree_view">
+        <field name="name">intn_trazabilidad_uso_marca.impresion_etiquetas_tree_view</field>
+        <field name="model">impresion.etiquetas</field>
+        <field name="arch" type="xml">
+            <tree string="Impresión de Etiquetas" import="false" create="false" delete="false">
+                <field name="name"/>
+                <field name="solicitud_id"/>
+                <field name="fecha_solicitud"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="qty"/>
+                <field name="user_id"/>
+                <field name="state"/>
+            </tree>
+
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="intn_trazabilidad_uso_marca.impresion_etiquetas_form_view">
+        <field name="name">intn_trazabilidad_uso_marca.impresion_etiquetas_form_view</field>
+        <field name="model">impresion.etiquetas</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="asignado,verificado,reimpresion,cancel"/>
+                    <field name="muestra_primera_etiqueta" invisible="1"/>
+                    <field name="muestra_verificar" invisible="1"/>
+                    <field name="muestra_imprimir" invisible="1"/>
+                    <button string="Asignar" type="object" name="button_asignar" class="oe_highlight"
+                            attrs="{'invisible':[('state','not in',['draft'])]}"/>
+                    <button string="Imprimir Primera Etiqueta" type="object" name="button_imprimir_primera_etiqueta"
+                            class="oe_highlight"
+                            attrs="{'invisible':[('muestra_primera_etiqueta','=',False)]}"/>
+                    <button string="Imprimir" type="object" name="button_imprimir" class="oe_highlight"
+                            attrs="{'invisible':[('muestra_imprimir','=',False)]}"/>
+                    <button string="Solicitar Reimpresión" type="object" name="button_reimprimir" class="oe_highlight"
+                            attrs="{'invisible':['|',('state','!=','asignado'),'|',('primera_etiqueta','=',False),'|',
+                            ('necesita_verificacion','=',False)]}"/>
+                    <button string="Cancelar" type="object" name="button_cancelar" class="oe_highlight"
+                            attrs="{'invisible':[('state','!=','asignado')]}"/>
+                    <button string="Verificar" type="object" name="button_verificar" class="oe_highlight"
+                            attrs="{'invisible':[('muestra_verificar','=',False)]}"/>
+                    <button string="Autorizar Reimpresión" type="object" name="button_autorizar_reimpresion" class="oe_highlight"
+                            attrs="{'invisible':[('state','!=','reimpresion')]}"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="open_scrap" class="oe_stat_button" attrs="{'invisible':[('state', '!=', 'asignado')]}"
+                                icon="fa-trash" type="object">
+                            <span class="o_stat_text">Desechar</span>
+                        </button>
+                    </div>
+                    <h2>
+                        <field name="name" class="oe_title" readonly="True"/>
+                    </h2>
+                    <group>
+                        <field name="primera_etiqueta" invisible="0"/>
+                        <field name="prox_control" invisible="0"/>
+                        <field name="cant_impresos" invisible="0"/>
+                        <field name="necesita_verificacion" invisible="0"/>
+                        <field name="quant_ids" invisible="0"/>
+                        <field name="lot_ids" invisible="0"/>
+                        <field name="lines" invisible="0"/>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="solicitud_id" readonly="1"/>
+                            <field name="fecha_solicitud" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="user_id" attrs="{'readonly':[('state','not in',['draft'])]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="product_id" readonly="1"/>
+                            <field name="qty" readonly="1"/>
+                            <field name="control_inicial" readonly="1"/>
+                            <field name="control_final" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="intn_trazabilidad_uso_marca.impresion_etiquetas_search_view">
+        <field name="name">intn_trazabilidad_uso_marca.impresion_etiquetas_search_view</field>
+        <field name="model">impresion.etiquetas</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="solicitud_id"/>
+                <field name="fecha_solicitud"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="qty"/>
+                <field name="user_id"/>
+                <field name="state"/>
+                <separator/>
+                <filter string="Mis Impresiones" name="mis_impresiones" domain="[('user_id', '=', uid)]"/>
+            </search>
+        </field>
+    </record>
+
+
+    <menuitem id="impresion_etiquetas_menu" name="Impresión de Etiquetas" parent="intn_trazabilidad_uso_marca.menu_2"
+              action="intn_trazabilidad_uso_marca.impresion_etiquetas_view" sequence="0"
+              groups="intn_trazabilidad_uso_marca.grupo_acceso_trazabilidad_uso_marca,intn_trazabilidad_uso_marca.grupo_impresor_uso_marca"/>
+</odoo>

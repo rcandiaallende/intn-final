@@ -1,0 +1,236 @@
+<odoo>
+    <data>
+
+        <record id="paperformat_acta_extraccion" model="report.paperformat">
+            <field name="name">Acta de Extracción de Muestras</field>
+            <!--field name="default" eval="True"/-->
+            <field name="format">custom</field>
+            <field name="page_height">216</field>
+            <field name="page_width">333</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">15</field>
+            <field name="margin_bottom">35</field>
+            <field name="margin_left">20</field>
+            <field name="margin_right">20</field>
+            <field name="header_line" eval="True"/>
+            <field name="header_spacing">20</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report id="reporte_acta_extraccion" string="Acta de Extracción de Muestras" model="acta.extraccion" report_type="qweb-pdf" name="intn_trazabilidad_uso_marca.acta_extraccion" paperformat="paperformat_acta_extraccion" />
+        <template id="acta_extraccion">
+            <t t-call="web.html_container">
+                <t t-call="web.basic_layout">
+                    <div class="page">
+                        <div class="row">
+                            <style>
+                                .bg-g{
+                                background:grey;
+                                }
+
+                                .bg-l{
+                                background:lightgrey;
+                                }
+                                table {
+                                width: 100%;
+                                }
+
+                                .fs-14 {
+                                font-size: 16px;
+                                padding: 10px;
+                                }
+                                .fs-16 {
+                                font-size: 20px;
+                                padding: 10px;
+                                }
+                                .fs-18 {
+                                font-size: 22px;
+                                padding: 10px;
+                                }
+
+                                .text-center {
+                                text-align: center;
+                                }
+
+                                .text-right {
+                                text-align: right;
+                                }
+
+                                .bold {
+                                font-weight: bold;
+                                }
+
+                                .text-justify {
+                                text-align: justify;
+                                }
+
+                                table,
+                                td,
+                                tr {
+                                border: 1px solid black;
+                                border-collapse: collapse;
+
+                                }
+
+                                p{
+                                margin-top:0;
+                                margin-bottom:2px;
+                                margin-left:2px;
+                                }
+
+                                td{
+                                padding-left:5px;
+                                padding-right:5px;
+                                }
+
+                            </style>
+                            <t t-foreach="docs" t-as="s">
+                                <div class="page">
+                                    <table style="border:1px solid black !important;">
+                                        <tr style="border:1px solid black !important;">
+                                            <td style="width:25%;border:1px solid black !important;" class="text-center" >
+                                                <img src='/web/binary/company_logo' style="width:90px;padding:5px;"/>
+                                            </td>
+                                            <td class="text-center" style="border:1px solid grey !important;">
+                                                <p class="bold">
+                                                    Organismo Nacional de Inspección (ONI) <br/>
+                                                    Departamento de Muestreo <br/>
+                                                    Acta de Extracción de Muestras
+                                                </p>
+                                            </td>
+                                            <td style="border:1px solid grey !important;">
+                                                <p class="bold">
+                                                    FORM - M - 16<br/>
+                                                    Versión: 02 <br/>
+                                                    Vigencia: 25/07/2017<br/>
+                                                    Folio N°: 1
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br/>
+                                    <br/>
+                                    <table style="border:1px solid white !important;">
+                                        <tr style="border:1px solid white !important;">
+                                            <td style="width:25%;border:1px solid white !important;" colspan="2">
+                                                <span class="bold">
+                                                    Lugar y Fecha:
+                                                </span>
+                                                <span t-field="s.city_id"/>, <span t-field="s.fecha_hora"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border:1px solid white !important;">
+                                            <td style="width:25%;border:1px solid white !important;">
+                                                <span class="bold">
+                                                    Solicitante:
+                                                </span>
+                                                <span t-field="s.solicitante_id"/>
+                                            </td>
+                                            <td style="width:25%;border:1px solid white !important;" >
+                                                <span class="bold">
+                                                    Expediente INTN N°:
+                                                </span>
+                                                <span t-field="s.order_id"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border:1px solid white !important;">
+                                            <td style="width:25%;border:1px solid white !important;"  colspan="2">
+                                                <span class="bold">
+                                                    Producto:
+                                                </span>
+                                                <span t-field="s.product_id"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border:1px solid white !important;">
+                                            <td style="width:25%;border:1px solid white !important;"  colspan="2">
+                                                <span class="bold">
+                                                    Lugar de Muestreo:
+                                                </span>
+                                                <span t-field="s.lugar_muestreo"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border:1px solid white !important;">
+                                            <td style="width:25%;border:1px solid white !important;"  colspan="2">
+                                                <span class="bold">
+                                                    Norma o Método Aplicado:
+                                                </span>
+                                                <t t-foreach="s.norma_ids" t-as="n">
+                                                    <t t-esc="n.name"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div class="text-justify">
+                                        <span class="bold">
+                                            Detalle del lote
+                                        </span>
+                                        <span>
+                                            (Cantidad, presentación, fecha elaboración y vencimiento, identificación y otros)
+                                        </span>
+                                        <span t-raw="s.detalle_lote"/>
+                                    </div>
+                                    <div class="text-justify ">
+                                        <span class="bold">
+                                            Muestra
+                                        </span>
+                                        <span t-raw="s.muestra"/>
+                                    </div>
+                                    <div class="text-justify ">
+                                        <span class="bold">
+                                            Observación
+                                        </span>
+                                        <span t-raw="s.observacion"/>
+                                    </div>
+                                    <br/>
+                                    <br/>
+                                    <div class="text-justify ">
+                                        <span class="bold">
+                                            Notas:
+                                        </span>
+                                        <p style="font-size:13px">Las muestras extraídas e identificadas serán transportadas por el funcionario del ONI - INTN firmante en este acta, quien es
+                                        responsable de su entrega en óptimas condiciones. Si serán transportadas por otros mecanismos, se debe aclarar en el presente documento.</p>
+                                        <br/>
+                                        <p style="font-size:13px">
+                                            Habiendo total acuerdo en los datos contenidos en este acta y con el sistema para la extracción de la muestra se firman tres ejemplares de un mismo
+                                            tenor y a un solo efecto.
+                                        </p>
+                                    </div>
+                                    <br/>
+                                    <div>
+                                        <table style="border:1px solid white !important;">
+                                            <tr style="border:1px solid white !important;">
+                                                 <td class="bold" style="width:50%;text-align:center;width:40%;border:1px solid white !important;">
+                                                      <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    SOLICITANTE O REPRESENTANTE<br/>
+                                                    TESTIGO DEL MUESTREO
+                                                </td>
+                                                <td class="bold" style="text-align:center;width:40%;border:1px solid white !important;">
+                                                    <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    FUNCIONARIO ONI - INTN<br/>
+                                                    DIRECTORA - ONC INTN
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="footer">
+                                        <div style="font-size:12px;">
+                                            <p style="font-weight:bold">
+                                                 Este ACTA deberá ser completado en el lugar y en el momento del muestreo.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

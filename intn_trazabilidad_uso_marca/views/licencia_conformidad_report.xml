@@ -1,0 +1,225 @@
+<odoo>
+    <data>
+
+        <record id="paperformat_licencia_conformidad" model="report.paperformat">
+            <field name="name">Licencia de Conformidad</field>
+            <!--field name="default" eval="True"/-->
+            <field name="format">custom</field>
+            <field name="page_height">216</field>
+            <field name="page_width">333</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">15</field>
+            <field name="margin_bottom">30</field>
+            <field name="margin_left">20</field>
+            <field name="margin_right">20</field>
+            <field name="header_line" eval="True"/>
+            <field name="header_spacing">20</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report id="reporte_licencia_conformidad" string="Licencia de Conformidad" model="licencia.conformidad" report_type="qweb-pdf" name="intn_trazabilidad_uso_marca.licencia_conformidad" paperformat="paperformat_licencia_conformidad" />
+        <template id="licencia_conformidad">
+            <t t-call="web.html_container">
+                <t t-call="web.basic_layout">
+                    <div class="page">
+                        <div class="row">
+                            <style>
+                                .bg-g{
+                                background:grey;
+                                }
+
+                                .bg-l{
+                                background:lightgrey;
+                                }
+                                table {
+                                width: 100%;
+                                }
+
+                                .fs-14 {
+                                font-size: 16px;
+                                padding: 10px;
+                                }
+                                .fs-16 {
+                                font-size: 20px;
+                                padding: 10px;
+                                }
+                                .fs-18 {
+                                font-size: 22px;
+                                padding: 10px;
+                                }
+
+                                .text-center {
+                                text-align: center;
+                                }
+
+                                .text-right {
+                                text-align: right;
+                                }
+
+                                .bold {
+                                font-weight: bold;
+                                }
+
+                                .text-justify {
+                                text-align: justify;
+                                }
+
+                                table,
+                                td,
+                                tr {
+                                border: 1px solid black;
+                                border-collapse: collapse;
+
+                                }
+
+                                p{
+                                margin-top:0;
+                                margin-bottom:2px;
+                                margin-left:2px;
+                                }
+
+                                td{
+                                padding-left:5px;
+                                padding-right:5px;
+                                }
+
+                            </style>
+                            <t t-foreach="docs" t-as="s">
+                                <div class="page">
+                                    <table style="border:1px solid grey !important;" class="bg-g">
+                                        <tr style="border:1px solid grey !important;">
+                                            <td style="width:25%;border:1px solid grey !important;" class="text-center" >
+                                                <img src='/web/binary/company_logo' style="width:90px;padding:5px;"/>
+                                            </td>
+                                            <td class="text-center" style="border:1px solid grey !important;">
+                                                <p class="bold">
+                                                    LICENCIA DE CONFORMIDAD
+                                                </p>
+                                                <p class="bold">
+                                                    ONC N° <span t-esc="s.name"/>
+                                                </p>
+                                            </td>
+                                            <td style="border:1px solid grey !important;text-align:right">
+                                                <img src='/intn_trazabilidad_uso_marca/static/src/img/onc.png' style="max-height: 100px;"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br></br>
+                                    <br></br>
+                                    <div class="text-center bg-l">
+                                        <p class="text-center bold" style="font-size:16px;color:white">
+                                            El Organismo Nacional de Certificación del INTN,
+                                            <span class="bold">
+                                                concede la presente Licencia para el Uso de la Marca ONC de Conformidad.
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <br></br>
+                                    <table style="font-size:16px;line-height:30px;">
+                                        <tr class="bg-l">
+                                            <td>
+                                                I - SOLICITANTE
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span t-field="s.solicitante_id"/><br/>
+                                                <span t-field="s.street"/> <span t-field="s.city_id"/> <span t-field="s.country_id"/> <br/>
+                                                <span t-field="s.ruc"/><br/>
+                                            </td>
+                                        </tr>
+                                        <tr class="bg-l">
+                                            <td>
+                                                II - FABRICANTE
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span t-field="s.fabricante_id"/><br/>
+                                                <span t-field="s.street_fabricante"/> <span t-field="s.fabricante_city_id"/> <span t-field="s.fabricante_country_id"/> <br/>
+                                                <span t-field="s.ruc_fabricante"/><br/>
+                                            </td>
+                                        </tr>
+                                        <tr class="bg-l">
+                                            <td>
+                                                III - PRODUCTO
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            <t t-foreach="s.product_ids" t-as="p">
+                                                <span t-esc="p.name"/>
+                                            </t>
+                                            <span t-raw="s.descripcion"/>
+                                            </td>
+                                        </tr>
+                                        <tr class="bg-l">
+                                            <td>
+                                                IV - DOCUMENTO DE REFERENCIA
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <t t-foreach="s.norma_ids" t-as="norma">
+                                                    <t t-esc="norma.name"/><br/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr class="bg-l">
+                                            <td>
+                                                V - FECHA DE VENCIMIENTO
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span t-field="s.fecha_vencimiento_letras"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br></br>
+                                    <br></br>
+                                    <p>
+                                        Asunción, <span t-field="s.fecha_letras"/>
+                                    </p>
+                                    <div style="margin-top:60px">
+                                        <table style="border:1px solid white !important;">
+                                            <tr style="border:1px solid white !important;">
+                                                <td style="width:60%;border:1px solid white !important;"/>
+                                                <td class="bold" style="text-align:center;width:40%;border:1px solid white !important;">
+                                                    <br/>
+                                                    <br/>
+                                                    <br/>
+                                                    Dirección ONC INTN
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <br/>
+                                        <br/>
+                                        <div style="display:table-cell;vertical-align:top;">
+
+                                            <img t-att-src="image_data_uri(s.qr_code)" style="max-width:150px;max-height:150px;margin-left:15px"/>
+                                            <!--br/>-->
+                                            <!--                                                        <span style="margin-left:15px;font-size:14px">Consulte la validez de ésta constancia online</span>-->
+                                        </div>
+                                    </div>
+
+                                    <div class="footer">
+                                        <div style="font-size:12px;">
+                                            <p style="text-align:right">
+                                                ONC-FOR-051 / Rev. 01
+                                            </p>
+                                            <br/>
+                                            <p style="text-align:center">
+                                                Avenida Artigas N° 3.973 y Gral. Roa / Teléf: 595-21 290 160 - Asunción, Paraguay
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

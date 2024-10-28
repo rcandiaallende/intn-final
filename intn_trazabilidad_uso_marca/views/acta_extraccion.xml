@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="acta_extraccion_tree_view">
+        <field name="name">acta_extraccion_tree_view</field>
+        <field name="model">acta.extraccion</field>
+        <field name="arch" type="xml">
+            <tree string="Acta de extracción de muestras">
+                <field name="name"/>
+                <field name="fecha_hora"/>
+                <field name="solicitante_id"/>
+                <field name="order_id"/>
+                <field name="state"/>
+            </tree>
+
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="acta_extraccion_form_view">
+        <field name="name">acta_extraccion_form_view</field>
+        <field name="model">acta.extraccion</field>
+        <field name="arch" type="xml">
+            <form>
+                <header name="header">
+                    <field name="state" widget="statusbar"/>
+                    <button string="Confirmar" type="object" name="button_confirmar" class="oe_highlight" attrs="{'invisible':[('state','!=','draft')]}"/>
+                    <button string="Cancelar" type="object" name="button_cancelar" attrs="{'invisible':[('state','!=','done')]}"/>
+                </header>
+                <sheet>
+                    <h2 name="titulo">
+                        <field name="name" class="oe_title" readonly="True"/>
+                    </h2>
+                    <group>
+                        <group>
+                            <field name="city_id" attrs="{'readonly':[('state','!=','draft')]}" options="{'no_create': True, 'no_quick_create': True, 'no_create_edit':True}"/>
+                            <field name="fecha_hora" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="solicitante_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="order_id" attrs="{'readonly':[('state','!=','draft')]}" domain="[('partner_id','=',solicitante_id)]"/>
+                            <field name="product_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="lugar_muestreo" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="norma_ids" widget="many2many_tags" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <sheet string="Detalle del Lote">
+                            <page string="Detalle del Lote">
+                                <field name="detalle_lote" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </page>
+                        </sheet>
+                        <sheet string="Muestra">
+                            <page string="Muestra">
+                                <field name="muestra" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </page>
+                        </sheet>
+                        <sheet string="Observación">
+                            <page string="Observación">
+                                <field name="observacion" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </page>
+                        </sheet>
+                    </notebook>
+
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+
+            </form>
+
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="acta_extraccion_search_view">
+        <field name="name">acta_extraccion_search_view</field>
+        <field name="model">acta.extraccion</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="fecha_hora"/>
+                <field name="solicitante_id"/>
+                <field name="order_id"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="intn_trazabilidad_uso_marca.acta_extraccion_action_view">
+        <field name="name">Acta de extracción de muestras</field>
+        <field name="res_model">acta.extraccion</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Cree una nueva Acta de extracción de muestras
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="intn_trazabilidad_uso_marca.acta_extraccion_menu" name="Acta de extracción de muestras"
+              parent="intn_trazabilidad_uso_marca.menu_2"
+              action="intn_trazabilidad_uso_marca.acta_extraccion_action_view" sequence="4"
+              groups="intn_trazabilidad_uso_marca.grupo_acceso_trazabilidad_uso_marca,intn_trazabilidad_uso_marca.grupo_muestreo"/>
+
+
+</odoo>

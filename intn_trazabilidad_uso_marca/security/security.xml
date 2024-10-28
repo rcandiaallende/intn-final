@@ -1,0 +1,13 @@
+<odoo>
+    <data>
+        <record id="intn_trazabilidad_uso_marca.grupo_acceso_trazabilidad_uso_marca" model="res.groups">
+            <field name="name">Gestión de Uso de Marca</field>
+        </record>
+        <record id="intn_trazabilidad_uso_marca.grupo_impresor_uso_marca" model="res.groups">
+            <field name="name">Puede imprimir etiquetas de Uso de Marca</field>
+        </record>
+        <record id="intn_trazabilidad_uso_marca.grupo_muestreo" model="res.groups">
+            <field name="name">Gestión de Muestreo</field>
+        </record>
+    </data>
+</odoo>

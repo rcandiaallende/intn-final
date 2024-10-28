@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <template id="online_licencia_servicios">
+            <style>
+                .bg-g{
+                background:lightgrey;
+                }
+
+                .bg-l{
+                background:lightgrey;
+                }
+                table {
+                width: 100%;
+                }
+
+                .fs-14 {
+                font-size: 16px;
+                padding: 10px;
+                }
+                .fs-16 {
+                font-size: 20px;
+                padding: 10px;
+                }
+                .fs-18 {
+                font-size: 22px;
+                padding: 10px;
+                }
+
+                .text-center {
+                text-align: center;
+                }
+
+                .text-right {
+                text-align: right;
+                }
+
+                .bold {
+                font-weight: bold;
+                }
+
+                .text-justify {
+                text-align: justify;
+                }
+
+                table,
+                td,
+                tr {
+                border: 1px solid black;
+                border-collapse: collapse;
+
+                }
+
+                p{
+                margin-top:0;
+                margin-bottom:2px;
+                margin-left:2px;
+                }
+
+                td{
+                padding-left:5px;
+                padding-right:5px;
+                }
+
+            </style>
+            <div style="text-align:center;margin: auto;width: 60%;border: 3px solid #000;padding: 10px;">
+                <div style="border:20px solid darkblue !important;">
+                    <table style="border:1px solid white !important;width:100%;margin-top:30px !important">
+                        <tr style="border:1px solid white !important;">
+                            <td style="width:35%;border:1px solid white !important;" class="text-center" >
+                                <img src='/web/binary/company_logo' style="width:90px;padding:5px;"/>
+                            </td>
+                            <td class="text-center bg-g" style="border:1px solid white !important;">
+                                <p class="bold">
+                                    LICENCIA ONC N° <span t-esc="licencia_serviciolicencia_servicios.name"/>
+                                </p>
+                            </td>
+                            <td style="width:35%;border:1px solid white !important;padding:0;" class="text-center">
+                                <img src='/intn_trazabilidad_uso_marca/static/src/img/marca_intn.png' style="max-height: 100px;"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <div class="text-center" style="margin-left:30px;margin-right:30px;">
+                        <div class="text-center bold" style="font-size:20px;">
+                            EL ORGANISMO NACIONAL DE CERTIFICACIÓN <br/>
+                            DEL INSTITUTO NACIONAL DE TECNOLOGÍA, NORMALIZACIÓN Y METROLOGÍA
+                        </div>
+                        <br/>
+                        Concede a: <br/>
+                        <span class="bold" style="font-size:18px" t-field="licencia_servicios.solicitante_id"/><br/>
+                        <span t-field="licencia_servicios.street"/> <span t-field="licencia_servicios.city_id"/><br/>
+                        <span t-field="licencia_servicios.country_id"/>
+                        <br/>
+                        Licencia para el uso de la <span class="bold">MARCA INTN - SERVICIOS</span> para su servicio de :
+                    </div>
+                    <br/>
+                    <div class="text-center" style="margin-left:30px;margin-right:30px;">
+                        <t t-if="licencia_servicios.des_servicio_1">
+                            <ul>
+                                <li>
+                                    <t t-raw="licencia_servicios.des_servicio_1" class="bold"/>
+                                    <t t-foreach="licencia_servicios.agentes_1" t-as="ag1">
+                                        <span t-field="ag1.name" class="bold"/>
+                                    </t>
+                                    <t t-if="licencia_servicios.marca_1">
+                                        marca
+                                        <span t-field="licencia_servicios.marca_1" class="bold"/>
+                                    </t>
+                                </li>
+                            </ul>
+                        </t>
+                        <t t-if="licencia_servicios.des_servicio_2">
+                            <ul>
+                                <li>
+                                    <t t-raw="licencia_servicios.des_servicio_2" class="bold"/>
+                                    <t t-foreach="licencia_servicios.agentes_2" t-as="ag2">
+                                        <span t-field="ag2.name" class="bold"/>
+                                    </t>
+                                    <t t-if="licencia_servicios.marca_2">
+                                        marca
+                                        <span t-field="licencia_servicios.marca_2" class="bold"/>
+                                    </t>
+                                </li>
+                            </ul>
+                        </t>
+                        <br/>
+                        Esta LICENCIA, implica el cumplimiento de los requisitos del Reglamento General <span t-field="licencia_servicios.reglamento_general_id"/>, Reglamento
+                        Especifico
+                        <t t-foreach="licencia_servicios.reglamentos_especificos_ids" t-as="re">
+                            <span t-field="re.name"/>
+                        </t>
+                        y de las Normas Paraguayas
+                        <t t-foreach="licencia_servicios.norma_ids" t-as="norma">
+                            <span t-esc="norma.name"/>,
+                        </t>
+                        .
+		</div>
+		<!-- Inicio comentado el 5/mar/2024
+                    <br></br>
+                    <p class="bold text-center">
+                        Válido hasta el <span t-field="licencia_servicios.fecha_vencimiento_letras"/>
+                    </p>
+                    <div style="margin-top:60px">
+                        <table style="border:1px solid white !important;">
+                            <tr style="border:1px solid white !important;">
+                                <td style="border:1px solid white !important;" class="bold text-center">
+                                    <span t-esc="licencia_servicios.fecha.strftime('%Y/%m/%d')"/><br/>
+                                    FECHA
+                                </td>
+                            </tr>
+                        </table>
+			</div>
+		Fin 5/mar/2024 -->
+                </div>
+            </div>
+
+        </template>
+
+        <template id="token_invalido">
+            <div style="text-align:center">
+                <span style="font-size:20px">Token inválido</span>
+            </div>
+        </template>
+    </data>
+</odoo>

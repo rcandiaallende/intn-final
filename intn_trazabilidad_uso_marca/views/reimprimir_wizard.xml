@@ -1,0 +1,26 @@
+<odoo>
+    <data>
+        <record id="intn_trazabilidad_uso_marca.reimprimir_wizard_view" model="ir.ui.view">
+            <field name="name">intn_trazabilidad_uso_marca.reimprimir_wizard_view</field>
+            <field name="model">reimprimir.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="impresion_etiquetas_id" readonly="True"/>
+                            <field name="product_id" readonly="True"/>
+                            <field name="lineas" widget="many2many_tags"
+                                   domain="[('impresion_etiquetas_id','=',impresion_etiquetas_id)]"
+                                   options="{'no_create': True, 'no_quick_create': True, 'no_create_edit':True}"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Confirmar" type="object" name="button_solicitar_reimpresion" class="oe_highlight"
+                                confirm="¿Desea confirmar los datos introducidos? No podrá hacer cambios posteriores"/>
+                        <button string="Cancelar" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

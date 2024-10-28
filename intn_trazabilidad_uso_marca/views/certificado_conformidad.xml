@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="certificado_conformidad_tree_view">
+        <field name="name">certificado_conformidad_tree_view</field>
+        <field name="model">certificado.conformidad</field>
+        <field name="arch" type="xml">
+            <tree string="Certificado de Conformidad de Lotes de Productos">
+                <field name="name"/>
+                <field name="fecha"/>
+                <field name="solicitante_id"/>
+                <field name="product_id"/>
+                <field name="order_id"/>
+                <field name="acta_id"/>
+                <field name="informes_ensayo"/>
+                <field name="state"/>
+            </tree>
+
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="certificado_conformidad_form_view">
+        <field name="name">certificado_conformidad_form_view</field>
+        <field name="model">certificado.conformidad</field>
+        <field name="arch" type="xml">
+            <form>
+                <header name="header">
+                    <field name="state" widget="statusbar"/>
+                    <button string="Confirmar" type="object" name="button_confirmar" class="oe_highlight" attrs="{'invisible':[('state','!=','draft')]}"/>
+                    <button string="Cancelar" type="object" name="button_cancelar" attrs="{'invisible':[('state','!=','done')]}"/>
+                </header>
+                <sheet>
+                    <h2 name="titulo">
+                        <field name="name" class="oe_title" readonly="False"/>
+                    </h2>
+                    <group string="Cabecera">
+                        <field name="descripcion1" nolabel="1" widget="html" attrs="{'readonly':[('state','!=','draft')]}"/>
+                    </group>
+                    <group>
+                        <group string="Producto">
+                            <field name="product_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="identificacion_lote" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="tam_lote" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="tamaño_lote_kg" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="tamaño_lote_restante_real" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="tamaño_lote_restante_aproximado" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="modelo" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="fabricante_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="marca_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="origen" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="fecha_vencimiento" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Solicitante">
+                            <field name="solicitante_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="ruc" readonly="1" force_save="1"/>
+                            <field name="street" readonly="1" force_save="1"/>
+                            <field name="city_id" readonly="1" force_save="1"/>
+                            <field name="state_id" readonly="1" force_save="1"/>
+                            <field name="order_id" attrs="{'readonly':[('state','!=','draft')]}" domain="[('partner_id','=',solicitante_id)]"/>
+                        </group>
+                        <group string="Informes Relacionados">
+                            <field name="acta_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="informes_ensayo" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Observaciones">
+                            <field name="observaciones" nolabel="1" attrs="{'readonly':[('state','!=','draft')]}" widget="html"/>
+                            <group>
+                                <field name="periodo_validez" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </group>
+                        </page>
+                        <page string="Seguridad">
+                            <group>
+                                <field name="nro_hoja_seguridad" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="nro_sello" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </group>
+                        </page>
+                    </notebook>
+
+
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+
+            </form>
+
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="certificado_conformidad_search_view">
+        <field name="name">certificado_conformidad_search_view</field>
+        <field name="model">certificado.conformidad</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="fecha"/>
+                <field name="solicitante_id"/>
+                <field name="product_id"/>
+                <field name="order_id"/>
+                <field name="acta_id"/>
+                <field name="informes_ensayo"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="intn_trazabilidad_uso_marca.certificado_conformidad_action_view">
+        <field name="name">Certificado de Conformidad de Lotes de Productos</field>
+        <field name="res_model">certificado.conformidad</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Cree una nueva Certificado de Conformidad de Lotes de Productos
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="intn_trazabilidad_uso_marca.certificado_conformidad_menu" name="Certificado de Conformidad de Lotes de Productos" parent="intn_trazabilidad_uso_marca.licencias" action="intn_trazabilidad_uso_marca.certificado_conformidad_action_view" sequence="4"/>
+
+
+</odoo>

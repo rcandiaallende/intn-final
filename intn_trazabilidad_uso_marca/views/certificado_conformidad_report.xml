@@ -1,0 +1,299 @@
+<odoo>
+    <data>
+        <record id="paperformat_certificado_conformidad" model="report.paperformat">
+            <field name="name">Certificado de Conformidad de Lotes de Productos</field>
+            <!--field name="default" eval="True"/-->
+            <field name="format">custom</field>
+            <field name="page_height">297</field>
+            <field name="page_width">210</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">10</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">20</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report id="reporte_certificado_conformidad" string="Certificado de Conformidad de Lotes de Productos"
+                model="certificado.conformidad" report_type="qweb-pdf"
+                name="intn_trazabilidad_uso_marca.certificado_conformidad"
+                paperformat="paperformat_certificado_conformidad"
+                print_report_name="'Certificado de Conformidad de Lotes de Productos ONC N° %s' % (object.name)"/>
+        <template id="certificado_conformidad">
+            <t t-call="web.html_container">
+                <t t-call="web.basic_layout">
+                    <style>
+                        .bg-g{
+                        background:grey;
+                        }
+
+                        .bg-l{
+                        background:lightgrey;
+                        }
+                        table {
+                        width: 100%;
+                        }
+
+                        .fs-14 {
+                        font-size: 16px;
+                        padding: 10px;
+                        }
+                        .fs-16 {
+                        font-size: 20px;
+                        padding: 10px;
+                        }
+                        .fs-18 {
+                        font-size: 22px;
+                        padding: 10px;
+                        }
+
+                        .text-center {
+                        text-align: center;
+                        }
+
+                        .text-right {
+                        text-align: right;
+                        }
+
+                        .bold {
+                        font-weight: bold;
+                        }
+
+                        .text-justify {
+                        text-align: justify;
+                        }
+
+                        table,
+                        td,
+                        tr {
+                        border: 1px solid black;
+                        border-collapse: collapse;
+                        font-size:14px;
+                        }
+
+                        p{
+                        margin-top:0;
+                        margin-bottom:2px;
+                        margin-left:2px;
+                        }
+
+                        td{
+                        padding-left:5px;
+                        padding-right:5px;
+                        line-height: 22px;
+                        }
+
+                    </style>
+                    <t t-foreach="docs" t-as="s">
+                        <div class="page">
+                            <table style="border:1px solid transparent !important;border-bottom: 8px solid black !important;">
+                                <tr>
+                                    <td class="bg-l" style="width:80px;border:1px solid transparent !important;"/>
+                                    <td style="padding-top:0;padding-left:15px;border:1px solid transparent !important;">
+                                        <table style="border:1px solid lightgrey !important;margin-left: -15px;">
+                                            <tr style="border:1px solid lightgrey !important;">
+                                                <td style="width:20%;border:1px solid lightgrey !important;background-color:white" class="text-center">
+                                                    <img src="/web/binary/company_logo" style="width:90px;padding:5px;"/>
+                                                </td>
+                                                <td class="text-center bg-l" style="border:1px solid lightgrey !important;">
+                                                    <p class="bold">
+                                                        ORGANISMO NACIONAL DE CERTIFICACIÓN DEL <br/>
+                                                        INSTITUTO NACIONAL DE TECNOLOGÍA, NORMALIZACIÓN Y METROLOGÍA
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <br/>
+                                        <p class="bold text-center" style="font-size:20px">
+                                            CERTIFICADO DE CONFORMIDAD DE LOTES DE PRODUCTOS
+                                        </p>
+                                        <br/>
+                                        <p class="bold col-md-3 offset-md-9 text-center" style="font-size:18px;border:1px solid black !important">
+                                            ONC N° <span t-field="s.name"/>
+                                        </p>
+                                        <br/>
+                                        <div class="text-justify bg-l" style="border-radius:10px;padding:10px">
+                                            <span t-raw="s.descripcion1"/>
+                                        </div>
+                                        <br/>
+                                        <table style="font-size:16px;line-height:30px;">
+                                            <tr>
+                                                <td class="bold bg-l" colspan="2">
+                                                    I - PRODUCTO
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Descripción:
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.product_id"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Identificación del Lote:
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.identificacion_lote"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Tamaño del Lote
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.tam_lote"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Modelo
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.modelo"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Fabricante
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.fabricante_id"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Marca
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.marca_id"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Origen
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.origen"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Fecha de Vencimiento
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.fecha_vencimiento"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold bg-l" colspan="2">
+                                                    II - SOLICITANTE
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Denominación de la empresa:
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.solicitante_id"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Dirección:
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.street"/> <span t-field="s.city_id"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Solicitu de Servicio al INTN N°:
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.order_id"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold bg-l" colspan="2">
+                                                    III - INFORMES RELACIONADOS
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Acta de Extracción de Muestras:
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.acta_id"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold">
+                                                    Informes de Ensayo:
+                                                </td>
+                                                <td>
+                                                    <span t-field="s.informes_ensayo"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold bg-l" colspan="2">
+                                                    VI - OBSERVACIONES
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <span t-raw="s.observaciones"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <br/>
+                                        <span class="bold">
+                                            PERIODO DE VALIDEZ DE ÉSTE CERTIFICADO:
+                                        </span>
+                                        <span t-field="s.periodo_validez"/>, a partir de la fecha de expedición.
+                                        <br/>
+                                        <br/>
+                                        <p>
+                                            Asunción, <span t-field="s.fecha_letras"/>
+                                        </p>
+                                        <br/>
+                                        <div>
+                                            <table style="border:1px solid white !important;">
+                                                <tr style="border:1px solid white !important;">
+                                                    <td style="width:60%;border:1px solid white !important;">
+                                                        <img t-att-src="image_data_uri(s.qr_code)"/>
+                                                    </td>
+                                                    <td class="bold" style="text-align:center;width:40%;border:1px solid white !important;">
+                                                        <br/>
+                                                        <br/>
+                                                        LIC. ERIKA ETCHEVERRY<br/>
+                                                        DIRECTORA - ONC INTN
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="footer">
+                                <div style="font-size:12px;">
+                                    <p style="text-align:right">
+                                        ONC-FOR-052 / Rev. 00
+                                    </p>
+                                    <br/>
+                                    <p style="text-align:center">
+                                        Avenida Artigas N° 3.973 y Gral. Roa / Teléf: 595-21 290 160 - Asunción, Paraguay
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

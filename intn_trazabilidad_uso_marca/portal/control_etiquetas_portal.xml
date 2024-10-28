@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_control_etiquetas" name="Mis Control de Etiquetas">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Control de Etiquetas</t>
+            </t>
+            <a role="button" class="btn btn-primary" href="/new/control-etiquetas">
+                <i class="fa fa-plus-square-o"/>
+                Nuevo Control de Etiquetas
+            </a>
+            <!--            <a role="button" class="btn btn-primary" href="/new/control-metci"><i class="fa fa-plus-square-o"/> Nueva Solicitud para Laboratorio</a>-->
+            <t t-if="not control_etiquetas">
+                <p>Actualmente no tiene Controles de Etiquetas.</p>
+            </t>
+            <t t-if="control_etiquetas" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Control de Etiqueta #</th>
+                        <th class="text-right">Fecha/Hora</th>
+                        <th class="text-center"/>
+                        <!--                        <th class="text-right">Total</th>-->
+                    </tr>
+                </thead>
+                <t t-foreach="control_etiquetas" t-as="control">
+                    <tr>
+                        <td>
+                            <a t-att-href="control.get_portal_url()">
+                                <t t-esc="control.name"/>
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <span t-field="control.fecha_hora"/>
+                        </td>
+                        <td class="text-center">
+                            <!--span t-if="solicitud.state == 'cancel'" class="badge badge-pill badge-secondary"><i class="fa fa-fw fa-remove"/> Cancelado</span>
+                            <span t-if="solicitud.state == 'verificado'" class="badge badge-pill badge-success"><i class="fa fa-fw fa-check-square-o"/> Verificado</span>
+                            <span t-if="solicitud.state == 'draft'" class="badge badge-pill badge-primary"><i class="fa fa-fw fa-clock-o"/> Nuevo</span>
+                        -->
+                        </td>
+                        <!--                        <td class="text-right">-->
+                        <!--                            <span t-field="quotation.amount_total"/>-->
+                        <!--                        </td>-->
+                    </tr>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_my_control_metci" name="Solicitud METCI">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Sistema de Gestion de Solicitudes(METCI)</t>
+            </t>
+            <a role="button" class="btn btn-primary" name="nuevaSolicitudMetci" type="submit" href="/new/control-metci">
+                <i class="fa fa-plus-square-o"/>
+                Nueva Solicitud de Laboratorio
+            </a>
+            <!--            <a role="button" class="btn btn-primary" href="/new/control-metci"><i class="fa fa-plus-square-o"/> Nueva Solicitud para Laboratorio</a>-->
+            <!--            <t t-if="not control_etiquetas">-->
+            <!--                <p>Actualmente no tiene Controles de Etiquetas.</p>-->
+            <!--            </t>-->
+            <!--            <t t-if="control_etiquetas" t-call="portal.portal_table">-->
+            <!--                <thead>-->
+            <!--                    <tr class="active">-->
+            <!--                        <th>Control de Etiqueta #</th>-->
+            <!--                        <th class="text-right">Fecha/Hora</th>-->
+            <!--                        <th class="text-center"/>-->
+            <!--                        &lt;!&ndash;                        <th class="text-right">Total</th>&ndash;&gt;-->
+            <!--                    </tr>-->
+            <!--                </thead>-->
+            <!--                <t t-foreach="control_etiquetas" t-as="control">-->
+            <!--                    <tr>-->
+            <!--                        <td><a t-att-href="control.get_portal_url()"><t t-esc="control.name"/></a></td>-->
+            <!--                        <td class="text-right"><span t-field="control.fecha_hora"/></td>-->
+            <!--                        <td class="text-center">-->
+            <!--                            &lt;!&ndash;span t-if="solicitud.state == 'cancel'" class="badge badge-pill badge-secondary"><i class="fa fa-fw fa-remove"/> Cancelado</span>-->
+            <!--                            <span t-if="solicitud.state == 'verificado'" class="badge badge-pill badge-success"><i class="fa fa-fw fa-check-square-o"/> Verificado</span>-->
+            <!--                            <span t-if="solicitud.state == 'draft'" class="badge badge-pill badge-primary"><i class="fa fa-fw fa-clock-o"/> Nuevo</span>-->
+            <!--                        &ndash;&gt;-->
+            <!--                        </td>-->
+            <!--                        &lt;!&ndash;                        <td class="text-right">&ndash;&gt;-->
+            <!--                        &lt;!&ndash;                            <span t-field="quotation.amount_total"/>&ndash;&gt;-->
+            <!--                        &lt;!&ndash;                        </td>&ndash;&gt;-->
+            <!--                    </tr>-->
+            <!--                </t>-->
+            <!--            </t>-->
+        </t>
+    </template>
+
+    <template id="control_etiquetas_portal_template" name="Control de Etiquetas Portal Template"
+              inherit_id="portal.portal_sidebar" primary="True">
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <!--t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#return_label=Website&amp;model=%s&amp;id=%s&amp;action=%s&amp;view_type=form' % (control_etiquetas.name, control_etiquetas.id, control_etiquetas.env.ref('intn_trazabilidad_uso_marca.control_etiquetases_view').id)"/>
+                </t>
+            </t-->
+
+            <div class="row mt16 o_portal_sale_sidebar">
+                <!-- Sidebar -->
+                <t t-call="portal.portal_record_sidebar">
+                    <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
+
+                    <!--                    <t t-set="title">-->
+                    <!--                        <h2 class="mb-0"><b t-field="sale_order.amount_total" data-id="total_amount"/> </h2>-->
+                    <!--                    </t>-->
+                    <t t-set="entries">
+                        <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                            <t t-if="control_etiquetas">
+                                <li class="list-group-item">
+                                    <div class="card-body text-center pb-2 pt-3">
+
+                                        <h3>
+                                            <t t-esc="control_etiquetas.name"/>
+                                        </h3>
+
+                                        <p>
+                                            Fecha / Hora
+                                        </p>
+                                        <p>
+                                            <i class="fa fa-clock-o" aria-title="Fecha/Hora" title="Fecha/Hora"></i>
+                                            <t t-esc="control_etiquetas.fecha_hora"/>
+                                        </p>
+                                        <!--span t-if="control_etiquetas.state == 'cancel'" class="badge badge-pill badge-secondary"><i class="fa fa-fw fa-remove"/> Cancelado</span>
+                                        <span t-if="control_etiquetas.state == 'verificado'" class="badge badge-pill badge-success"><i class="fa fa-fw fa-check-square-o"/> Verificado</span>
+                                        <span t-if="control_etiquetas.state == 'draft'" class="badge badge-pill badge-primary"><i class="fa fa-fw fa-clock-o"/> Vuevo</span>
+                                    -->
+                                    </div>
+                                </li>
+                            </t>
+
+                            <!--li class="list-group-item flex-grow-1">
+                                <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
+                                    <div class="btn-group flex-grow-1 mr-1 mb-1">
+                                        <a class="btn btn-secondary btn-block o_download_btn" t-att-href="control_etiquetas.get_portal_url(report_type='pdf', download=True)" title="Download"><i class="fa fa-download"/> Descargar</a>
+                                    </div>
+                                    <div class="btn-group flex-grow-1 mb-1">
+                                        <a class="btn btn-secondary btn-block o_print_btn o_portal_invoice_print" t-att-href="control_etiquetas.get_portal_url(report_type='pdf')" id="print_invoice_report" title="Print" target="_blank"><i class="fa fa-print"/> Imprimir</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="navspy list-group-item pl-0 flex-grow-1" t-ignore="true" role="complementary">
+                                <ul class="nav flex-column bs-sidenav"></ul>
+                            </li-->
+
+
+                            <li t-if="control_etiquetas.user_id" class="list-group-item flex-grow-1">
+                                <div class="small mb-1">
+                                    <strong class="text-muted">Su Contacto</strong>
+                                </div>
+                                <div class="row flex-nowrap">
+                                    <div class="col flex-grow-0 pr-2">
+                                        <img class="rounded-circle mr4 float-left o_portal_contact_img"
+                                             t-if="control_etiquetas.user_id.image"
+                                             t-att-src="image_data_uri(control_etiquetas.user_id.image)"
+                                             alt="Contacto"/>
+                                        <img class="rounded-circle mr4 float-left o_portal_contact_img"
+                                             t-if="not control_etiquetas.user_id.image"
+                                             src="/web/static/src/img/placeholder.png" alt="Contacto"/>
+                                    </div>
+                                    <div class="col pl-0" style="min-width: user_id">
+                                        <span t-field="control_etiquetas.user_id"
+                                              t-options='{"widget": "contact", "fields": ["name", "phone"], "no_marker": True}'/>
+                                        <a href="#discussion" class="small">
+                                            <i class="fa fa-comment"></i>
+                                            Enviar mensaje
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </t>
+                </t>
+
+                <!-- Page Content
+                <div id="invoice_content" class="o_portal_page_content col-12 col-lg d-flex flex-column align-items-end">
+                    <div class="o_portal_page_size">
+                        <t t-if="error or warning" t-call="account.portal_invoice_error"/>
+                        <t t-if="success and (not error and not warning)" t-call="account.portal_invoice_success"/>
+
+                        <div class="o_portal_html_view shadow">
+                            <div class="o_portal_html_loader text-center">
+                                <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw text-black-50"/>
+                            </div>
+                            <iframe style="min-height:800px;" id="invoice_html" class="mt8 mb8" width="100%" height="100%" frameborder="0" scrolling="no" t-att-src="control_etiquetas.get_portal_url(report_type='html')"/>
+
+                        </div>
+
+                        <div id="sale_order_communication" class="mt-4">
+                            <h2>Comunicación</h2>
+                            <t t-call="portal.message_thread">
+                                <t t-set="object" t-value="control_etiquetas"/>
+                            </t>
+                        </div>
+                    </div>
+
+                </div>
+                 -->
+
+
+            </div>
+        </xpath>
+    </template>
+
+    <template id="nueva_control_etiquetas" name="Nuevo Control de Etiquetas">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Control de Etiquetas</t>
+            </t>
+
+            <div class="o_portal_page_content col-12 col-lg d-flex flex-column shadow"
+                 style="padding:0 !important;background:white;">
+                <div class="o_portal_page_size">
+                    <div class="container" style="padding:15px !important;margin-left:auto;margin-right:auto;">
+                        <form t-att-action="'save/control-etiquetas'" id="formImpresion" enctype="multipart/form-data"
+                              method="post">
+                            <style>
+                                *{
+                                -webkit-font-smoothing: antialiased;
+                                -moz-osx-font-smoothing: grayscale;
+                                }
+                                .card{
+                                border-radius : 10px;
+                                padding : 10px;
+                                }
+                                input[type="text"], input[type="date"], input[type="number"], select {
+                                width: 100% !important;
+                                padding: 12px 20px;
+                                margin: 8px 0;
+                                display: inline-block;
+                                border: 1px solid #ccc;
+                                border-radius: 4px;
+                                box-sizing: border-box;
+
+                            </style>
+                            <h1 style="text-align:center">Nuevo Control de Etiquetas</h1>
+                            <br></br>
+                            <div class="card">
+                                <h5 class="card-header"></h5>
+                                <div class="card-body" style="font-size:16px">
+                                    <table style="width:100%">
+                                        <tr>
+                                            <td>
+                                                <span style="font-weight:bold;">Cliente:</span>
+                                            </td>
+                                            <td>
+                                                <t t-esc="partner.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span style="font-weight:bold;">Fecha/Hora:</span>
+                                            </td>
+                                            <td>
+                                                <t t-esc="fecha_actual"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span style="font-weight:bold;">Archivo:</span>
+                                            </td>
+                                            <td>
+                                                <input type="file" id="archivo" name="archivo" required="required"
+                                                       data-show-upload="true" data-show-caption="true"
+                                                       data-show-preview="true"/>
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <br></br>
+
+                            <input type="text" readonly="1" style="display:none" t-att-value="partner.id" name="partner"
+                                   id="partner"/>
+                            <input type="text" readonly="1" name="lines" id="lines" style="display:none"/>
+                            <input type="hidden" name="csrf_token" t-att-value="csrf_token"/>
+                            <div style="padding-top:20px">
+                                <button id="guardarSolicitud" name="guardarSolicitud" type="submit"
+                                        class="btn btn-primary">Guardar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="formulario_crear_presupuesto" name="Formulario Crear Presupuesto">
+        <div class="o_portal_wrapper">
+            <style>
+                *{
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                }
+                .card{
+                border-radius : 10px;
+                padding : 10px;
+                }
+                input[type="text"], input[type="date"], input[type="number"], select {
+                width: 100% !important;
+                padding: 12px 20px;
+                margin: 8px 0;
+                display: inline-block;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+
+            </style>
+            <h2 style="text-align:center">Crear Nuevo Presupuesto</h2>
+            <form action="/submit/nuevo_presupuesto" method="POST">
+                <div class="form-group">
+                    <label style="font-weight:bold;" for="sucursal">Sucursal</label>
+                    <select name="sucursal" id="sucursal" class="form-control">
+                        <option value="sucursal_1">INTN Central Artigas</option>
+                        <!--                        <option value="sucursal_2">Sucursal 2</option>-->
+                        <!--                        <option value="sucursal_3">Sucursal 3</option>-->
+                    </select>
+                </div>
+                <!--                <div class="form-group">-->
+                <!--                    <label style="font-weight:bold;" for="laboratory">Laboratorio</label>-->
+                <!--                    <select name="laboratory" id="laboratory" required="True">-->
+                <!--                        &lt;!&ndash; Recorrer los laboratorios y mostrarlos como opciones &ndash;&gt;-->
+                <!--                        <t t-foreach="laboratorios" t-as="lab">-->
+                <!--                            <option t-att-value="lab.name">-->
+                <!--                                <t t-esc="lab.name"/>-->
+                <!--                            </option>-->
+                <!--                        </t>-->
+                <!--                    </select>-->
+                <!--                </div>-->
+                <div class="form-group">
+                    <label for="servicio" style="font-weight:bold;">Servicio</label>
+                    <select name="servicio" id="servicio" class="form-control">
+                        <t t-foreach="servicios" t-as="servicio">
+                            <option t-att-value="['servicio.id']" t-att-data-precio="int(servicio['price'])" >
+                                <t t-esc="servicio['name']"/>
+                                -
+                                <t t-esc="servicio['determinacion']"/>
+                                - Precio Gs:
+                                <t style="font-weight:bold;"
+                                   t-esc="'{:,}'.format(int(servicio['price'])).replace(',', '.')"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cantidad" style="font-weight:bold;">Cantidad</label>
+                    <input type="number" id="cantidad" class="form-control" oninput="calcularTotal()"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="monto_total" style="font-weight:bold;">Monto Total</label>
+                    <input type="text" id="monto_total" class="form-control" readonly="1"/>
+                </div>
+
+                <script>
+                    function calcularTotal() {
+                    var precio =
+                    parseInt(document.getElementById('servicio').selectedOptions[0].getAttribute('data-precio'));
+                    var cantidad = parseInt(document.getElementById('cantidad').value) || 0;
+                    var total = precio * cantidad;
+
+                    document.getElementById('monto_total').value = '{:,}'.format(total).replace(',', '.');
+                    }
+                </script>
+                <!--                <div>-->
+                <!--                    <label for="precio">Precio:</label>-->
+                <!--                    <input type="text" name="precio" id="precio" readonly="1"/>-->
+                <!--                </div>-->
+                <!--                <script>-->
+                <!--                    function actualizarPrecio() {-->
+                <!--                    var servicioSelect = document.getElementById('servicio');-->
+                <!--                    var precioInput = document.getElementById('precio');-->
+
+                <!--                    // Obtener el precio del producto seleccionado a través del atributo data-price-->
+                <!--                    var precio = servicioSelect.options[servicioSelect.selectedIndex].getAttribute('price');-->
+
+                <!--                    // Asignar el precio al campo de precio-->
+                <!--                    precioInput.value = precio ? precio : '';-->
+                <!--                    }-->
+                <!--                </script>-->
+                <!--                <div class="form-group">-->
+                <!--                    <label style="font-weight:bold;" for="amount">Monto</label>-->
+                <!--                    <input style="font-weight:bold;" type="number" name="amount" id="amount" class="form-control"/>-->
+                <!--                </div>-->
+                <button type="submit" class="btn btn-success">Crear Presupuesto</button>
+            </form>
+        </div>
+    </template>
+
+
+    <template id="control_etiquetas_creada" name="Control de Etiquetas Creada">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Control de Etiquetas</t>
+            </t>
+
+            <div class="o_portal_page_content col-12 col-lg d-flex flex-column shadow"
+                 style="padding:0 !important;background:white;">
+                <div class="o_portal_page_size">
+                    <div class="container" style="padding:15px !important;margin-left:auto;margin-right:auto;">
+
+                        <h3 style="text-align:center">SE HA CREADO CORRECTAMENTE EL CONTROL DE ETIQUETAS
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

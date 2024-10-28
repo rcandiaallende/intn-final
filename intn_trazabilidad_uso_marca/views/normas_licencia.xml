@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.actions.act_window" id="normas_licencia_action_view">
+        <field name="name">Normas
+        </field>
+        <field name="res_model">normas.licencia</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Cree una nueva Norma
+            </p>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="normas_licencia_tree_view">
+        <field name="name">normas_licencia_tree_view</field>
+        <field name="model">normas.licencia</field>
+        <field name="arch" type="xml">
+            <tree string="Normas">
+                <field name="name"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="normas_licencia_form_view">
+        <field name="name">normas_licencia_form_view</field>
+        <field name="model">normas.licencia</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <h2 name="titulo">
+                        <field name="name" class="oe_title" readonly="True"/>
+                    </h2>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </group>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+
+            </form>
+
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="normas_licencia_search_view">
+        <field name="name">normas_licencia_search_view</field>
+        <field name="model">normas.licencia</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <menuitem id="intn_trazabilidad_uso_marca.normas_licencia_menu" name="Normas" parent="intn_trazabilidad_uso_marca.menu_1"
+              action="intn_trazabilidad_uso_marca.normas_licencia_action_view"/>
+
+</odoo>

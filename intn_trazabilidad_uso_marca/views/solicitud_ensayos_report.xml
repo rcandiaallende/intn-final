@@ -1,0 +1,282 @@
+<odoo>
+    <data>
+        <record id="paperformat_solicitud_ensayos" model="report.paperformat">
+            <field name="name">Solicitud de Ensayos</field>
+            <!--field name="default" eval="True"/-->
+            <field name="format">custom</field>
+            <field name="page_height">216</field>
+            <field name="page_width">333</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">15</field>
+            <field name="margin_bottom">20</field>
+            <field name="margin_left">20</field>
+            <field name="margin_right">20</field>
+            <field name="header_line" eval="True"/>
+            <field name="header_spacing">20</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report id="reporte_solicitud_ensayos" string="Solicitud de Ensayos" model="solicitud.ensayos" report_type="qweb-pdf" name="intn_trazabilidad_uso_marca.solicitud_ensayos" paperformat="paperformat_solicitud_ensayos" />
+        <template id="solicitud_ensayos">
+            <t t-call="web.html_container">
+                <t t-call="web.basic_layout">
+                    <div class="page">
+                        <div class="row">
+                            <style>
+                                .bg-l{
+                                background: lightgray;
+                                }
+                                table {
+                                width: 100%;
+                                }
+
+                                .fs-14 {
+                                font-size: 16px;
+                                padding: 10px;
+                                }
+                                .fs-16 {
+                                font-size: 20px;
+                                padding: 10px;
+                                }
+                                .fs-18 {
+                                font-size: 22px;
+                                padding: 10px;
+                                }
+
+                                .text-center {
+                                text-align: center;
+                                }
+
+                                .text-right {
+                                text-align: right;
+                                }
+
+                                .bold {
+                                font-weight: bold;
+                                }
+
+                                .text-justify {
+                                text-align: justify;
+                                }
+
+                                table,
+                                td,
+                                tr {
+                                border: 1px solid black;
+                                border-collapse: collapse;
+
+                                }
+
+                                p{
+                                margin-top:0;
+                                margin-bottom:2px;
+                                margin-left:2px;
+                                }
+
+                                td{
+                                padding-left:5px;
+                                padding-right:5px;
+                                }
+
+                            </style>
+                            <t t-foreach="docs" t-as="s">
+                                <div class="page">
+                                    <table style="border:1px solid black !important;">
+                                        <tr style="border:1px solid black !important;">
+                                            <td style="width:25%;border:1px solid black !important;" class="text-center" >
+                                                <img src='/web/binary/company_logo' style="width:90px;padding:5px;"/>
+                                            </td>
+                                            <td class="text-center" style="border:1px solid grey !important;">
+                                                <p class="bold">
+                                                    ORGANISMO NACIONAL DE CERTIFICACIÓN <br/>
+                                                </p>
+                                            </td>
+                                            <td style="border:1px solid grey !important;">
+                                                <p class="bold">
+                                                    Código: ONC-FOR-021<br/>
+                                                    Revisión: 06 <br/>
+                                                    Vigencia: 2014-10-01<br/>
+                                                    Página 1 de 2
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="text-center">
+                                                SOLICITUD DE ENSAYOS Y/O INSPECCION
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br/>
+                                    <br/>
+                                    <p style="text-align:right" class="bold">
+                                        S.E. N°: <span t-field="s.name"/>
+                                    </p>
+                                    <br/>
+                                    <br/>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <span class="bold">
+                                                    Señor(es):
+                                                </span>
+                                                <span t-field="s.organismo_id"/>
+                                            </td>
+                                            <td>
+                                                <span class="bold">
+                                                    Fecha de Solicitud:
+                                                </span>
+                                                <span t-field="s.fecha_solicitud"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <span class="bold">
+                                                    El ORGANISMO NACIONAL DE CERTIFICACIÓN DEL INTN,
+                                                </span>
+                                                solicita tenga a bien realizar los ensayos detallados más abajo, conforme a los siguientes datos:
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <span class="bold">
+                                                    Producto:
+                                                </span>
+                                                <span t-field="s.product_id"/>
+                                            </td>
+                                        </tr>
+                                        <td colspan="2">
+                                            <span class="bold">
+                                                Lote:
+                                            </span>
+                                            <span t-field="s.lote"/>
+                                        </td>
+                                    </table>
+                                    <table>
+                                        <tr class="text-center bold">
+                                            <td>
+                                                Cantidad muestra/s
+                                            </td>
+                                            <td>
+                                                Identificación muestra/s
+                                            </td>
+                                            <td>
+                                                Descripción muestra/s
+                                            </td>
+                                            <td>
+                                                Determinación
+                                            </td>
+                                        </tr>
+                                        <t t-foreach="s.line_ids" t-as="l">
+                                            <tr class="text-center">
+                                                <td>
+                                                    <span t-field="l.cantidad"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="l.identificacion_muestra"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="l.descripcion_muestra"/>
+                                                </td>
+                                                <td>
+                                                    <t t-foreach="l.determinacion_ids.sorted(key=lambda record: record.sequence, reverse=False)" t-as="d">
+                                                        <t t-if="d.display_type != 'False'">
+                                                            <p class="bold">
+                                                                <span t-field="d.name"/>
+                                                            </p>
+                                                        </t>
+                                                        <t t-if="d.display_type == 'False'">
+                                                            <p>
+                                                            <span t-field="d.determinacion_id"/>
+                                                        </p>
+                                                        </t>
+
+                                                        <!--t t-if="d.determinacion_ids">
+                                                            <t t-foreach="d.determinacion_ids" t-as="a">
+                                                                <p>
+                                                                    <span t-field="a.name"/>
+                                                                </p>
+                                                            </t>
+                                                        </t-->
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </table>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <p class="bold">
+                                                    Observaciones:
+                                                </p>
+                                                <span t-raw="s.observaciones"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p class="bold">
+                                                    Confidencialidad:
+                                                </p>
+                                                Toda documentación o datos de los resultados obtenidos durante la realización de los ensayos y/o inspecciones,
+                                                son de carácter confidencial; por lo que no puede proporcionarse a terceros, sin el consentimiento por escrito del Organismo
+                                                Nacional de Certificación.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p class="bold">
+                                                    Solicitamos:
+                                                </p>
+                                                <p>
+                                                    - Remitir al correo labdala@intn.gov.py la fecha estimada de entrega del Informe/Certificado, en un plazo de 5 (cinco)
+                                                    días hábiles a partir de la recepción de la presente.
+                                                </p>
+                                                <p>
+                                                    - Remitir 2 (dos) originales del Informe/Certificado a nombre del ONC.
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table>
+                                        <tr>
+                                            <td class="text-center">
+                                                <br/>
+                                                <br/>
+                                                <br/>
+                                                <br/>
+                                                <br/>
+                                                <br/>
+                                                Responsable de Certificación ONC
+                                            </td>
+                                            <td class="text-center">
+                                                <br/>
+                                                <br/>
+                                                <br/>
+                                                <br/>
+                                                <br/>
+                                                <br/>
+                                                Dirección ONC
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br/>
+                                    <br/>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                La/s muestra/s detallada/s en la presente Solicitud coincide/n con la/s muestra/s recepcionada/s:<br/>
+                                                Recibido por: <br/>
+                                                Aclaración: <br/>
+                                                Fecha y hora: <br/>
+                                                Observación: <br/><br/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
