@@ -1,0 +1,17 @@
+<odoo>
+  <data>
+
+    <menuitem name="Trazabilidad de Uso de Marca" id="intn_trazabilidad_uso_marca.menu_root"
+              web_icon="intn_trazabilidad_uso_marca,static/description/trazabilidad.png"
+              groups="intn_trazabilidad_uso_marca.grupo_acceso_trazabilidad_uso_marca,intn_trazabilidad_uso_marca.grupo_impresor_uso_marca,intn_trazabilidad_uso_marca.grupo_muestreo">
+    </menuitem>
+
+    <menuitem name="Datos principales" id="intn_trazabilidad_uso_marca.menu_1" parent="intn_trazabilidad_uso_marca.menu_root" sequence="1"/>
+    <menuitem name="Operaciones" id="intn_trazabilidad_uso_marca.menu_2" parent="intn_trazabilidad_uso_marca.menu_root" sequence="2"/>
+    <menuitem name="Licencias" id="intn_trazabilidad_uso_marca.licencias" parent="intn_trazabilidad_uso_marca.menu_root" sequence="3"/>
+      <!--
+    <menuitem id="intn_trazabilidad_uso_marca.camiones_cisterna_menu" name="Registro de camiones" parent="intn_trazabilidad_uso_marca.menu_1" action="intn_trazabilidad_uso_marca.camiones_cisterna_action_view"/>
+    
+  -->
+  </data>
+</odoo>

@@ -1,0 +1,246 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <template id="online_certificado_conformidad">
+            <style>
+                .bg-g{
+                background:grey;
+                }
+
+                .bg-l{
+                background:lightgrey;
+                }
+                table {
+                width: 100%;
+                }
+
+                .fs-14 {
+                font-size: 16px;
+                padding: 10px;
+                }
+                .fs-16 {
+                font-size: 20px;
+                padding: 10px;
+                }
+                .fs-18 {
+                font-size: 22px;
+                padding: 10px;
+                }
+
+                .text-center {
+                text-align: center;
+                }
+
+                .text-right {
+                text-align: right;
+                }
+
+                .bold {
+                font-weight: bold;
+                }
+
+                .text-justify {
+                text-align: justify;
+                }
+
+                table,
+                td,
+                tr {
+                border: 1px solid black;
+                border-collapse: collapse;
+
+                }
+
+                p{
+                margin-top:0;
+                margin-bottom:2px;
+                margin-left:2px;
+                }
+
+                td{
+                padding-left:5px;
+                padding-right:5px;
+                }
+
+            </style>
+
+            <div style="text-align:center;margin: auto;width: 60%;border: 3px solid #000;padding: 10px;">
+                <table style="border:1px solid grey !important;" class="bg-g">
+                    <tr style="border:1px solid grey !important;">
+                        <td style="width:25%;border:1px solid grey !important;" class="text-center" >
+                            <img src='/web/binary/company_logo' style="width:90px;padding:5px;"/>
+                        </td>
+                        <td class="text-center" style="border:1px solid grey !important;">
+                            <p class="bold">
+                                ORGANISMO NACIONAL DE CERTIFICACIÓN DEL <br/>
+                                INSTITUO NACIONAL DE TECNOLOGÍA, NORMALIZACIÓN Y METROLOGÍA
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <br/>
+                <p class="bold text-center" style="font-size:18px">
+                    CERTIFICADO DE CONFORMIDAD DE LOTES DE PRODUCTOS
+                </p>
+                <br/>
+                <p class="bold" style="text-align:right;font-size:18px">
+                    ONC N° <span t-field="certificado_conformidad.name"/>
+                </p>
+                <br/>
+                <div class="text-justify bg-l" style="border-radius:10px;padding:10px">
+                    <span t-raw="certificado_conformidad.descripcion1"/>
+                </div>
+                <br/>
+                <table style="font-size:16px;line-height:30px;">
+                    <tr>
+                        <td class="bold bg-l" colspan="2">
+                            I - PRODUCTO
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Descripción:
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.product_id"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Identificación del Lote:
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.identificacion_lote"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Tamaño del Lote
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.tam_lote"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Modelo
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.modelo"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Fabricante
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.fabricante_id"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Marca
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.marca_id"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Origen
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.origen"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Fecha de Vencimiento
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.fecha_vencimiento"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold bg-l" colspan="2">
+                            II - SOLICITANTE
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Denominación de la empresa:
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.solicitante_id"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Dirección:
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.street"/> <span t-field="certificado_conformidad.city_id"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Solicitu de Servicio al INTN N°:
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.order_id"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold bg-l" colspan="2">
+                            III - INFORMES RELACIONADOS
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Acta de Extracción de Muestras:
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.acta_id"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold">
+                            Informes de Ensayo:
+                        </td>
+                        <td>
+                            <span t-field="certificado_conformidad.informes_ensayo"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold bg-l" colspan="2">
+                            VI - OBSERVACIONES
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <span t-raw="certificado_conformidad.observaciones"/>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <span class="bold">
+                    PERIODO DE VALIDEZ DE ÉSTE CERTIFICADO:
+                </span>
+                <span t-field="certificado_conformidad.periodo_validez"/>, a partir de la fecha de expedición.
+                <br/>
+                <br/>
+                <p>
+                    Asunción, <span t-field="certificado_conformidad.fecha_letras"/>
+                </p>
+            </div>
+
+        </template>
+
+        <template id="token_invalido">
+            <div style="text-align:center">
+                <span style="font-size:20px">Token inválido</span>
+            </div>
+        </template>
+    </data>
+</odoo>

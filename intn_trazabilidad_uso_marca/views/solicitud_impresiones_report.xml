@@ -1,0 +1,268 @@
+<odoo>
+    <data>
+
+        <record id="paperformat_solicitud" model="report.paperformat">
+            <field name="name">Solicitud</field>
+            <!--field name="default" eval="True"/-->
+            <field name="format">custom</field>
+            <field name="page_height">216</field>
+            <field name="page_width">333</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">15</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">20</field>
+            <field name="margin_right">20</field>
+            <field name="header_line" eval="True"/>
+            <field name="header_spacing">20</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report id="reporte_solicitud_impresion" string="Solicitud de Impresión" model="solicitud.impresiones" report_type="qweb-pdf" name="intn_trazabilidad_uso_marca.solicitud_impresiones" paperformat="paperformat_solicitud" />
+        <template id="solicitud_impresiones">
+            <t t-call="web.html_container">
+                <t t-call="web.basic_layout">
+                    <div class="page">
+                        <div class="row">
+                            <t t-foreach="docs" t-as="s">
+                                <style>
+                                    .subrayado {
+                                    border-bottom: 1px solid #000;
+                                    line-height: 0.1em;
+                                    margin-top: 0;
+                                    }
+
+                                    table {
+                                    width: 100%;
+
+                                    }
+
+                                    .fs-12 {
+                                    font-size: 14px;
+                                    margin: 2px;
+                                    }
+
+                                    .text-center {
+                                    text-align: center;
+                                    }
+
+                                    .text-right {
+                                    text-align: right;
+                                    }
+
+                                    .bold {
+                                    font-weight: bold;
+                                    }
+
+                                    .text-justify {
+                                    text-align: justify;
+                                    }
+
+                                    table,
+                                    th,
+                                    tr {
+                                    border: 1px solid black;
+                                    border-collapse: collapse;
+
+                                    }
+
+                                    .td {
+                                    border-right: 1px solid black;
+                                    }
+
+                                    .centrado {
+                                    margin-left: 20%;
+                                    }
+
+                                    .izquierda {
+                                    margin-left: 45%;
+                                    }
+                                    .tr{
+                                    border-collapse: collapse
+                                    }
+                                    .ml-5{
+                                    margin-left:5x;
+                                    }
+
+
+                                    p{
+                                    margin-top:0;
+                                    margin-bottom:2px;
+                                    margin-left:2px;
+                                    }
+                                    .w-90{
+                                    width:100mm;
+                                    }
+                                    .w-15{
+                                    width:20mm;
+                                    }
+                                    .t-detalle {
+                                    border: 1px solid black;
+                                    border-collapse: collapse;
+                                    }
+                                    .t-detalle td {
+                                    border-left: 1px solid black;
+                                    border-right: 1px solid black;
+                                    border-bottom: 0.5px solid black;
+                                    border-top: 0.5px solid black;
+                                    border-collapse: collapse;
+                                    }
+                                    .t-detalle td:empty {
+                                    border-left: 1px solid black;
+                                    border-right: 1px solid black;
+                                    border-top: 0.5px solid black;
+                                    border-collapse: collapse;
+                                    }
+
+                                    .terms {
+                                    <!--                                    white-space: -pre-wrap;-->
+                                    max-width:800px;
+                                    }
+
+                                    .column1 {
+                                    float: left;
+                                    width: 60%;
+                                    padding: 10px;
+                                    }
+                                    .column2 {
+                                    float: left;
+                                    width: 40%;
+                                    padding: 10px;
+                                    }
+
+                                    .rows:after {
+                                    content: "";
+                                    display: table;
+                                    clear: both;
+                                    }
+                                    span:before {
+                                    content: '\n';
+                                    white-space: pre;
+                                    }
+
+
+                                </style>
+                                <div class="page">
+                                    <t t-foreach="docs" t-as="doc">
+                                        <table>
+                                            <tr>
+                                                <td style="width:20%;" class="text-center">
+                                                    <img src='/web/binary/company_logo' style="width:50%"/>
+                                                </td>
+                                                <td class="text-center" style="margin-top:0">
+                                                    <p>INSTITUTO NACIONAL DE TECNOLOGÍA, NORMALIZACIÓN Y METROLOGÍA
+                                                    </p>
+                                                    <p class="bold text-center">SOLICITUD DE IMPRESIÓN <t t-esc="doc.name"/> </p>
+                                                    <p class="text-right" style="padding-right:5px;">
+                                                        <span class="bold">
+                                                            RUC:
+                                                        </span>
+                                                        <t t-if="doc.partner_id.parent_id">
+                                                            <span t-field="doc.partner_id.parent_id.vat"/>
+                                                        </t>
+                                                        <t t-if="not doc.partner_id.parent_id">
+                                                            <span t-field="doc.partner_id.vat"/>
+                                                        </t>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <br></br>
+                                        <p>
+                                            <span class="bold">
+                                                Fecha de Solicitud:
+                                            </span>
+                                            <span t-field="doc.fecha_solicitud"/>
+                                        </p>
+                                        <p>
+                                            <span class="bold">
+                                                Nombre y Apellido / Razón Social:
+                                            </span>
+                                            <span t-field="doc.partner_id"/>
+                                        </p>
+                                        <p>
+                                            <span class="bold">
+                                                Dirección:
+                                            </span>
+                                            <span t-field="doc.partner_id.street"/>
+                                        </p>
+                                        <br></br>
+                                        <br></br>
+                                        <br></br>
+                                        <t t-set="amount_total" t-value="0"/>
+                                        <table class="t-detalle">
+                                            <tr>
+                                                <td colspan="4" class="bold text-center ">
+                                                    ETIQUETAS SOLICITADAS
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="bold text-center w-90">
+                                                    ETIQUETA
+                                                </td>
+                                                <td class="bold text-center w-15">
+                                                    CANT.
+                                                </td>
+                                                <td class="bold text-center w-15">
+                                                    KG/L POR UNIDAD.
+                                                </td>
+                                                <td class="bold text-center w-15">
+                                                    KG/L TOTAL.
+                                                </td>
+                                            </tr>
+                                            <t t-foreach="doc.solicitud_impresiones_lines" t-as="l">
+                                                <tr>
+                                                    <td class=" text-left w-90" style="padding-left:5px;">
+                                                        <span t-field="l.product_id"/>
+                                                    </td>
+                                                    <td class="w-15 text-center">
+                                                        <!--                                                        <t t-esc="l.product_uom_qty" />-->
+                                                        <span t-esc="'{0:,.0f}'.format(l.qty).replace(',','.')"/>
+                                                        <!--                                                        <span t-esc="'{0:,.0f}'.format(int(l.product_uom_qty)).replace(',','.')"/>-->
+                                                    </td>
+                                                    <td class="w-15 text-center">
+                                                        <!--                                                        <t t-esc="l.product_uom_qty" />-->
+                                                        <span t-esc="'{0:,.0f}'.format(l.kg_polvo).replace(',','.')"/>
+                                                        <!--                                                        <span t-esc="'{0:,.0f}'.format(int(l.product_uom_qty)).replace(',','.')"/>-->
+                                                    </td>
+                                                    <td class="w-15 text-center">
+                                                        <!--                                                        <t t-esc="l.product_uom_qty" />-->
+                                                        <span t-esc="'{0:,.0f}'.format(l.kg_polvo_total).replace(',','.')"/>
+                                                        <!--                                                        <span t-esc="'{0:,.0f}'.format(int(l.product_uom_qty)).replace(',','.')"/>-->
+                                                    </td>
+<!--                                                    <td class="w-15 text-center">-->
+<!--                                                        <span t-esc="'{0:,.0f}'.format(int(l.price_unit)).replace(',','.')"/>-->
+<!--                                                    </td>-->
+<!--                                                    <td class="w-15 text-center">-->
+<!--                                                        <span t-esc="'{0:,.0f}'.format(l.product_uom_qty*int(l.price_unit)).replace(',','.')"/>-->
+<!--                                                        <t t-set="amount_total" t-value="amount_total+(l.product_uom_qty*int(l.price_unit))"/>-->
+<!--                                                    </td>-->
+                                                </tr>
+                                            </t>
+                                            <tr>
+
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+<!--                                            <tr>-->
+<!--                                                <td class="w-90" colspan="2">-->
+<!--                                                </td>-->
+<!--                                                <td class="w-15 bold text-center">-->
+<!--                                                    Costo-->
+<!--                                                </td>-->
+<!--                                                <td class="w-15 bold text-center">-->
+<!--                                                    <t t-set="totalPagarNumeros" t-value="amount_total"/>-->
+<!--                                                    <span t-esc="'{0:,.0f}'.format(int(totalPagarNumeros)).replace(',','.')"/>-->
+<!--                                                </td>-->
+<!--                                            </tr>-->
+                                        </table>
+
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

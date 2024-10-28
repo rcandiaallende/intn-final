@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <template id="public_licencia_servicios">
+            <style>
+                .bg-g{
+                background:grey;
+                }
+
+                .bg-l{
+                background:lightgrey;
+                }
+                table {
+                width: 100%;
+                }
+
+                .fs-14 {
+                font-size: 16px;
+                padding: 10px;
+                }
+                .fs-16 {
+                font-size: 20px;
+                padding: 10px;
+                }
+                .fs-18 {
+                font-size: 22px;
+                padding: 10px;
+                }
+
+                .text-center {
+                text-align: center;
+                }
+
+                .text-right {
+                text-align: right;
+                }
+
+                .bold {
+                font-weight: bold;
+                }
+
+                .text-justify {
+                text-align: justify;
+                }
+
+                table,
+                td,
+                tr {
+                border: 1px solid black;
+                border-collapse: collapse;
+
+                }
+
+                p{
+                margin-top:0;
+                margin-bottom:2px;
+                margin-left:2px;
+                }
+
+                td{
+                padding-left:5px;
+                padding-right:5px;
+                }
+
+            </style>
+            <div style="text-align:center;margin: auto;width: 80%;border: 3px solid #000;padding: 10px;">
+                <table style="border:1px solid white !important;width:100%">
+                    <tr style="border:1px solid white !important;">
+                        <td style="width:25%;border:1px solid grey !important;" class="text-center" >
+                            <img src='/web/binary/company_logo' style="width:90px;padding:5px;"/>
+                        </td>
+                        <td class="text-center bg-g" style="border:1px solid white !important;">
+                            <p class="bold">
+                                LICENCIA ONC N° <span t-esc="licencia_servicios.name"/>
+                            </p>
+                        </td>
+                        <td style="border:1px solid white !important;text-align:right;padding:0;width:10%">
+                            <img src='/intn_trazabilidad_uso_marca/static/src/img/marca_intn.png' style="max-height: 100px;"/>
+                        </td>
+                    </tr>
+                </table>
+                <br></br>
+                <br></br>
+                <div class="text-center" style="margin-left:30px;margin-right:30px;">
+                    <p class="text-center bold" style="font-size:16px;">
+                        EL ORGANISMO NACIONAL DE CERTIFICACIÓN DEL INSTITUTO NACIONAL DE TECNOLOGÍA, NORMALIZACIÓN Y METROLOGÍA,
+                    </p>
+                    Concede a: <br/>
+                    <span class="bold" style="font-size:18px" t-field="licencia_servicios.solicitante_id"/><br/>
+                    <span t-field="licencia_servicios.street"/> <span t-field="licencia_servicios.city_id"/><br/>
+                    <span t-field="licencia_servicios.country_id"/>
+                    <br/>
+                    <br/>
+                    Licencia para el uso de la <span class="bold">MARCA INTN - SERVICIOS</span>
+                </div>
+                <br></br>
+			<!-- Inicio comentario que ocultar el codigo de validez y fecha 29/feb/2024
+		<br></br>
+                <p class="bold text-center">
+                    Válido hasta el <span t-field="licencia_servicios.fecha_vencimiento_letras"/>
+                </p>
+                <div style="margin-top:60px">
+                    <table style="border:1px solid white !important;">
+                        <tr style="border:1px solid white !important;">
+                            <td style="border:1px solid white !important;" class="bold text-center">
+                                <span t-esc="licencia_servicios.fecha.strftime('%Y/%m/%d')"/><br/>
+                                FECHA
+                            </td>
+                        </tr>
+                    </table>
+		</div>
+			Fin 29/feb/2024 -->			
+            </div>
+
+        </template>
+
+        <template id="token_invalido">
+            <div style="text-align:center">
+                <span style="font-size:20px">Token inválido</span>
+            </div>
+        </template>
+    </data>
+</odoo>

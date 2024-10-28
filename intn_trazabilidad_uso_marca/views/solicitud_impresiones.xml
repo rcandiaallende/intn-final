@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.actions.act_window" id="intn_trazabilidad_uso_marca.solicitud_impresiones_view">
+        <field name="name">Solicitudes de Impresión
+        </field>
+        <field name="res_model">solicitud.impresiones</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Cree una nueva Solicitud de Impresión
+            </p>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="intn_trazabilidad_uso_marca.solicitud_impresiones_tree_view">
+        <field name="name">intn_trazabilidad_uso_marca.solicitud_impresiones_tree_view</field>
+        <field name="model">solicitud.impresiones</field>
+        <field name="arch" type="xml">
+            <tree string="Solicitudes de Impresión">
+                <field name="name"/>
+                <field name="fecha_solicitud"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="state"/>
+            </tree>
+
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="intn_trazabilidad_uso_marca.solicitud_impresiones_form_view">
+        <field name="name">intn_trazabilidad_uso_marca.solicitud_impresiones_form_view</field>
+        <field name="model">solicitud.impresiones</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,draft,done,cancel"/>
+                    <button string="Convertir a borrador" type="object" name="button_draft" class="oe_highlight"
+                            attrs="{'invisible':[('state','not in',['pending'])]}"/>
+                    <button string="Asignar" type="object" name="button_asignar" class="oe_highlight"
+                            attrs="{'invisible':[('state','not in',['draft'])]}"/>
+                    <button string="Ver productos" type="object" name="listar_productos" class="oe_highlight"
+                            attrs="{'invisible':[('state','not in',['draft'])]}"/>
+                    <button string="Cancelar" type="object" name="button_cancelar" class="oe_highlight"
+                            attrs="{'invisible':[('state','not in',['asignado'])]}"/>
+                </header>
+                <sheet>
+                    <h2>
+                        <field name="name" class="oe_title" readonly="True"/>
+                    </h2>
+                    <group>
+                        <group>
+                            <field name="fecha_solicitud" attrs="{'readonly':[('state','not in',['draft'])]}"/>
+                            <field name="partner_id" attrs="{'readonly':[('state','not in',['draft'])]}" domain="[('state_uso_marca','=','habilitado')]"/>
+                            <field name="licencia_id" invisible="1" force_save="1"/>
+                            <field name="etiquetas_disponibles" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="user_id" attrs="{'readonly':[('state','not in',['draft'])]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Etiquetas solicitadas">
+                            <field name="solicitud_impresiones_lines" attrs="{'readonly': [('state', 'in', ('asignado','verificado','cancel'))]}" mode="tree" nolabel="1">
+                                <tree string="Etiquetas Solicitadas" editable="bottom">
+                                    <field name="product_id" domain="[('id','in',parent.etiquetas_disponibles)]"/>
+                                    <field name="qty"/>
+                                    <field name="kg_polvo"/>
+                                    <field name="kg_polvo_total" readonly="1" force_save="1"/>
+                                    <field name="saldo" readonly="1" t-attf-style="color: red;"/>
+                                    <field name="saldo_factura" readonly="1" t-attf-style="color: red;"/>
+                                    <field name="certificado_ids" widget="many2many_tags"/>
+                                    <field name="factura_ids" widget="many2many_tags"/>
+                                    <!--                                      <field name="price_unit"/>-->
+                                    <!--                                      <field name="tax_id" widget="many2many_tags"/>-->
+                                    <!--                                      <field name="price_total"/>-->
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="intn_trazabilidad_uso_marca.solicitud_impresiones_search_view">
+        <field name="name">intn_trazabilidad_uso_marca.solicitud_impresiones_search_view</field>
+        <field name="model">solicitud.impresiones</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="fecha_solicitud"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+            </search>
+        </field>
+    </record>
+
+
+    <menuitem id="solicitud_impresiones_menu" name="Solicitudes de Impresión" parent="intn_trazabilidad_uso_marca.menu_2"
+              action="intn_trazabilidad_uso_marca.solicitud_impresiones_view" sequence="0"/>
+</odoo>

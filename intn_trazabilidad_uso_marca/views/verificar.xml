@@ -1,0 +1,45 @@
+<odoo>
+    <data>
+        <record id="intn_trazabilidad_uso_marca.verificar_wizard_view" model="ir.ui.view">
+            <field name="name">intn_trazabilidad_uso_marca.verificar_wizard_view</field>
+            <field name="model">intn_trazabilidad_uso_marca.verificar_impresion_wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="impresion_etiquetas_id" readonly="True"/>
+                            <field name="product_id" readonly="True"/>
+                            <field name="nro_control"/>
+                            <field name="nro_lote"/>
+                            <field name="nro_control_requerido" readonly="1" force_save="1"/>
+                            <field name="nro_lote_requerido" readonly="1" force_save="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="nro_control_dif" invisible="1"/>
+                        <field name="nro_lote_dif" invisible="1"/>
+                        <span style="color:DarkRed;font-style:italic;font-size:16px;"
+                              attrs="{'invisible':[('nro_control_dif','=',False)]}">
+                            El número de control introducido no coincide con el número de control que debería ser.
+                        </span>
+                    </group>
+                    <group>
+                        <span style="color:DarkRed;font-style:italic;font-size:16px;"
+                              attrs="{'invisible':[('nro_lote_dif','=',False)]}">
+                            El número de lote introducido no coincide con el número de lote que debería ser.
+                        </span>
+                    </group>
+                    <group>
+                        <field name="motivo" attrs="{'invisible':[('nro_control_dif','=',False)]}"/>
+                        <field name="motivo" attrs="{'invisible':[('nro_lote_dif','=',False)]}"/>
+                    </group>
+                    <footer>
+                        <button string="Confirmar" type="object" name="button_confirmar" class="oe_highlight"
+                                confirm="¿Desea confirmar los datos introducidos? No podrá hacer cambios posteriores"/>
+                        <button string="Cancelar" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

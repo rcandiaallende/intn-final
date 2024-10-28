@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.actions.act_window" id="color_anillos_action_view">
+        <field name="name">Color de Anillos
+        </field>
+        <field name="res_model">intn_trazabilidad_uso_marca.color_anillos</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Cree un nuevo Color de Anillos
+            </p>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="color_anillos_tree_view">
+        <field name="name">color_anillos_tree_view</field>
+        <field name="model">intn_trazabilidad_uso_marca.color_anillos</field>
+        <field name="arch" type="xml">
+            <tree string="Color de Anillos" editable="top">
+                <field name="name"/>
+                <field name="year"/>
+                <field name="active"/>
+            </tree>
+
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="color_anillos_search_view">
+        <field name="name">color_anillos_search_view</field>
+        <field name="model">intn_trazabilidad_uso_marca.color_anillos</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="year"/>
+            </search>
+        </field>
+    </record>
+
+    <menuitem id="intn_trazabilidad_uso_marca.color_anillos_menu" name="Color de Anillos" parent="intn_trazabilidad_uso_marca.menu_1"
+              action="intn_trazabilidad_uso_marca.color_anillos_action_view"/>
+
+</odoo>

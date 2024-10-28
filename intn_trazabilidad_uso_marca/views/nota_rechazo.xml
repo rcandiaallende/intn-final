@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="nota_rechazo_tree_view">
+        <field name="name">nota_rechazo_tree_view</field>
+        <field name="model">intn_trazabilidad_uso_marca.nota_rechazo</field>
+        <field name="arch" type="xml">
+            <tree string="Nota de Rechazo">
+                <field name="fecha"/>
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="partner_id"/>
+                <field name="state"/>
+            </tree>
+
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="nota_rechazo_form_view">
+        <field name="name">nota_rechazo_form_view</field>
+        <field name="model">intn_trazabilidad_uso_marca.nota_rechazo</field>
+        <field name="arch" type="xml">
+            <form>
+                <header name="header">
+                    <field name="state" widget="statusbar"/>
+                    <button string="Confirmar" type="object" name="button_confirmar" class="oe_highlight" attrs="{'invisible':[('state','!=','draft')]}"/>
+                    <button string="Cancelar" type="object" name="button_cancelar" attrs="{'invisible':[('state','!=','done')]}"/>
+                </header>
+                <sheet>
+                    <h2 name="titulo">
+                        <field name="name" class="oe_title" readonly="True"/>
+                    </h2>
+                    <group>
+                        <group>
+                            <field name="fecha" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="partner_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <field name="order_id" attrs="{'readonly':[('state','!=','draft')]}" domain="[('partner_id','=',partner_id)]"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <sheet string="Contenido de la Nota">
+                            <page string="Contenido de la Nota">
+                                <field name="nota" attrs="{'readonly':[('state','!=','draft')]}"/>
+                            </page>
+                        </sheet>
+                    </notebook>
+
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+
+            </form>
+
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="nota_rechazo_search_view">
+        <field name="name">nota_rechazo_search_view</field>
+        <field name="model">intn_trazabilidad_uso_marca.nota_rechazo</field>
+        <field name="arch" type="xml">
+            <search>
+                 <field name="name"/>
+                <field name="order_id"/>
+                <field name="partner_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="intn_trazabilidad_uso_marca.nota_rechazo_action_view">
+        <field name="name">Nota de Rechazo</field>
+        <field name="res_model">intn_trazabilidad_uso_marca.nota_rechazo</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Cree una nueva Nota de Rechazo
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="intn_trazabilidad_uso_marca.nota_rechazo_menu" name="Nota de Rechazo" parent="intn_trazabilidad_uso_marca.menu_2" action="intn_trazabilidad_uso_marca.nota_rechazo_action_view" sequence="4"/>
+
+
+</odoo>

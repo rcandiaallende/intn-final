@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.actions.act_window" id="impresora_etiquetas_action_view">
+        <field name="name">Impresora de Etiquetas
+        </field>
+        <field name="res_model">impresora.etiquetas</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Cree una nueva impresora de etiquetas
+            </p>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="impresora_etiquetas_tree_view">
+        <field name="name">impresora_etiquetas_tree_view</field>
+        <field name="model">impresora.etiquetas</field>
+        <field name="arch" type="xml">
+            <tree string="Impresoras de Etiquetas" editable="top">
+                <field name="name"/>
+                <field name="active"/>
+            </tree>
+
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="impresora_etiquetas_search_view">
+        <field name="name">impresora_etiquetas_search_view</field>
+        <field name="model">impresora.etiquetas</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+     <menuitem id="intn_trazabilidad_uso_marca.impresora_etiquetas_menu" name="Impresoras" parent="intn_trazabilidad_uso_marca.menu_1"
+               action="intn_trazabilidad_uso_marca.impresora_etiquetas_action_view"/>
+
+</odoo>

@@ -1,0 +1,50 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="intn_trazabilidad_uso_marca.view_partner_form">
+            <field name="name">intn_trazabilidad_uso_marca.view_partner_form
+            </field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+             <field name="groups" eval="[(4, ref('intn_trazabilidad_uso_marca.grupo_acceso_trazabilidad_uso_marca'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='internal_notes']" position="before">
+                    <page string="Licencias Marca INTN - Servicios">
+                        <group>
+                            <group>
+                                <field name="state_uso_marca"/>
+                                <field name="nombre_impresion"/>
+                                <field name="cod_uso_marca"/>
+                                <field name="marca_id"/>
+                            </group>
+                        </group>
+                        <field name="licencia_servicios_ids" mode="tree">
+                            <tree string="Task Detail" editable="0" delete="0" create="0">
+                                <field name="name" />
+                                <field name="fecha"/>
+                                <field name="fecha_vencimiento"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="intn_trazabilidad_uso_marca.view_res_partner_filter" model="ir.ui.view">
+            <field name="name">intn_trazabilidad_uso_marca.view_res_partner_filter</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+             <field name="groups" eval="[(4, ref('intn_trazabilidad_uso_marca.grupo_acceso_trazabilidad_uso_marca'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='phone']" position="after">
+                    <field name="state_uso_marca"/>
+                    <field name="state_id"/>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
+

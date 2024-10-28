@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="product_template_form_view">
+            <field name="name">product_template_form_view</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="groups" eval="[(4, ref('intn_trazabilidad_uso_marca.grupo_acceso_trazabilidad_uso_marca'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page name="Uso de Marca" string="Uso de Marca">
+                        <group>
+                            <field name="cod_licencia"/>
+                            <field name="es_agente"/>
+                            <field name="es_anillo"/>
+                            <field name="etiqueta_ids" attrs="{'invisible':[('es_agente','=',False)]}"
+                                   widget="many2many_tags" domain="[('es_etiqueta','=',True)]"/>
+                            <field name="es_etiqueta" attrs="{'invisible':[('es_agente','=',True)]}"/>
+                            <field name="sgte_numero_control" attrs="{'invisible':[('es_etiqueta','=',False)],'required':[('es_etiqueta','=',True)]}"/>
+                            <field name="aro_id" attrs="{'invisible':[('es_etiqueta','=',False)]}"/>
+                            <field name="kg_polvo" attrs="{'invisible':[('es_etiqueta','=',False)],'required':[('es_etiqueta','=',True)]}"/>
+                        </group>
+                    </page>
+                    <page string="Determinaciones">
+                        <group>
+                            <field name="determinacion_ids" nolabel="1" widget="section_and_note_one2many" mode="tree">
+                                <tree string="Determinaciones" editable="bottom">
+                                    <field name="display_type" invisible="1"/>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="determinacion_id"/>
+                                    <field name="name" string=" " attrs="{'readonly': [('display_type', '=', 'False')]}" widget="section_and_note_text"/>
+                                    <control>
+                                        <create string="Agregar una determinación"/>
+                                        <create string="Agregar una sección" context="{'default_display_type': 'line_section'}"/>
+                                        <!--create string="Agregar una nota" context="{'default_display_type': 'line_note'}"/-->
+                                    </control>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                    <page string="Observaciones p/ Certificado">
+                        <field name="observaciones_certificado" nolabel="1"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

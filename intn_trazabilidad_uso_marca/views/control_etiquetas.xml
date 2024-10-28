@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.actions.act_window" id="control_etiquetas_action">
+        <field name="name">Control de Etiquetas</field>
+        <field name="res_model">control.etiquetas</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Adjunte un Planilla Excel
+            </p>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="control_etiquetas_tree">
+        <field name="name">control_etiquetas_tree</field>
+        <field name="model">control.etiquetas</field>
+        <field name="arch" type="xml">
+            <tree string="Control de Etiquetas">
+                <field name="name"/>
+                <field name="fecha_hora"/>
+                <field name="partner_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="control_etiquetas_form">
+        <field name="name">control_etiquetas_form</field>
+        <field name="model">control.etiquetas</field>
+        <field name="arch" type="xml">
+            <form>
+                <!--header>
+                    <field name="state" widget="statusbar"/>
+                    <button string="Confirmar" type="object" name="confirmar_contrato" class="oe_highlight"
+                            attrs="{'invisible':[('state','!=','draft')]}"/>
+                </header-->
+                <sheet>
+                    <h2>
+                        <field name="name" class="oe_title" readonly="True"/>
+                    </h2>
+                    <group>
+                        <group>
+                            <field name="fecha_hora"/>
+                            <field name="partner_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="archivo_excel" filename="excel_name"/>
+                            <field name="excel_name" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="control_etiquetas_search">
+        <field name="name">control_etiquetas_search</field>
+        <field name="model">control.etiquetas</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="fecha_hora"/>
+                <field name="partner_id"/>
+            </search>
+        </field>
+    </record>
+
+    <menuitem id="control_etiquetas_menu" name="Control de Etiquetas" parent="intn_trazabilidad_uso_marca.menu_2"
+              action="control_etiquetas_action"/>
+
+</odoo>

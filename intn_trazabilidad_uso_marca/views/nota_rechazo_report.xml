@@ -1,0 +1,150 @@
+<odoo>
+    <data>
+        <record id="paperformat_informe_muestreo" model="report.paperformat">
+            <field name="name">Informe de Muestreo</field>
+            <!--field name="default" eval="True"/-->
+            <field name="format">custom</field>
+            <field name="page_height">216</field>
+            <field name="page_width">333</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">15</field>
+            <field name="margin_bottom">45</field>
+            <field name="margin_left">20</field>
+            <field name="margin_right">20</field>
+            <field name="header_line" eval="True"/>
+            <field name="header_spacing">20</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report id="reporte_informe_muestreo" string="Informe de Muestreo" model="informe.muestreo" report_type="qweb-pdf" name="intn_trazabilidad_uso_marca.informe_muestreo" paperformat="paperformat_informe_muestreo" />
+        <template id="informe_muestreo">
+            <t t-call="web.html_container">
+                <t t-call="web.basic_layout">
+                    <div class="page">
+                        <div class="row">
+                            <style>
+                                .bg-l{
+                                background: lightgray;
+                                }
+                                table {
+                                width: 100%;
+                                }
+
+                                .fs-14 {
+                                font-size: 16px;
+                                padding: 10px;
+                                }
+                                .fs-16 {
+                                font-size: 20px;
+                                padding: 10px;
+                                }
+                                .fs-18 {
+                                font-size: 22px;
+                                padding: 10px;
+                                }
+
+                                .text-center {
+                                text-align: center;
+                                }
+
+                                .text-right {
+                                text-align: right;
+                                }
+
+                                .bold {
+                                font-weight: bold;
+                                }
+
+                                .text-justify {
+                                text-align: justify;
+                                }
+
+                                table,
+                                td,
+                                tr {
+                                border: 1px solid black;
+                                border-collapse: collapse;
+
+                                }
+
+                                p{
+                                margin-top:0;
+                                margin-bottom:2px;
+                                margin-left:2px;
+                                }
+
+                                td{
+                                padding-left:5px;
+                                padding-right:5px;
+                                }
+
+                            </style>
+                            <t t-foreach="docs" t-as="s">
+                                <div class="page">
+                                    <table style="border:1px solid white !important;">
+                                        <tr style="border:1px solid white !important;">
+                                            <td style="width:30%;border:1px solid white !important;" class="text-center" rowspan="4">
+                                                <br/>
+                                                <img src='/intn_trazabilidad_uso_marca/static/src/img/logo_intn_largo.png' style="max-height: 100px;"/>
+                                            </td>
+                                            <td style="width:30%;border:1px solid white !important;" class="text-center" rowspan="4">
+                                                <br/>
+                                                <img src='/intn_trazabilidad_uso_marca/static/src/img/gobierno_nacional.png' style="max-height: 100px;"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br/>
+                                    <div style="text-align:right">
+                                        <b>Asunción, </b> <span t-field="s.fecha_letras"/>
+                                    </div>
+                                    <br/>
+                                    <div style="text-align:justify">
+                                        <span t-raw="s.nota"/>
+                                    </div>
+
+                                    <div class="footer">
+                                        <div class="row" style="font-size:12px;">
+                                            <p style="text-align:justify;font-size:12px;">
+                                                <br></br>
+                                                <span class="bold">Tembipota:</span>
+                                                Oipytyvõ tekoaty, mba’eapopyha, ñemureko ha
+                                                opaite mba’e’aporãme, taha’e jehapereka, kuave’ẽmby ñepytyvõmby,
+                                                mbojojaha, mba’era’ãha, tendyry ñangareko rupive, avei kuatia mboaje
+                                                ha jesareko
+                                                iporãve hag̃ua mba’eapopy, kuave’ẽmby, tapichakuéra jeikoporã ha
+                                                tekomo’ã, tembiapo omomba’eguasúva tekoaty ha tekoha reheve.
+                                                <span class="bold">Misión:</span>Contribuir con la sociedad, la
+                                                industria, el comercio, el sector productivo, mediante la
+                                                investigación, servicios de asistencia técnica,
+                                                normalización, metrología, seguridad eléctrica, certificación e
+                                                inspección, para el mejoramiento de la calidad de los productos, los
+                                                servicios, el
+                                                bienestar y seguridad de las personas, con un enfoque de
+                                                responsabilidad social y ambiental.
+                                                <br></br>
+                                                <span class="bold">Tembihecha:</span>Temimoĩmby hembiapopyahukuaáva
+                                                ha ojepytaso añetéva, ojehechakuáva tetãpýre ha tetã ambue rupi
+                                                omog̃uahẽ porã rehe kuave’ẽmbyeta
+                                                puruharakuérape, imba’apoharakuéra ikatupyry ha imba’erechakuaágui,
+                                                ha upéichante avei oipytyvõhaguére tekoatýpe.
+                                                <span class="bold">Visión:</span>Ser una institución innovadora y
+                                                competitiva, reconocida nacional e internacionalmente por la calidad
+                                                de sus servicios, la excelencia profesional
+                                                y humana de su gente, y su contribución
+                                                a la sociedad.
+                                            </p>
+                                            <p style="text-align:center;font-size:12px;">
+                                                Avda. Artigas 3973 y Gral. Roa / C.C. | Teléf.: 288 6000 |
+                                                www.intn.gov.py | e-mail: intn@intn.gov.py | Asunción – Paraguay
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
