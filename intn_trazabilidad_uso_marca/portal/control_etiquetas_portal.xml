@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <template id="portal_my_control_etiquetas" name="Mis Control de Etiquetas">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
@@ -12,6 +11,7 @@
                 <i class="fa fa-plus-square-o"/>
                 Nuevo Control de Etiquetas
             </a>
+            <!--            <a role="button" class="btn btn-primary" href="/new/control-metci"><i class="fa fa-plus-square-o"/> Nueva Solicitud para Laboratorio</a>-->
             <t t-if="not control_etiquetas">
                 <p>Actualmente no tiene Controles de Etiquetas.</p>
             </t>
@@ -21,6 +21,7 @@
                         <th>Control de Etiqueta #</th>
                         <th class="text-right">Fecha/Hora</th>
                         <th class="text-center"/>
+                        <!--                        <th class="text-right">Total</th>-->
                     </tr>
                 </thead>
                 <t t-foreach="control_etiquetas" t-as="control">
@@ -34,7 +35,14 @@
                             <span t-field="control.fecha_hora"/>
                         </td>
                         <td class="text-center">
+                            <!--span t-if="solicitud.state == 'cancel'" class="badge badge-pill badge-secondary"><i class="fa fa-fw fa-remove"/> Cancelado</span>
+                            <span t-if="solicitud.state == 'verificado'" class="badge badge-pill badge-success"><i class="fa fa-fw fa-check-square-o"/> Verificado</span>
+                            <span t-if="solicitud.state == 'draft'" class="badge badge-pill badge-primary"><i class="fa fa-fw fa-clock-o"/> Nuevo</span>
+                        -->
                         </td>
+                        <!--                        <td class="text-right">-->
+                        <!--                            <span t-field="quotation.amount_total"/>-->
+                        <!--                        </td>-->
                     </tr>
                 </t>
             </t>
@@ -52,6 +60,35 @@
                 <i class="fa fa-plus-square-o"/>
                 Nueva Solicitud de Laboratorio
             </a>
+            <!--            <a role="button" class="btn btn-primary" href="/new/control-metci"><i class="fa fa-plus-square-o"/> Nueva Solicitud para Laboratorio</a>-->
+            <!--            <t t-if="not control_etiquetas">-->
+            <!--                <p>Actualmente no tiene Controles de Etiquetas.</p>-->
+            <!--            </t>-->
+            <!--            <t t-if="control_etiquetas" t-call="portal.portal_table">-->
+            <!--                <thead>-->
+            <!--                    <tr class="active">-->
+            <!--                        <th>Control de Etiqueta #</th>-->
+            <!--                        <th class="text-right">Fecha/Hora</th>-->
+            <!--                        <th class="text-center"/>-->
+            <!--                        &lt;!&ndash;                        <th class="text-right">Total</th>&ndash;&gt;-->
+            <!--                    </tr>-->
+            <!--                </thead>-->
+            <!--                <t t-foreach="control_etiquetas" t-as="control">-->
+            <!--                    <tr>-->
+            <!--                        <td><a t-att-href="control.get_portal_url()"><t t-esc="control.name"/></a></td>-->
+            <!--                        <td class="text-right"><span t-field="control.fecha_hora"/></td>-->
+            <!--                        <td class="text-center">-->
+            <!--                            &lt;!&ndash;span t-if="solicitud.state == 'cancel'" class="badge badge-pill badge-secondary"><i class="fa fa-fw fa-remove"/> Cancelado</span>-->
+            <!--                            <span t-if="solicitud.state == 'verificado'" class="badge badge-pill badge-success"><i class="fa fa-fw fa-check-square-o"/> Verificado</span>-->
+            <!--                            <span t-if="solicitud.state == 'draft'" class="badge badge-pill badge-primary"><i class="fa fa-fw fa-clock-o"/> Nuevo</span>-->
+            <!--                        &ndash;&gt;-->
+            <!--                        </td>-->
+            <!--                        &lt;!&ndash;                        <td class="text-right">&ndash;&gt;-->
+            <!--                        &lt;!&ndash;                            <span t-field="quotation.amount_total"/>&ndash;&gt;-->
+            <!--                        &lt;!&ndash;                        </td>&ndash;&gt;-->
+            <!--                    </tr>-->
+            <!--                </t>-->
+            <!--            </t>-->
         </t>
     </template>
 
@@ -259,7 +296,7 @@
         </t>
     </template>
 
-    <template id="formulario_crear_presupuesto" name="Formulario Crear Presupuesto">
+<template id="formulario_crear_presupuesto" name="Formulario Crear Presupuesto">
         <div class="o_portal_wrapper">
             <style>
                 body {
@@ -432,7 +469,6 @@
             </script>
         </div>
     </template>
-
 
     <template id="control_etiquetas_creada" name="Control de Etiquetas Creada">
         <t t-call="portal.portal_layout">
