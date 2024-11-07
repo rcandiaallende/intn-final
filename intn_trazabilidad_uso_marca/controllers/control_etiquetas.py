@@ -247,30 +247,51 @@ class CustomerPortal(CustomerPortal):
     def submit_nuevo_presupuesto(self, **post):
         # Obtener los datos del formulario
         sucursal = post.get('sucursal')
-        laboratory = post.get('laboratory')
-        servicio = post.get('servicio')
-        amount = post.get('amount')
+        laboratory = []
+        servicios = []
+        cantidades = []
+        line_totals = []
 
         # Obtener el laboratorio por nombre
-        laboratorio = request.env['intn.laboratorios'].sudo().search([('name', '=', laboratory)], limit=1)
+        # laboratorio = request.env['intn.laboratorios'].sudo().search([('name', '=', laboratory)], limit=1)
 
-        if not laboratorio:
+        # if not laboratorio:
+        #     return request.render('error_template', {
+        #         'error_message': 'El laboratorio seleccionado no existe.',
+        #     })
+
+        index = 0
+        while f"servicio_{index}" in post:
+            servicios.append(int(post.get(f"servicio_{index}")))
+            cantidades.append(float(post.get(f"cantidad_{index}")))
+            line_totals.append(float(post.get(f"line_total_{index}")))
+            index += 1
+
+        if not (len(servicios) == len(cantidades) == len(line_totals)):
             return request.render('error_template', {
-                'error_message': 'El laboratorio seleccionado no existe.',
+                'error_message': 'Los datos de los ítems no coinciden en tamaño.',
             })
 
         # Obtener el cliente (usuario del portal)
         partner = request.env.user.partner_id
 
         # Crear un nuevo presupuesto en el modelo sale.order
-        request.env['sale.order'].sudo().create({
+        sale_order = request.env['sale.order'].sudo().create({
             'partner_id': partner.id,
             'sucursal': sucursal,
-            'laboratory': laboratory,
-            'servicio_id': int(servicio),  # Servicio seleccionado
-            'amount_total': amount,
+            # 'laboratory': laboratory,
             'state': 'draft',
         })
+
+        # Crear las líneas del presupuesto
+        for servicio_id, cantidad, line_total in zip(servicios, cantidades, line_totals):
+            request.env['sale.order.line'].sudo().create({
+                'order_id': sale_order.id,
+                'product_id': servicio_id,
+                'product_uom_qty': cantidad,
+                'price_unit': line_total / cantidad if cantidad != 0 else 0,
+                'price_subtotal': line_total,
+            })
 
         # Redirigir al listado de presupuestos o a la página de éxito
         return request.redirect('/my/presupuestos')

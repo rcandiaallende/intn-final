@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <template id="portal_my_control_etiquetas" name="Mis Control de Etiquetas">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
@@ -11,7 +12,6 @@
                 <i class="fa fa-plus-square-o"/>
                 Nuevo Control de Etiquetas
             </a>
-            <!--            <a role="button" class="btn btn-primary" href="/new/control-metci"><i class="fa fa-plus-square-o"/> Nueva Solicitud para Laboratorio</a>-->
             <t t-if="not control_etiquetas">
                 <p>Actualmente no tiene Controles de Etiquetas.</p>
             </t>
@@ -21,7 +21,6 @@
                         <th>Control de Etiqueta #</th>
                         <th class="text-right">Fecha/Hora</th>
                         <th class="text-center"/>
-                        <!--                        <th class="text-right">Total</th>-->
                     </tr>
                 </thead>
                 <t t-foreach="control_etiquetas" t-as="control">
@@ -35,14 +34,7 @@
                             <span t-field="control.fecha_hora"/>
                         </td>
                         <td class="text-center">
-                            <!--span t-if="solicitud.state == 'cancel'" class="badge badge-pill badge-secondary"><i class="fa fa-fw fa-remove"/> Cancelado</span>
-                            <span t-if="solicitud.state == 'verificado'" class="badge badge-pill badge-success"><i class="fa fa-fw fa-check-square-o"/> Verificado</span>
-                            <span t-if="solicitud.state == 'draft'" class="badge badge-pill badge-primary"><i class="fa fa-fw fa-clock-o"/> Nuevo</span>
-                        -->
                         </td>
-                        <!--                        <td class="text-right">-->
-                        <!--                            <span t-field="quotation.amount_total"/>-->
-                        <!--                        </td>-->
                     </tr>
                 </t>
             </t>
@@ -60,35 +52,6 @@
                 <i class="fa fa-plus-square-o"/>
                 Nueva Solicitud de Laboratorio
             </a>
-            <!--            <a role="button" class="btn btn-primary" href="/new/control-metci"><i class="fa fa-plus-square-o"/> Nueva Solicitud para Laboratorio</a>-->
-            <!--            <t t-if="not control_etiquetas">-->
-            <!--                <p>Actualmente no tiene Controles de Etiquetas.</p>-->
-            <!--            </t>-->
-            <!--            <t t-if="control_etiquetas" t-call="portal.portal_table">-->
-            <!--                <thead>-->
-            <!--                    <tr class="active">-->
-            <!--                        <th>Control de Etiqueta #</th>-->
-            <!--                        <th class="text-right">Fecha/Hora</th>-->
-            <!--                        <th class="text-center"/>-->
-            <!--                        &lt;!&ndash;                        <th class="text-right">Total</th>&ndash;&gt;-->
-            <!--                    </tr>-->
-            <!--                </thead>-->
-            <!--                <t t-foreach="control_etiquetas" t-as="control">-->
-            <!--                    <tr>-->
-            <!--                        <td><a t-att-href="control.get_portal_url()"><t t-esc="control.name"/></a></td>-->
-            <!--                        <td class="text-right"><span t-field="control.fecha_hora"/></td>-->
-            <!--                        <td class="text-center">-->
-            <!--                            &lt;!&ndash;span t-if="solicitud.state == 'cancel'" class="badge badge-pill badge-secondary"><i class="fa fa-fw fa-remove"/> Cancelado</span>-->
-            <!--                            <span t-if="solicitud.state == 'verificado'" class="badge badge-pill badge-success"><i class="fa fa-fw fa-check-square-o"/> Verificado</span>-->
-            <!--                            <span t-if="solicitud.state == 'draft'" class="badge badge-pill badge-primary"><i class="fa fa-fw fa-clock-o"/> Nuevo</span>-->
-            <!--                        &ndash;&gt;-->
-            <!--                        </td>-->
-            <!--                        &lt;!&ndash;                        <td class="text-right">&ndash;&gt;-->
-            <!--                        &lt;!&ndash;                            <span t-field="quotation.amount_total"/>&ndash;&gt;-->
-            <!--                        &lt;!&ndash;                        </td>&ndash;&gt;-->
-            <!--                    </tr>-->
-            <!--                </t>-->
-            <!--            </t>-->
         </t>
     </template>
 
@@ -299,102 +262,174 @@
     <template id="formulario_crear_presupuesto" name="Formulario Crear Presupuesto">
         <div class="o_portal_wrapper">
             <style>
-                *{
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
+                body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f4f6f8;
+                color: #495057;
+                margin: 0;
+                padding: 0;
                 }
-                .card{
-                border-radius : 10px;
-                padding : 10px;
+                .o_portal_wrapper {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                padding: 20px;
                 }
-                input[type="text"], input[type="date"], input[type="number"], select {
-                width: 100% !important;
-                padding: 12px 20px;
-                margin: 8px 0;
-                display: inline-block;
-                border: 1px solid #ccc;
-                border-radius: 4px;
+                .card-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                }
+                .card {
+                border-radius: 12px;
+                padding: 25px;
+                background-color: #ffffff;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                max-width: 650px;
+                width: 100%;
+                border: none;
+                text-align: left;
+                }
+                h2 {
+                color: #007bff;
+                font-weight: 700;
+                margin-bottom: 25px;
+                }
+                .form-group {
+                margin-bottom: 20px;
+                }
+                label {
+                font-weight: 600;
+                color: #343a40;
+                display: block;
+                margin-bottom: 8px;
+                }
+                select, input[type="text"], input[type="number"] {
+                width: 100%;
+                padding: 10px;
+                margin-top: 5px;
+                border: 1px solid #ced4da;
+                border-radius: 8px;
                 box-sizing: border-box;
-
+                transition: border-color 0.2s;
+                }
+                select:focus, input[type="text"]:focus, input[type="number"]:focus {
+                border-color: #007bff;
+                outline: none;
+                }
+                .btn-success {
+                background-color: #28a745;
+                border-color: #28a745;
+                color: #ffffff;
+                font-weight: 600;
+                width: 100%;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                }
+                .btn-success:hover {
+                background-color: #218838;
+                border-color: #1e7e34;
+                }
+                .btn-secondary {
+                background-color: #6c757d;
+                border-color: #6c757d;
+                color: #ffffff;
+                font-weight: 600;
+                width: 100%;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+                margin-top: 10px;
+                transition: background-color 0.2s;
+                }
+                .btn-secondary:hover {
+                background-color: #5a6268;
+                border-color: #545b62;
+                }
             </style>
-            <h2 style="text-align:center">Crear Nuevo Presupuesto</h2>
-            <form action="/submit/nuevo_presupuesto" method="POST">
-                <div class="form-group">
-                    <label style="font-weight:bold;" for="sucursal">Sucursal</label>
-                    <select name="sucursal" id="sucursal" class="form-control">
-                        <option value="sucursal_1">INTN Central Artigas</option>
-                        <!--                        <option value="sucursal_2">Sucursal 2</option>-->
-                        <!--                        <option value="sucursal_3">Sucursal 3</option>-->
-                    </select>
+
+            <div class="card-container">
+                <h2>Crear Nuevo Presupuesto</h2>
+                <div class="card">
+                    <form action="/submit/nuevo_presupuesto" method="POST">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="form-group">
+                            <label for="sucursal">Sucursal</label>
+                            <select name="sucursal" id="sucursal" class="form-control">
+                                <option value="sucursal_1">INTN Central Artigas</option>
+                            </select>
+                        </div>
+
+                        <div id="items-container">
+                            <div class="item-row" data-index="0">
+                                <label for="servicio_0">Servicio</label>
+                                <select name="servicio_0" class="form-control service-select">
+                                    <t t-foreach="servicios" t-as="servicio">
+                                        <option t-att-value="servicio['id']" t-att-data-precio="servicio['price']">
+                                            <t t-esc="servicio['name']"/>
+                                            -
+                                            <t t-esc="servicio['determinacion']"/>
+                                            - Precio Gs:
+                                            <t t-esc="servicio['price']"/>
+                                        </option>
+                                    </t>
+                                </select>
+
+                                <label for="cantidad_0">Cantidad</label>
+                                <input type="number" name="cantidad_0" class="form-control quantity-input"
+                                       oninput="calculateTotals()"/>
+
+                                <label for="line_total_0">Monto Total de Línea</label>
+                                <input type="text" name="line_total_0" class="form-control line-total" readonly="1"/>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary" onclick="addItem()">Agregar Otro Ítem</button>
+
+                        <div class="form-group">
+                            <label for="monto_total_general">Monto Total General</label>
+                            <input type="text" id="monto_total_general" class="form-control" readonly="1"/>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Crear Presupuesto</button>
+                    </form>
                 </div>
-                <!--                <div class="form-group">-->
-                <!--                    <label style="font-weight:bold;" for="laboratory">Laboratorio</label>-->
-                <!--                    <select name="laboratory" id="laboratory" required="True">-->
-                <!--                        &lt;!&ndash; Recorrer los laboratorios y mostrarlos como opciones &ndash;&gt;-->
-                <!--                        <t t-foreach="laboratorios" t-as="lab">-->
-                <!--                            <option t-att-value="lab.name">-->
-                <!--                                <t t-esc="lab.name"/>-->
-                <!--                            </option>-->
-                <!--                        </t>-->
-                <!--                    </select>-->
-                <!--                </div>-->
-                <div class="form-group">
-                    <label for="servicio" style="font-weight:bold;">Servicio</label>
-                    <select name="servicio" id="servicio" class="form-control">
-                        <t t-foreach="servicios" t-as="servicio">
-                            <option t-att-value="['servicio.id']" t-att-data-precio="int(servicio['price'])" >
-                                <t t-esc="servicio['name']"/>
-                                -
-                                <t t-esc="servicio['determinacion']"/>
-                                - Precio Gs:
-                                <t style="font-weight:bold;"
-                                   t-esc="'{:,}'.format(int(servicio['price'])).replace(',', '.')"/>
-                            </option>
-                        </t>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="cantidad" style="font-weight:bold;">Cantidad</label>
-                    <input type="number" id="cantidad" class="form-control" oninput="calcularTotal()"/>
-                </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="monto_total" style="font-weight:bold;">Monto Total</label>
-                    <input type="text" id="monto_total" class="form-control" readonly="1"/>
-                </div>
+            <script>
+                let itemIndex = 1;
 
-                <script>
-                    function calcularTotal() {
-                    var precio =
-                    parseInt(document.getElementById('servicio').selectedOptions[0].getAttribute('data-precio'));
-                    var cantidad = parseInt(document.getElementById('cantidad').value) || 0;
-                    var total = precio * cantidad;
+                function addItem() {
+                const itemRow = document.querySelector('.item-row').cloneNode(true);
+                itemRow.setAttribute('data-index', itemIndex);
 
-                    document.getElementById('monto_total').value = '{:,}'.format(total).replace(',', '.');
-                    }
-                </script>
-                <!--                <div>-->
-                <!--                    <label for="precio">Precio:</label>-->
-                <!--                    <input type="text" name="precio" id="precio" readonly="1"/>-->
-                <!--                </div>-->
-                <!--                <script>-->
-                <!--                    function actualizarPrecio() {-->
-                <!--                    var servicioSelect = document.getElementById('servicio');-->
-                <!--                    var precioInput = document.getElementById('precio');-->
+                itemRow.querySelector('.service-select').name = `servicio_${itemIndex}`;
+                itemRow.querySelector('.quantity-input').name = `cantidad_${itemIndex}`;
+                itemRow.querySelector('.line-total').name = `line_total_${itemIndex}`;
 
-                <!--                    // Obtener el precio del producto seleccionado a través del atributo data-price-->
-                <!--                    var precio = servicioSelect.options[servicioSelect.selectedIndex].getAttribute('price');-->
+                itemRow.querySelector('.quantity-input').value = '';
+                itemRow.querySelector('.line-total').value = '';
+                document.getElementById('items-container').appendChild(itemRow);
 
-                <!--                    // Asignar el precio al campo de precio-->
-                <!--                    precioInput.value = precio ? precio : '';-->
-                <!--                    }-->
-                <!--                </script>-->
-                <!--                <div class="form-group">-->
-                <!--                    <label style="font-weight:bold;" for="amount">Monto</label>-->
-                <!--                    <input style="font-weight:bold;" type="number" name="amount" id="amount" class="form-control"/>-->
-                <!--                </div>-->
-                <button type="submit" class="btn btn-success">Crear Presupuesto</button>
-            </form>
+                itemIndex++;
+                }
+
+                function calculateTotals() {
+                let totalGeneral = 0;
+                document.querySelectorAll('.item-row').forEach(function(row) {
+                const precio =
+                parseFloat(row.querySelector('.service-select').selectedOptions[0].getAttribute('data-precio')) || 0;
+                const cantidad = parseFloat(row.querySelector('.quantity-input').value) || 0;
+                const lineTotal = precio * cantidad;
+                row.querySelector('.line-total').value = lineTotal.toLocaleString('es-ES');
+                totalGeneral += lineTotal;
+                });
+                document.getElementById('monto_total_general').value = totalGeneral.toLocaleString('es-ES');
+                }
+            </script>
         </div>
     </template>
 
