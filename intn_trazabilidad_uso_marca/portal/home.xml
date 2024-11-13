@@ -28,8 +28,8 @@
                 </a>
 
                 <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
-                   href="/my/control-metci" title="Sistema de Gestion de Solicitud(METCI)">
-                    Sistema de Gestion de Solicitudes(METCI)
+                   href="/my/control-metci" title="Gestion de solicitudes de calibracion (METCI)">
+                    Gestion de solicitudes de calibracion (METCI)
                     <t t-if="control_etiquetas_count">
                         <span class="badge badge-secondary badge-pill">
                             <t t-esc="control_etiquetas_count"/>

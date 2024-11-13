@@ -54,7 +54,7 @@
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
             <t t-call="portal.portal_searchbar">
-                <t t-set="title">Sistema de Gestion de Solicitudes(METCI)</t>
+                <t t-set="title">Gestion de solicitudes de calibracion (METCI)</t>
             </t>
             <a role="button" class="btn btn-primary" name="nuevaSolicitudMetci" type="submit" href="/new/control-metci">
                 <i class="fa fa-plus-square-o"/>
