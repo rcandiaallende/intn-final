@@ -296,7 +296,7 @@
         </t>
     </template>
 
-<template id="formulario_crear_presupuesto" name="Formulario Crear Presupuesto">
+    <template id="formulario_crear_presupuesto" name="Formulario Crear Presupuesto">
         <div class="o_portal_wrapper">
             <style>
                 body {
@@ -400,19 +400,23 @@
                             </select>
                         </div>
 
+                        <div class="form-group">
+                            <label for="laboratorio">Laboratorio</label>
+                            <select name="laboratorio" id="laboratorio" class="form-control"
+                                    onchange="filtrarServicios()">
+                                <t t-foreach="laboratorios" t-as="lab">
+                                    <option t-att-value="lab.id">
+                                        <t t-esc="lab.name"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+
                         <div id="items-container">
                             <div class="item-row" data-index="0">
                                 <label for="servicio_0">Servicio</label>
                                 <select name="servicio_0" class="form-control service-select">
-                                    <t t-foreach="servicios" t-as="servicio">
-                                        <option t-att-value="servicio['id']" t-att-data-precio="servicio['price']">
-                                            <t t-esc="servicio['name']"/>
-                                            -
-                                            <t t-esc="servicio['determinacion']"/>
-                                            - Precio Gs:
-                                            <t t-esc="servicio['price']"/>
-                                        </option>
-                                    </t>
+                                    <!-- Los servicios se llenarán dinámicamente -->
                                 </select>
 
                                 <label for="cantidad_0">Cantidad</label>
@@ -438,6 +442,32 @@
 
             <script>
                 let itemIndex = 1;
+
+                function filtrarServicios() {
+                const laboratorioId = document.getElementById('laboratorio').value;
+                // Llamada AJAX para obtener los servicios filtrados
+                fetch('/filtrar_servicios', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({laboratorio_id: laboratorioId})
+                })
+                .then(response => response.json())
+                .then(data => {
+                const servicioSelect = document.querySelector('.service-select');
+                servicioSelect.innerHTML = ''; // Limpiar las opciones existentes
+                data.forEach(servicio => {
+                const option = document.createElement('option');
+                option.value = servicio.id;
+                option.setAttribute('data-precio', servicio.price);
+                option.textContent = `${servicio.name} - Precio Gs: ${servicio.price}`;
+                servicioSelect.appendChild(option);
+                });
+                })
+                .catch(error => console.error('Error al filtrar servicios:', error));
+                }
 
                 function addItem() {
                 const itemRow = document.querySelector('.item-row').cloneNode(true);
