@@ -1,0 +1,12 @@
+<!-- report/solicitud_impresiones_report.xml -->
+<odoo>
+    <report
+        id="solicitud_impresiones_report_action"
+        model="solicitud.impresiones"
+        string="Solicitud de Impresiones"
+        report_type="qweb-pdf"
+        name="intn_trazabilidad_uso_marca.solicitud_impresiones_report_template"
+        file="intn_trazabilidad_uso_marca.solicitud_impresiones_report_template"
+        print_report_name="'Solicitud Impresiones - %s' % (object.name)"
+    />
+</odoo>

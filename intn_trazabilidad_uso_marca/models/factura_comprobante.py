@@ -17,6 +17,7 @@ class FacturaComprobante(models.Model):
     factura_compra_name = fields.Char(string="Factura por compra Name")
     timbrado = fields.Char(string="Timbrado Factura", required=True)
 
+
     line_ids = fields.One2many('factura_comprobante_lines', 'factura_comprobante_id',string="Lineas de Factura", required=True)
 
     state = fields.Selection(string="Estado",
@@ -27,6 +28,35 @@ class FacturaComprobante(models.Model):
     _sql_constraints = [
         ('unique_name_timbrado', 'UNIQUE(name, timbrado)', 'El nombre y el timbrado deben ser únicos.'),
     ]
+
+    @api.constrains('name')
+    def _check_factura_name_length(self):
+        for record in self:
+            if record.name and len(record.name) != 15:
+                raise exceptions.ValidationError(
+                    "El número de factura debe tener exactamente 17 caracteres, incluyendo los guiones (ejemplo: 001-003-0001832)."
+                )
+
+    @api.model
+    def create(self, vals):
+        # Comprobar si ya existe una factura con el mismo nombre y timbrado
+        existing = self.search([('name', '=', vals.get('name')), ('timbrado', '=', vals.get('timbrado'))])
+        if existing:
+            raise exceptions.ValidationError(
+                "Ya existe una factura con el mismo número y timbrado. Por favor, verifica los datos.")
+        return super(FacturaComprobante, self).create(vals)
+
+    def write(self, vals):
+        if 'name' in vals or 'timbrado' in vals:
+            for record in self:
+                name = vals.get('name', record.name)
+                timbrado = vals.get('timbrado', record.timbrado)
+                # Verificar duplicados en la escritura
+                existing = self.search([('name', '=', name), ('timbrado', '=', timbrado), ('id', '!=', record.id)])
+                if existing:
+                    raise exceptions.ValidationError(
+                        "Ya existe una factura con el mismo número y timbrado. Por favor, verifica los datos.")
+        return super(FacturaComprobante, self).write(vals)
 
     def button_cancelar(self):
         for this in self:
@@ -45,9 +75,12 @@ class FacturaComprobanteLines(models.Model):
     factura_comprobante_id = fields.Many2one('factura_comprobante', string="Factura de Compra", required=True)
     product_id = fields.Many2one('product.product',string='Descripción', required=True,track_visibility='onchange')
     qty = fields.Float(string='Cantidad', required=True, default=1)
-    aprox_qty_usada = fields.Float(string='Cantidad Aprox. Utilizada', required=True, default=0)
-    qty_usada = fields.Float(string='Cantidad Utilizada', readonly=True, compute='_compute_used_qty')
+    aprox_qty_usada = fields.Float(string='Cantidad Aprox. Utilizada', compute='_compute_saldo',
+                                   store=True, required=True, default=0)
+    qty_usada = fields.Float(string='Cantidad Utilizada', readonly=True)
 
-    def _compute_used_qty(self):
-        self.qty_usada = self.qty - self.aprox_qty_usada
-        return self.qty_usada
+    @api.depends('qty','qty_usada' )
+    def _compute_saldo(self):
+        for rec in self:
+            rec.aprox_qty_usada = rec.qty - rec.qty_usada
+            return rec.aprox_qty_usada

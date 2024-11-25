@@ -1,10 +1,5 @@
 import uuid
 from odoo import api, fields, models, exceptions
-import datetime
-from datetime import date
-
-import dateutil
-from dateutil.relativedelta import relativedelta
 
 
 class SolicitudImpresionesLine(models.Model):
@@ -13,70 +8,72 @@ class SolicitudImpresionesLine(models.Model):
     solicitud_id = fields.Many2one('solicitud.impresiones', string='Solicitud de Impresiones', required=True,
                                    copy=False)
 
-    product_id = fields.Many2one('product.product', string='Etiqueta',
-                                 domain=['|', ('es_etiqueta', '=', True), ('es_anillo', '=', True)]
-                                 , change_default=True, ondelete='restrict')
-
+    product_id = fields.Many2one('product.product', string='Etiqueta', change_default=True, ondelete='restrict')
     qty = fields.Integer(string='Cantidad', required=True, default=1)
     kg_polvo = fields.Float(string="Kg/L por unidad")
 
     kg_polvo_total = fields.Float("Kg/L total")
 
-    # saldo = fields.Float("Saldo Cert", compute='_compute_saldo')
-    # saldo_factura = fields.Float("Saldo Fac", compute='_compute_saldo_fac')
-
-    saldos_certificados = fields.Many2many(
-        'solicitud.impresiones.certificado.saldo', 'line_id', string="Saldos por Certificado"
-    )
-    saldos_facturas = fields.Many2many(
-        'solicitud.impresiones.factura.saldo', 'line_id', string="Saldos por Factura"
-    )
+    saldos_certificados = fields.Text(string='Saldos por certificados', compute='_update_saldos_certificados')
+    saldos_facturas = fields.Text(string='Saldos por Factura', compute='_update_saldos_factura')
     certificado_ids = fields.Many2many('certificado.conformidad', string="Certificados", required=False)
     factura_ids = fields.Many2many('factura_comprobante', string="Facturas", required=False)
 
+    saldo_auxiliar_cert = fields.Float(string='Auxiliar saldo certificado',
+                                       related='solicitud_id.total_saldo_certificado', store=True)
+    saldo_auxiliar_fac = fields.Float(string='Auxiliar saldo certificado', related='solicitud_id.total_saldo_factura',
+                                      store=True)
+
     impresion_etiqueta_id = fields.Many2one('impresion.etiquetas', required=True, string="Impresion de Etiquetas")
+
+    show_saldos_certificados = fields.Boolean(
+        string="Mostrar Saldos",
+        related="solicitud_id.show_saldos",
+        store=True
+    )
 
     @api.onchange('certificado_ids', 'kg_polvo_total')
     def _update_saldos_certificados(self):
-        self.saldos_certificados.unlink()
-        saldos_acumulados = 0
-        for cert in self.certificado_ids:
-            saldo_actual = cert.tamaño_lote_restante_aproximado - self.kg_polvo_total - saldos_acumulados
-            if saldo_actual < 0 and self.solicitud_id.state != 'asignado':
-                raise exceptions.ValidationError(
-                    f"El tamaño a descontar es mayor al lote en el certificado {cert.name}, favor verifique."
-                )
-            nuevo_saldo = self.env['solicitud.impresiones.certificado.saldo'].create({
-                'certificado_id': cert.id,
-                'line_id': self.id,
-                'saldo': saldo_actual,
-            })
-            saldos_acumulados += saldo_actual
-            self.saldos_certificados = [(4, nuevo_saldo.id)]
+        for record in self:
+            record.ensure_one()
+            if record.certificado_ids:
+                saldos_list = []
+                acumulado = []
+                total = 0
+                for cert in record.certificado_ids:
+                    if record.saldo_auxiliar_cert > 0:
+                        saldo_actual = total - (
+                                cert.tamaño_lote_restante_aproximado - record.kg_polvo_total - record.saldo_auxiliar_cert)
+                    else:
+                        saldo_actual = cert.tamaño_lote_restante_aproximado - record.kg_polvo_total - record.saldo_auxiliar_cert
+                    # if saldo_actual < 0 and record.solicitud_id.state != 'asignado':
+                    #     raise exceptions.ValidationError(
+                    #         f"El tamaño a descontar es mayor al lote en el certificado {cert.name}, favor verifique."
+                    #     )
+                    saldos_list.append(f"*{cert.name}: {saldo_actual}")
+                    acumulado.append(saldo_actual)
+                total = sum(acumulado)
+                record.saldo_auxiliar_cert += total
+                record.saldos_certificados = "\n".join(saldos_list)
 
-    @api.onchange('factura_ids')
+    @api.onchange('factura_ids', 'kg_polvo_total')
     def _update_saldos_factura(self):
-        self.saldos_facturas.unlink()  # Eliminar líneas existentes
-        new_lines = [(0, 0, {'factura_id': factura.id}) for factura in self.factura_ids]
-        self.saldos_facturas = new_lines
-
-    @api.depends('certificado_ids', 'kg_polvo_total')
-    @api.onchange('certificado_ids')
-    def _compute_saldo_certificados(self):
-        for line in self:
-            line.saldos_certificados.unlink()
-            for cert in line.certificado_ids:
-                saldo = cert.tamaño_lote_restante_aproximado - line.kg_polvo_total
-                if saldo < 0 and line.solicitud_id.state != 'asignado':
-                    raise exceptions.ValidationError(
-                        "El tamaño a descontar es mayor al lote. Verifique el certificado %s." % cert.name
-                    )
-                # Crear un nuevo registro de saldo por certificado
-                self.env['solicitud.impresiones.certificado.saldo'].create({
-                    'line_id': line.id,
-                    'certificado_id': cert.id,
-                    'saldo': saldo,
-                })
+        for record in self:
+            record.ensure_one()
+            if record.factura_ids:
+                saldos_list = []
+                for fac in record.factura_ids:
+                    if record.saldo_auxiliar_fac > 0:
+                        saldo_actual = record.saldo_auxiliar_fac - (fac.line_ids.qty - record.kg_polvo_total)
+                    else:
+                        saldo_actual = fac.line_ids.qty - record.kg_polvo_total
+                    # if saldo_actual < 0 and record.solicitud_id.state != 'asignado':
+                    #     raise exceptions.ValidationError(
+                    #         f"El tamaño a descontar es mayor al de la factura {fac.name}, favor verifique."
+                    #     )
+                    saldos_list.append(f"*{fac.name}: {saldo_actual}")
+                    record.saldo_auxiliar_fac += saldo_actual
+                record.saldos_facturas = "\n".join(saldos_list)
 
     @api.model
     def get_certificado_fields(self):
@@ -91,37 +88,6 @@ class SolicitudImpresionesLine(models.Model):
             for cert in certificados
         ]
         return fields
-
-    @api.model
-    def listar_productos(self):
-        productos = self.env['product.product'].search(['|', ('es_etiqueta', '=', True), ('es_anillo', '=', True)])
-        for producto in productos:
-            print(f"Producto: {producto.name} - ID: {producto.id}")
-
-    @api.depends('certificado_ids')
-    @api.onchange('certificado_ids')
-    def _compute_saldo(self):
-        for this in self:
-            if this.certificado_ids:
-                total_certificado_qty = sum(cert.tamaño_lote_restante_aproximado for cert in this.certificado_ids)
-                this.saldo = total_certificado_qty - this.kg_polvo_total
-                if this.saldo < 0 and this.solicitud_id.state != 'asignado':
-                    raise exceptions.ValidationError(
-                        "El tamaño a descontar es mayor al lote, favor verifique")
-
-    @api.depends('factura_ids')
-    @api.onchange('factura_ids')
-    def _compute_saldo_fac(self):
-        for this in self:
-            # Sumar la cantidad total de todas las líneas de las facturas seleccionadas.
-            total_factura_qty = sum(
-                line.qty for factura in this.factura_ids for line in factura.line_ids
-            )
-            this.saldo_factura = total_factura_qty - this.kg_polvo_total
-            if this.saldo_factura < 0:
-                raise exceptions.ValidationError(
-                    "El tamaño a descontar es mayor al lote, favor verifique"
-                )
 
     @api.onchange('product_id')
     @api.depends('product_id')
@@ -140,6 +106,7 @@ class SolicitudImpresionesLine(models.Model):
 class SolicitudImpresionesCertificadoSaldo(models.Model):
     _name = 'solicitud.impresiones.certificado.saldo'
 
+    certificado_id = fields.Many2one('certificado.conformidad', string="Certificado", required=True)
     certificado_id = fields.Many2one('certificado.conformidad', string="Certificado", required=True)
     line_id = fields.Many2one('solicitud.impresiones.lines', string="Línea de Impresión", required=True)
     saldo = fields.Float(string="Saldo")
@@ -206,7 +173,8 @@ class SolicitudImpresiones(models.Model):
     partner_id = fields.Many2one(
         "res.partner", string="Empresa", required=True, track_visibility="onchange")
     user_id = fields.Many2one(
-        "res.users", string="Usuario", copy=False, track_visibility="onchange")
+        "res.users", string="Usuario", copy=False, track_visibility="onchange",
+        default=lambda self: self.env.user)
     state = fields.Selection(string="Estado",
                              selection=[("draft", "Nuevo"), ("asignado", "Asignado"), ("verificado", "Verificado"),
                                         ("cancel", "Cancelado")], default="draft", copy=False,
@@ -228,8 +196,13 @@ class SolicitudImpresiones(models.Model):
 
     active = fields.Boolean('Activo', default=True, track_visibility='onchange')
 
+    show_saldos = fields.Boolean(string="Mostrar Saldos por Certificados", default=True)
+
+    total_saldo_certificado = fields.Float(string='Total de saldos certificados')
+
+    total_saldo_factura = fields.Float(string='Total de saldos certificados')
+
     @api.onchange('partner_id')
-    @api.depends('partner_id')
     def onchangePartner(self):
         licencia_vigente = self.partner_id.mapped('licencia_servicios_ids').filtered(
             lambda x: x.state == 'done' and x.fecha_vencimiento >= fields.Date.today()).sorted(key=lambda r: r.name)
@@ -237,6 +210,13 @@ class SolicitudImpresiones(models.Model):
             self.licencia_id = licencia_vigente[0]
             etiquetas_disponibles = licencia_vigente.mapped('agentes_1.etiqueta_ids')
             self.etiquetas_disponibles = [(6, 0, etiquetas_disponibles.ids)]
+            print(self.etiquetas_disponibles)
+
+    def listar_productos(self):
+        productos = self.env['product.product'].search(
+            ['|', ('es_etiqueta', '=', True), ('es_anillo', '=', True)])
+        for producto in productos:
+            print(f"Producto: {producto.name} - ID: {producto.id}")
 
     def _default_access_token(self):
         return uuid.uuid4().hex
@@ -321,62 +301,41 @@ class SolicitudImpresiones(models.Model):
                                 else:
                                     c.tamaño_lote_restante_aproximado = c.tamaño_lote_restante_aproximado - cant_descontar
                                     cant_descontar = 0
-                elif line.factura_ids:
+                if line.factura_ids:
                     facturas_validas = line.factura_ids.filtered(lambda f: f.state not in ['cancel', 'draft'])
                     if not facturas_validas:
                         raise exceptions.ValidationError(
                             "Las facturas deben estar confirmadas para realizar esta accion")
                     else:
-                        cant_restante = sum(line.factura_ids.mapped('line_ids.qty')) - sum(
-                            line.factura_ids.mapped('line_ids.aprox_qty_usada'))
+                        cant_restante = sum(line.factura_ids.mapped('line_ids.qty')) - sum(line.factura_ids.mapped('line_ids.qty_usada'))
+                        # qty_rest_aux = sum(line.factura_ids.mapped('line_ids.aprox_qty_usada'))
+                        # cant_restante = sum(line.factura_ids.mapped('aprox_qty_usada'))
                         cant_descontar_factura = line.kg_polvo_total
                         if cant_restante < line.kg_polvo_total:
                             raise exceptions.ValidationError(
                                 "No puede asignar la solicitud de impresión, no tiene disponible la cantidad de kg/l necesaria.")
                         else:
-                            for l in line.mapped('factura_ids.line_ids'):
-                                restante_line = l.qty - l.aprox_qty_usada
-                                if cant_descontar_factura > 0:
-                                    if cant_descontar_factura > restante_line:
-                                        resto = cant_descontar_factura - restante_line
-                                        l.aprox_qty_usada = l.aprox_qty_usada + resto
-                                        cant_descontar_factura = cant_descontar_factura - resto
-                                    else:
-                                        l.aprox_qty_usada = l.aprox_qty_usada + cant_descontar_factura
-                                        cant_descontar_factura = 0
-                elif line.factura_ids and line.certificado_ids:
-                    cant_descontar = line.kg_polvo_total
-                    if sum(line.certificado_ids.mapped('tamaño_lote_restante_aproximado')) < line.kg_polvo_total:
-                        raise exceptions.ValidationError(
-                            "No puede asignar la solicitud de impresión, no tiene disponible la cantidad de kg/l necesaria.")
-                    else:
-                        for c in line.certificado_ids:
-                            if cant_descontar > 0:
-                                if cant_descontar > c.tamaño_lote_restante_aproximado:
-                                    resto = cant_descontar - c.tamaño_lote_restante_aproximado
-                                    c.tamaño_lote_restante_aproximado = c.tamaño_lote_restante_aproximado - resto
-                                    cant_descontar = cant_descontar - resto
-                                else:
-                                    c.tamaño_lote_restante_aproximado = c.tamaño_lote_restante_aproximado - cant_descontar
-                                    cant_descontar = 0
-                    cant_restante = sum(line.factura_ids.mapped('line_ids.qty')) - sum(
-                        line.factura_ids.mapped('line_ids.aprox_qty_usada'))
-                    cant_descontar_factura = line.kg_polvo_total
-                    if cant_restante < line.kg_polvo_total:
-                        raise exceptions.ValidationError(
-                            "No puede asignar la solicitud de impresión, no tiene disponible la cantidad de kg/l necesaria.")
-                    else:
-                        for l in line.mapped('factura_ids.line_ids'):
-                            restante_line = l.qty - l.aprox_qty_usada
-                            if cant_descontar_factura > 0:
-                                if cant_descontar_factura > restante_line:
-                                    resto = cant_descontar_factura - restante_line
-                                    l.aprox_qty_usada = l.aprox_qty_usada + resto
-                                    cant_descontar_factura = cant_descontar_factura - resto
-                                else:
-                                    l.aprox_qty_usada = l.aprox_qty_usada + cant_descontar_factura
-                                    cant_descontar_factura = 0
-
+                            cantidad_a_consumir = line.kg_polvo_total
+                            for invoice in line.factura_ids:
+                                for fact_line in invoice.line_ids:
+                                    while cantidad_a_consumir > 0:
+                                        if fact_line.aprox_qty_usada > cantidad_a_consumir:
+                                            fact_line.qty_usada += cantidad_a_consumir
+                                            fact_line.aprox_qty_usada = fact_line.qty - fact_line.qty_usada
+                                            cantidad_a_consumir = 0
+                                        elif fact_line.aprox_qty_usada > 0 and fact_line.aprox_qty_usada <= cantidad_a_consumir:
+                                            # Consumir todo lo disponible en `aprox_qty_usada`
+                                            cantidad_a_consumir -= fact_line.aprox_qty_usada
+                                            fact_line.qty_usada += fact_line.aprox_qty_usada
+                                            fact_line.aprox_qty_usada = fact_line.qty - fact_line.qty_usada
+                                            # Actualizar los campos en la base de datos
+                                        fact_line.write({
+                                            'qty_usada': fact_line.qty_usada,
+                                            'aprox_qty_usada': fact_line.aprox_qty_usada,
+                                        })
+                                        # Salir del bucle y pasar a la siguiente línea si no queda más cantidad
+                                        if fact_line.aprox_qty_usada == 0:
+                                            break
             # i.crear_expediente()
             i.write({'state': 'asignado'})
             for pro in i.solicitud_impresiones_lines:
