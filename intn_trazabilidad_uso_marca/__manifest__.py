@@ -73,6 +73,7 @@
         'portal/home.xml',
         'portal/solicitud_impresiones_portal.xml',
         'portal/control_etiquetas_portal.xml',
+        'portal/portal_generar_presupuesto.xml',
         'views/tecnico_metrologia.xml',
     ],
     # only loaded in demonstration mode

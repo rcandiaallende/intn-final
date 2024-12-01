@@ -297,100 +297,154 @@
     </template>
 
     <template id="formulario_crear_presupuesto" name="Formulario Crear Presupuesto">
-        <div class="o_portal_wrapper">
+        <div class="o_portal_wrapper_full">
             <style>
                 body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background-color: #f4f6f8;
-                color: #495057;
+                font-family: 'Roboto', sans-serif;
+                background-color: #f8f9fa;
+                color: #212529;
                 margin: 0;
                 padding: 0;
                 }
-                .o_portal_wrapper {
+                .o_portal_wrapper_full {
                 display: flex;
                 justify-content: center;
-                align-items: center;
+                align-items: flex-start;
                 min-height: 100vh;
                 padding: 20px;
                 }
-                .card-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                }
                 .card {
-                border-radius: 12px;
-                padding: 25px;
-                background-color: #ffffff;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                max-width: 650px;
                 width: 100%;
+                max-width: 1200px;
+                padding: 30px;
+                background-color: #ffffff;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
                 border: none;
-                text-align: left;
                 }
                 h2 {
                 color: #007bff;
                 font-weight: 700;
                 margin-bottom: 25px;
+                text-align: center;
                 }
                 .form-group {
                 margin-bottom: 20px;
                 }
                 label {
                 font-weight: 600;
-                color: #343a40;
+                color: #495057;
                 display: block;
-                margin-bottom: 8px;
+                margin-bottom: 10px;
                 }
                 select, input[type="text"], input[type="number"] {
                 width: 100%;
-                padding: 10px;
+                padding: 12px;
                 margin-top: 5px;
                 border: 1px solid #ced4da;
                 border-radius: 8px;
                 box-sizing: border-box;
-                transition: border-color 0.2s;
+                transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
                 }
                 select:focus, input[type="text"]:focus, input[type="number"]:focus {
                 border-color: #007bff;
+                box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
                 outline: none;
+                }
+                input[type="number"]::-webkit-inner-spin-button,
+                input[type="number"]::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+                }
+                input[type="number"] {
+                -moz-appearance: textfield; /* Firefox */
+                }
+                .btn {
+                font-weight: 600;
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
                 }
                 .btn-success {
                 background-color: #28a745;
-                border-color: #28a745;
+                border: none;
                 color: #ffffff;
-                font-weight: 600;
-                width: 100%;
-                padding: 10px;
-                border-radius: 8px;
-                cursor: pointer;
-                transition: background-color 0.2s;
+                display: block;
+                margin: 0 auto;
                 }
                 .btn-success:hover {
                 background-color: #218838;
-                border-color: #1e7e34;
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
                 }
                 .btn-secondary {
                 background-color: #6c757d;
-                border-color: #6c757d;
+                border: none;
                 color: #ffffff;
-                font-weight: 600;
-                width: 100%;
-                padding: 10px;
-                border-radius: 8px;
-                cursor: pointer;
                 margin-top: 10px;
-                transition: background-color 0.2s;
                 }
                 .btn-secondary:hover {
                 background-color: #5a6268;
-                border-color: #545b62;
+                box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+                }
+                .btn-danger {
+                background-color: #dc3545;
+                border: none;
+                color: white;
+                padding: 6px 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+                }
+                .btn-danger:hover {
+                background-color: #c82333;
+                box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+                }
+                .table {
+                width: 100%;
+                margin-bottom: 20px;
+                border-collapse: collapse;
+                }
+                .table th, .table td {
+                border: 1px solid #dee2e6;
+                padding: 12px;
+                text-align: left;
+                vertical-align: middle;
+                }
+                .table th {
+                background-color: #f1f3f5;
+                font-weight: bold;
+                text-align: center;
+                }
+                .table tbody tr:hover {
+                background-color: #f8f9fa;
+                }
+                .table .form-group {
+                margin-bottom: 0;
+                }
+                .total-container {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                margin-bottom: 20px;
+                }
+                .total-container label {
+                margin-right: 10px;
+                font-weight: bold;
+                }
+                #monto_total_general {
+                width: 200px;
                 }
             </style>
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
-            <div class="card-container">
-                <h2>Crear Nuevo Presupuesto</h2>
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Crear Nuevo Presupuesto</t>
+                </t>
                 <div class="card">
+                    <h2>Crear Nuevo Presupuesto</h2>
                     <form action="/submit/nuevo_presupuesto" method="POST">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <div class="form-group">
@@ -399,106 +453,126 @@
                                 <option value="sucursal_1">INTN Central Artigas</option>
                             </select>
                         </div>
-
-                        <div class="form-group">
-                            <label for="laboratorio">Laboratorio</label>
-                            <select name="laboratorio" id="laboratorio" class="form-control"
-                                    onchange="filtrarServicios()">
-                                <t t-foreach="laboratorios" t-as="lab">
-                                    <option t-att-value="lab.id">
-                                        <t t-esc="lab.name"/>
-                                    </option>
-                                </t>
-                            </select>
+                        <br/>
+                        <div id="items-container" class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 400px">Servicio</th>
+                                        <th style="width: 100px">Cantidad</th>
+                                        <th style="width: 140px">Precio Total</th>
+                                        <th style="width: 80px"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="item-row" data-index="0">
+                                        <td>
+                                            <div class="form-group">
+                                                <select name="servicio_0" class="form-select"
+                                                        onchange="calculateLineTotal(this)">
+                                                    <t t-foreach="servicios" t-as="servicio">
+                                                        <option t-att-value="servicio['id']"
+                                                                t-att-data-precio="servicio['price']">
+                                                            <t t-esc="servicio['name']"/>
+                                                            - Precio Gs:
+                                                            <t t-esc="servicio['price']"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: right">
+                                            <div class="form-group">
+                                                <input type="number" name="cantidad_0" class="form-control"
+                                                       onchange="calculateLineTotal(this)"/>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: right">
+                                            <div class="form-group">
+                                                <input type="number" name="line_total_0" class="form-control"
+                                                       readonly="1"/>
+                                            </div>
+                                        </td>
+                                        <td style="text-align:center">
+                                            <button type="button" class="btn btn-danger" onclick="removeItem(this)">
+                                                <span>x</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
 
-                        <div id="items-container">
-                            <div class="item-row" data-index="0">
-                                <label for="servicio_0">Servicio</label>
-                                <select name="servicio_0" class="form-control service-select">
-                                    <!-- Los servicios se llenarán dinámicamente -->
-                                </select>
+                        <button type="button" class="btn btn-secondary mb-3" onclick="addItem()">
+                            <span>Agregar Ítem</span>
+                        </button>
 
-                                <label for="cantidad_0">Cantidad</label>
-                                <input type="number" name="cantidad_0" class="form-control quantity-input"
-                                       oninput="calculateTotals()"/>
-
-                                <label for="line_total_0">Monto Total de Línea</label>
-                                <input type="text" name="line_total_0" class="form-control line-total" readonly="1"/>
+                        <div class="total-container">
+                            <div class="form-group">
+                                <label for="monto_total_general" class="form-label">Monto Total</label>
+                                <input type="number" id="monto_total_general" name="monto_total_general"
+                                       class="form-control" readonly="1"/>
                             </div>
                         </div>
 
-                        <button type="button" class="btn btn-secondary" onclick="addItem()">Agregar Otro Ítem</button>
-
-                        <div class="form-group">
-                            <label for="monto_total_general">Monto Total General</label>
-                            <input type="text" id="monto_total_general" class="form-control" readonly="1"/>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success">Crear Presupuesto</button>
                         </div>
-
-                        <button type="submit" class="btn btn-success">Crear Presupuesto</button>
                     </form>
                 </div>
-            </div>
-
+            </t>
             <script>
                 let itemIndex = 1;
 
-                function filtrarServicios() {
-                const laboratorioId = document.getElementById('laboratorio').value;
-                // Llamada AJAX para obtener los servicios filtrados
-                fetch('/filtrar_servicios', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({laboratorio_id: laboratorioId})
-                })
-                .then(response => response.json())
-                .then(data => {
-                const servicioSelect = document.querySelector('.service-select');
-                servicioSelect.innerHTML = ''; // Limpiar las opciones existentes
-                data.forEach(servicio => {
-                const option = document.createElement('option');
-                option.value = servicio.id;
-                option.setAttribute('data-precio', servicio.price);
-                option.textContent = `${servicio.name} - Precio Gs: ${servicio.price}`;
-                servicioSelect.appendChild(option);
+                function addItem() {
+                const tableBody = document.querySelector('#items-container tbody');
+                const newRow = document.querySelector('.item-row').cloneNode(true);
+                newRow.setAttribute('data-index', itemIndex);
+
+                newRow.querySelectorAll('select, input').forEach(input => {
+                const name = input.name;
+                if (name) {
+                input.name = name.replace(/_\d+$/, `_${itemIndex}`);
+                input.value = "";
+                }
                 });
-                })
-                .catch(error => console.error('Error al filtrar servicios:', error));
+
+                tableBody.appendChild(newRow);
+                itemIndex++;
                 }
 
-                function addItem() {
-                const itemRow = document.querySelector('.item-row').cloneNode(true);
-                itemRow.setAttribute('data-index', itemIndex);
+                function removeItem(button) {
+                const row = button.closest('tr');
+                if (document.querySelectorAll('.item-row').length > 1) {
+                row.remove();
+                calculateTotal();
+                } else {
+                alert('Debe haber al menos un ítem.');
+                }
+                }
 
-                itemRow.querySelector('.service-select').name = `servicio_${itemIndex}`;
-                itemRow.querySelector('.quantity-input').name = `cantidad_${itemIndex}`;
-                itemRow.querySelector('.line-total').name = `line_total_${itemIndex}`;
-
-                itemRow.querySelector('.quantity-input').value = '';
-                itemRow.querySelector('.line-total').value = '';
-                document.getElementById('items-container').appendChild(itemRow);
-
-                itemIndex++;
+                function calculateLineTotal(element) {
+                const row = element.closest('.item-row');
+                const servicio = row.querySelector('select').selectedOptions[0];
+                const precio = parseFloat(servicio.getAttribute('data-precio') || 0);
+                const cantidad = parseFloat(row.querySelector('input[name^="cantidad"]').value || 0);
+                const lineTotal = row.querySelector('input[name^="line_total"]');
+                lineTotal.value = (precio * cantidad).toFixed(2);
+                calculateTotals();
                 }
 
                 function calculateTotals() {
                 let totalGeneral = 0;
-                document.querySelectorAll('.item-row').forEach(function(row) {
-                const precio =
-                parseFloat(row.querySelector('.service-select').selectedOptions[0].getAttribute('data-precio')) || 0;
-                const cantidad = parseFloat(row.querySelector('.quantity-input').value) || 0;
-                const lineTotal = precio * cantidad;
-                row.querySelector('.line-total').value = lineTotal.toLocaleString('es-ES');
-                totalGeneral += lineTotal;
+                document.querySelectorAll('.item-row').forEach(row => {
+                const total = parseFloat(row.querySelector('input[name^="line_total"]').value || 0);
+                totalGeneral += total;
                 });
-                document.getElementById('monto_total_general').value = totalGeneral.toLocaleString('es-ES');
+                document.getElementById('monto_total_general').value = totalGeneral.toFixed(2);
                 }
             </script>
         </div>
     </template>
+
 
     <template id="control_etiquetas_creada" name="Control de Etiquetas Creada">
         <t t-call="portal.portal_layout">
