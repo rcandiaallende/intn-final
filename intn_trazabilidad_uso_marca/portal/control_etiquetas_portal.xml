@@ -267,6 +267,14 @@
                 box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
                 outline: none;
                 }
+                input[type="number"]::-webkit-inner-spin-button,
+                input[type="number"]::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+                }
+                input[type="number"] {
+                -moz-appearance: textfield; /* Firefox */
+                }
                 .btn {
                 font-weight: 600;
                 padding: 12px;
@@ -284,6 +292,16 @@
                 .btn-success:hover {
                 background-color: #218838;
                 box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+                }
+                .btn-secondary {
+                background-color: #6c757d;
+                border: none;
+                color: #ffffff;
+                margin-top: 10px;
+                }
+                .btn-secondary:hover {
+                background-color: #5a6268;
+                box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
                 }
                 .btn-danger {
                 background-color: #dc3545;
@@ -315,6 +333,12 @@
                 font-weight: bold;
                 text-align: center;
                 }
+                .table tbody tr:hover {
+                background-color: #f8f9fa;
+                }
+                .table .form-group {
+                margin-bottom: 0;
+                }
                 .total-container {
                 display: flex;
                 justify-content: flex-end;
@@ -330,6 +354,11 @@
                 }
             </style>
             <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Crear Nuevo Presupuesto</t>
+                </t>
                 <div class="card">
                     <h2>Crear Nuevo Presupuesto</h2>
                     <form action="/submit/nuevo_presupuesto" method="POST">
@@ -337,6 +366,13 @@
                         <div class="alert alert-info" style="font-size: 14px;">
                             Algunos servicios están sujetos a un costo adicional.
                         </div>
+                        <div class="form-group">
+                            <label for="sucursal">Sucursal</label>
+                            <select name="sucursal" id="sucursal" class="form-control">
+                                <option value="sucursal_1">INTN Central Artigas</option>
+                            </select>
+                        </div>
+                        <br/>
                         <div id="items-container" class="table-responsive">
                             <table class="table table-bordered">
                                 <thead>
@@ -345,6 +381,7 @@
                                         <th style="width: 400px">Servicio</th>
                                         <th style="width: 100px">Cantidad</th>
                                         <th style="width: 140px">Precio Total</th>
+                                        <th style="width: 120px">Costo Adicional</th>
                                         <th style="width: 80px"></th>
                                     </tr>
                                 </thead>
@@ -352,10 +389,7 @@
                                     <tr class="item-row" data-index="0">
                                         <td>
                                             <div class="form-group">
-                                                <select name="laboratorio_0" class="form-select"
-                                                        onchange="filterServices(this)"
-                                                        t-att-data-servicios="json.dumps(servicios)">
-                                                    <option>Seleccione un laboratorio</option>
+                                                <select name="laboratorio_0" class="form-select">
                                                     <t t-foreach="laboratorios" t-as="laboratorio">
                                                         <option t-att-value="laboratorio['id']">
                                                             <t t-esc="laboratorio['name']"/>
@@ -366,8 +400,17 @@
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <select name="servicio_0" class="form-select">
-                                                    <option>Seleccione un servicio</option>
+                                                <select name="servicio_0" class="form-select"
+                                                        onchange="calculateLineTotal(this)">
+                                                    <t t-foreach="servicios" t-as="servicio">
+                                                        <option t-att-value="servicio['id']"
+                                                                t-att-data-precio="servicio['price']"
+                                                                t-att-data-additional-cost="servicio['additional_cost']">
+                                                            <t t-esc="servicio['name']"/>
+                                                            - Precio Gs:
+                                                            <t t-esc="servicio['price']"/>
+                                                        </option>
+                                                    </t>
                                                 </select>
                                             </div>
                                         </td>
@@ -379,24 +422,42 @@
                                         </td>
                                         <td style="text-align: right">
                                             <div class="form-group">
-                                                <input type="number" name="line_total_0" class="form-control" readonly="1"/>
+                                                <input type="number" name="line_total_0" class="form-control"
+                                                       readonly="1"/>
                                             </div>
                                         </td>
                                         <td style="text-align: center">
-                                            <button type="button" class="btn btn-danger" onclick="removeItem(this)">x
+                                            <div class="form-group">
+                                                <input type="text" name="additional_cost_0" class="form-control"
+                                                       readonly="1"
+                                                       t-att-value="servicio and servicio['additional_cost'] or 'N/A'"/>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: center">
+                                            <button type="button" class="btn btn-danger" onclick="removeItem(this)">
+                                                <span>x</span>
                                             </button>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <button type="button" class="btn btn-secondary mb-3" onclick="addItem()">Agregar Ítem</button>
+
+                        <button type="button" class="btn btn-secondary mb-3" onclick="addItem()">
+                            <span>Agregar Ítem</span>
+                        </button>
+
                         <div class="total-container">
-                            <label for="monto_total_general">Monto Total</label>
-                            <input type="number" id="monto_total_general" name="monto_total_general"
-                                   class="form-control" readonly="1"/>
+                            <div class="form-group">
+                                <label for="monto_total_general" class="form-label">Monto Total</label>
+                                <input type="number" id="monto_total_general" name="monto_total_general"
+                                       class="form-control" readonly="1"/>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-success">Crear Presupuesto</button>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success">Crear Presupuesto</button>
+                        </div>
                     </form>
                 </div>
             </t>
@@ -407,6 +468,7 @@
                 const tableBody = document.querySelector('#items-container tbody');
                 const newRow = document.querySelector('.item-row').cloneNode(true);
                 newRow.setAttribute('data-index', itemIndex);
+
                 newRow.querySelectorAll('select, input').forEach(input => {
                 const name = input.name;
                 if (name) {
@@ -414,6 +476,7 @@
                 input.value = "";
                 }
                 });
+
                 tableBody.appendChild(newRow);
                 itemIndex++;
                 }
@@ -422,7 +485,7 @@
                 const row = button.closest('tr');
                 if (document.querySelectorAll('.item-row').length > 1) {
                 row.remove();
-                calculateTotals();
+                calculateTotal();
                 } else {
                 alert('Debe haber al menos un ítem.');
                 }
@@ -430,10 +493,11 @@
 
                 function calculateLineTotal(element) {
                 const row = element.closest('.item-row');
-                const servicio = row.querySelector('select[name^="servicio"]').selectedOptions[0];
-                const precio = parseFloat(servicio?.getAttribute('data-precio') || 0);
+                const servicio = row.querySelector('select').selectedOptions[0];
+                const precio = parseFloat(servicio.getAttribute('data-precio') || 0);
                 const cantidad = parseFloat(row.querySelector('input[name^="cantidad"]').value || 0);
-                row.querySelector('input[name^="line_total"]').value = (precio * cantidad).toFixed(2);
+                const lineTotal = row.querySelector('input[name^="line_total"]');
+                lineTotal.value = (precio * cantidad).toFixed(2);
                 calculateTotals();
                 }
 
@@ -445,26 +509,9 @@
                 });
                 document.getElementById('monto_total_general').value = totalGeneral.toFixed(2);
                 }
-
-                function filterServices(selectElement) {
-                const laboratorioId = parseInt(selectElement.value);
-                const row = selectElement.closest('.item-row');
-                const servicioSelect = row.querySelector('select[name^="servicio"]');
-                const servicios = JSON.parse(selectElement.dataset.servicios);
-                servicios
-                .filter(servicio => servicio.laboratorio_id === laboratorioId)
-                .forEach(servicio => {
-                const option = document.createElement('option');
-                option.value = servicio.id;
-                option.setAttribute('data-precio', servicio.price);
-                option.textContent = `${servicio.name} - Precio Gs: ${servicio.price}`;
-                servicioSelect.appendChild(option);
-                });
-                }
             </script>
         </div>
     </template>
-
 
     <template id="control_etiquetas_creada" name="Control de Etiquetas Creada">
         <t t-call="portal.portal_layout">
