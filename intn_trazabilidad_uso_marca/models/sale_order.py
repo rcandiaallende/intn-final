@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -- coding: utf-8 --
 
 import hashlib
 from odoo import models, fields, api, _, exceptions
@@ -22,7 +22,6 @@ class SaleOrder(models.Model):
         'reprinting_id',  # Campo de referencia a las reimpresiones
         string='Re-impresiones asociadas'
     )
-    work_date = fields.Date(string="Fecha de programacion de Trabajo")
 
     def generate_unique_hash(self):
         order_id = str(self.id)  # Convertir el ID a cadena
@@ -41,4 +40,6 @@ class SaleOrder(models.Model):
         for rec in self:
             rec.action_confirm()
             if rec.calibration_request_id:
+                if not rec.calibration_request_id.work_date:
+                    raise UserError(_('Debe agendar una fecha para la realizacion del trabajo'))
                 rec.calibration_request_id.state = 'approved'

@@ -8,4 +8,9 @@ class CalibrationRequest(models.Model):
     state = fields.Selection(string="Estado",
                              selection=[('revision', 'En revisión'),
                                         ('approved', 'Presupuesto aprobado'),
-                                        ('scheduled', 'Orden de trabajo programada')])
+                                        ('scheduled', 'Orden de trabajo programada')], reaonly=True)
+
+    work_date = fields.Date(string="Fecha de programacion de Trabajo")
+
+    def get_state_string(self, state):
+        return dict(self._fields['state'].selection).get(state)

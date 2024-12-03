@@ -69,9 +69,6 @@
                 <t t-call="portal.portal_record_sidebar">
                     <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
 
-                    <!--                    <t t-set="title">-->
-                    <!--                        <h2 class="mb-0"><b t-field="sale_order.amount_total" data-id="total_amount"/> </h2>-->
-                    <!--                    </t>-->
                     <t t-set="entries">
                         <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
                             <t t-if="control_etiquetas">
@@ -89,9 +86,11 @@
                                             <i class="fa fa-clock-o" aria-title="Fecha/Hora" title="Fecha/Hora"></i>
                                             <t t-esc="control_etiquetas.fecha_hora"/>
                                         </p>
+
                                     </div>
                                 </li>
                             </t>
+
 
                             <li t-if="control_etiquetas.user_id" class="list-group-item flex-grow-1">
                                 <div class="small mb-1">
@@ -124,7 +123,6 @@
             </div>
         </xpath>
     </template>
-
     <template id="nueva_control_etiquetas" name="Nuevo Control de Etiquetas">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
@@ -393,7 +391,7 @@
                                             <div class="form-group">
                                                 <select name="laboratorio_0" class="form-select"
                                                         onchange="filterServices(this)"
-                                                        t-att-data-servicios='<t t-esc="json.dumps(servicios)"/>'>
+                                                        t-att-data-servicios="json.dumps(servicios)">
                                                     <t t-foreach="laboratorios" t-as="laboratorio">
                                                         <option t-att-value="laboratorio['id']">
                                                             <t t-esc="laboratorio['name']"/>
