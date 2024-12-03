@@ -34,7 +34,7 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <field name="state" widget="statusbar" />
+                    <field name="state" widget="statusbar"/>
                     <button string="Cancelar" type="object" name="button_cancelar" class="oe_highlight"
                             attrs="{'invisible':[('state','!=','cancel')]}"/>
                     <button string="Confirmar" type="object" name="button_confirmar" class="oe_highlight"
@@ -42,7 +42,8 @@
                 </header>
                 <sheet>
                     <h2>
-                        <field name="name" class="oe_title" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        <field name="name" class="oe_title" attrs="{'readonly':[('state','!=','draft')]}"
+                               options="{'max_length': 17}"/>
                     </h2>
                     <group>
                         <field name="fecha_hora" readonly="1"/>
@@ -50,15 +51,17 @@
                         <field name="fecha_factura" attrs="{'readonly':[('state','!=','draft')]}"/>
                         <field name="proveedor_id" string="Proveedor" attrs="{'readonly':[('state','!=','draft')]}"/>
                         <field name="cliente_id" string="Cliente" attrs="{'readonly':[('state','!=','draft')]}"/>
-                        <field name="factura_compra_pdf" filename="pdf_name" attrs="{'readonly':[('state','!=','draft')]}"/>
-                            <field name="factura_compra_name" invisible="1"/>
+                        <field name="factura_compra_pdf" filename="pdf_name"
+                               attrs="{'readonly':[('state','!=','draft')]}"/>
+                        <field name="factura_compra_name" invisible="1"/>
                     </group>
                     <notebook>
                         <page string="Lineas de Factura">
-                            <field name="line_ids" nolabel="1" force_save="1" attrs="{'readonly':[('state','!=','draft')]}">
+                            <field name="line_ids" nolabel="1" force_save="1"
+                                   attrs="{'readonly':[('state','!=','draft')]}">
                                 <tree string="Pedidos" editable="bottom" create="1" delete="1">
                                     <field name="factura_comprobante_id" readonly="1" force_save="1" invisible="1"/>
-                                    <field name="product_id" />
+                                    <field name="product_id"/>
                                     <field name="qty"/>
                                     <field name="aprox_qty_usada" string="Saldo"/>
                                     <field name="qty_usada"/>
@@ -84,7 +87,8 @@
         </field>
     </record>
 
-    <menuitem id="intn_trazabilidad_uso_marca.factura_comprobante_menu" name="Facturas/Comprobantes" parent="intn_trazabilidad_uso_marca.menu_2"
-               action="intn_trazabilidad_uso_marca.factura_comprobante_action_view"/>
+    <menuitem id="intn_trazabilidad_uso_marca.factura_comprobante_menu" name="Facturas/Comprobantes"
+              parent="intn_trazabilidad_uso_marca.menu_2"
+              action="intn_trazabilidad_uso_marca.factura_comprobante_action_view"/>
 
 </odoo>

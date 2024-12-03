@@ -56,6 +56,7 @@
                                    domain="[('state_uso_marca','=','habilitado')]"/>
                             <field name="licencia_id" invisible="1" force_save="1"/>
                             <field name="etiquetas_disponibles" invisible="1"/>
+<!--                            <field name="show_saldos"/>-->
                         </group>
                         <group>
                             <field name="user_id" attrs="{'readonly':[('state','not in',['draft'])]}"/>
@@ -67,28 +68,20 @@
                                    attrs="{'readonly': [('state', 'in', ('asignado','verificado','cancel'))]}"
                                    mode="tree" nolabel="1">
                                 <tree string="Etiquetas Solicitadas" editable="bottom">
-                                    <field name="product_id" domain="[('id','in',parent.etiquetas_disponibles)]"/>
+                                    <!--                                    <field name="product_id" domain="[('id', 'in', parent.etiquetas_disponibles)]"/>-->
+                                    <!--                                    <field name="product_id" domain="['|', ('id', 'in', parent.etiquetas_disponibles), '|', ('product_tmpl_id', '=', 8202), ('product_tmpl_id', '=', 8203)]"/>-->
+                                    <field name="product_id"
+                                           domain="['|', ('id', 'in', parent.etiquetas_disponibles), ('product_tmpl_id.es_anillo', '=', True)]"/>
                                     <field name="qty"/>
                                     <field name="kg_polvo"/>
                                     <field name="kg_polvo_total" readonly="1" force_save="1"/>
-                                    <!--                                    <field name="saldo" readonly="1" t-attf-style="color: red;"/>-->
-                                    <field name="saldos_certificados" mode="tree" string="Saldos por Certificado">
-                                        <tree editable="bottom" decoration-danger="saldo < 0"
-                                              decoration-success="saldo >= 0">
-                                            <field name="certificado_id" invisible="1"/>
-                                            <field name="saldo" widget="badge" string="Saldo"/>
-                                        </tree>
-                                    </field>
-                                    <field name="saldos_facturas" mode="tree" string="Saldos por Factura">
-                                        <tree editable="bottom" decoration-danger="saldo < 0"
-                                              decoration-success="saldo >= 0">
-                                            <field name="factura_id" invisible="1"/>
-                                            <field name="saldo" widget="badge" string="Saldo"/>
-                                        </tree>
-                                    </field>
-                                    <field name="saldo_factura" readonly="1" t-attf-style="color: red;"/>
-                                    <field name="certificado_ids" widget="many2many_tags"/>
-                                    <field name="factura_ids" widget="many2many_tags"/>
+<!--                                    <field name="saldo_auxiliar_cert" invisible="0"/>-->
+<!--                                    <field name="saldo_auxiliar_fac" invisible="0"/>-->
+<!--                                    <field name="show_saldos_certificados" invisible="1"/>-->
+<!--                                    <field name="saldos_certificados"/>-->
+<!--                                    <field name="saldos_facturas"/>-->
+                                    <field name="certificado_ids" widget="many2many_tags" domain="[('state', '!=', 'cancel')]"/>
+                                    <field name="factura_ids" widget="many2many_tags" domain="[('state', '!=', 'cancel'), ('has_valid_qty', '=', True)]"/>
                                     <!--                                      <field name="price_unit"/>-->
                                     <!--                                      <field name="tax_id" widget="many2many_tags"/>-->
                                     <!--                                      <field name="price_total"/>-->

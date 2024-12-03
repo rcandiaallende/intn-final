@@ -165,3 +165,35 @@ class CustomerPortal(CustomerPortal):
 
         return http.request.render('intn_trazabilidad_uso_marca.solicitud_impresion_creada',
                                    {'solicitud': solicitud,'page_name':'solicitud_impresion'})
+
+
+class SolicitudImpresionesController(http.Controller):
+    @http.route('/solicitud_impresiones/dynamic_form', type='json', auth='user')
+    def dynamic_form(self):
+        # Obtener los campos dinámicos
+        fields = request.env['solicitud.impresiones.lines'].get_certificado_fields()
+
+        # Generar los campos XML para la vista dinámica
+        fields_xml = ''.join([
+            f'<field name="{field["name"]}" string="{field["label"]}" required="{str(field["required"]).lower()}"/>'
+            for field in fields
+        ])
+
+        # Crear la estructura XML del formulario
+        form_xml = f"""
+        <form>
+            <sheet>
+                <group>
+                    <field name="product_id"/>
+                    {fields_xml}
+                </group>
+            </sheet>
+        </form>
+        """
+
+        return {
+            'view_id': False,
+            'view_type': 'form',
+            'view_mode': 'form',
+            'arch': form_xml,
+        }

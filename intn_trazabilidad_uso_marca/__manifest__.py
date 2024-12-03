@@ -74,6 +74,10 @@
         'portal/solicitud_impresiones_portal.xml',
         'portal/control_etiquetas_portal.xml',
         'views/tecnico_metrologia.xml',
+        'views/solicitud_impresiones_audit_report.xml',
+        'views/solicitud_impresiones_report_wizard_view.xml',
+        'views/solicitud_impresiones_report_template.xml',
+        'views/solicitud_impresiones_report_audit.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

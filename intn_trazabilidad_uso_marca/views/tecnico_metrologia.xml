@@ -23,6 +23,9 @@
                         <field name="activo"/>
                         <field name="date_inicio"/>
                         <field name="date_final"/>
+                        <field name="cedula"/>
+                        <field name="token_firma"/>
+                        <field name="qr_firma"/>
                     </group>
                     <div class="oe_chatter">
 <!--                        <field name="log_cambios" readonly="1"/>-->

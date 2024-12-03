@@ -25,6 +25,19 @@ class FacturaComprobante(models.Model):
                              default="draft", copy=False,
                              track_visibility="onchange")
 
+    has_valid_qty = fields.Boolean(
+        string="Tiene Cantidad Válida",
+        compute="_compute_has_valid_qty",
+        store=True
+    )
+
+    @api.depends('line_ids.aprox_qty_usada')
+    def _compute_has_valid_qty(self):
+        for record in self:
+            record.has_valid_qty = any(
+                line.aprox_qty_usada > 0 for line in record.line_ids
+            )
+
     _sql_constraints = [
         ('unique_name_timbrado', 'UNIQUE(name, timbrado)', 'El nombre y el timbrado deben ser únicos.'),
     ]
