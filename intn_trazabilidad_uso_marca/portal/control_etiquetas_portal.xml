@@ -379,7 +379,7 @@
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th style="width: 200px">Laboratorios</th>
+                                        <th style="width: 200px">Laboratorio</th>
                                         <th style="width: 400px">Servicio</th>
                                         <th style="width: 100px">Cantidad</th>
                                         <th style="width: 140px">Precio Total</th>
@@ -391,10 +391,9 @@
                                     <tr class="item-row" data-index="0">
                                         <td>
                                             <div class="form-group">
-                                                <label for="laboratorio_0">Laboratorio</label>
-                                                <select name="laboratorio_0" id="laboratorio_0" class="form-select"
+                                                <select name="laboratorio_0" class="form-select"
                                                         onchange="filterServices(this)"
-                                                        t-att-data-servicios="json.dumps(servicios)">
+                                                        t-att-data-servicios='<t t-esc="json.dumps(servicios)"/>'>
                                                     <t t-foreach="laboratorios" t-as="laboratorio">
                                                         <option t-att-value="laboratorio['id']">
                                                             <t t-esc="laboratorio['name']"/>
@@ -402,7 +401,6 @@
                                                     </t>
                                                 </select>
                                             </div>
-
                                         </td>
                                         <td>
                                             <div class="form-group">
@@ -425,7 +423,8 @@
                                         <td style="text-align: center">
                                             <div class="form-group">
                                                 <input type="text" name="additional_cost_0" class="form-control"
-                                                       readonly="1"/>
+                                                       readonly="1"
+                                                       t-att-value="servicio and servicio['additional_cost'] or 'N/A'"/>
                                             </div>
                                         </td>
                                         <td style="text-align: center">
@@ -489,7 +488,7 @@
                 function calculateLineTotal(element) {
                 const row = element.closest('.item-row');
                 const servicio = row.querySelector('select[name^="servicio"]').selectedOptions[0];
-                const precio = parseFloat(servicio.getAttribute('data-precio') || 0);
+                const precio = parseFloat(servicio?.getAttribute('data-precio') || 0);
                 const cantidad = parseFloat(row.querySelector('input[name^="cantidad"]').value || 0);
                 const lineTotal = row.querySelector('input[name^="line_total"]');
                 lineTotal.value = (precio * cantidad).toFixed(2);
@@ -511,7 +510,10 @@
                 const servicioSelect = row.querySelector('select[name^="servicio"]');
                 const servicios = JSON.parse(selectElement.dataset.servicios);
 
-                // Agregar servicios relacionados al laboratorio seleccionado
+                // Limpiar las opciones existentes en el select de servicios
+                servicioSelect.innerHTML = '<option value="" disabled selected>Seleccione un servicio</option>';
+
+                // Filtrar servicios relacionados con el laboratorio seleccionado
                 servicios
                 .filter(servicio => servicio.laboratorio_id === laboratorioId)
                 .forEach(servicio => {
