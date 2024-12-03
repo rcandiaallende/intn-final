@@ -1,0 +1,156 @@
+<odoo>
+    <data>
+
+        <report
+                id="action_report_preview_norma_onn"
+                model="sale.order"
+                string="Imprimir Norma ISO"
+                report_type="qweb-pdf"
+                name="intn_trazabilidad_uso_marca.report_preview_norma_onn"
+                file="intn_trazabilidad_uso_marca.report_preview_norma_onn"
+                paperformat="paperformat_normas_onn"
+        />
+
+        <!-- Plantilla QWeb para el reporte tipo ISO con formato más elegante -->
+        <template id="report_preview_norma_onn">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.basic_layout">
+                        <!-- Agregar marca de agua transparente en diagonal -->
+                        <div class="watermark"
+                             style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); opacity: 0.1; z-index: -1;">
+                            <p style="font-size: 100px; color: red; text-align: center;">
+                                NO VÁLIDO
+                            </p>
+                        </div>
+
+                        <!-- Portada del reporte -->
+                        <div class="page">
+                            <h1 style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px;">
+                                <t t-esc="doc.name"/>
+                            </h1>
+                            <p style="text-align: center; font-size: 18px; font-weight: 600; margin-bottom: 10px;">
+                                Norma Técnica ISO
+                            </p>
+                            <p style="text-align: center; font-size: 16px; margin-bottom: 5px;">
+                                Número:
+                                <t t-esc="doc.name"/>
+                            </p>
+                            <p style="text-align: center; font-size: 16px; margin-bottom: 5px;">
+                                Fecha de Emisión:
+                                <t t-esc="doc.create_date"/>
+                            </p>
+                            <p style="text-align: center; font-size: 16px;">
+                                <span style="font-weight: bold;">Versión:</span>
+                                <span style="font-weight: bold;">
+                                    <t t-esc="doc.generate_unique_hash()"/>
+                                </span>
+                            </p>
+                        </div>
+
+                        <!-- Índice -->
+                        <div class="page">
+                            <h2 style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">Índice</h2>
+                            <ul style="font-size: 14px; padding-left: 20px;">
+                                <li>1. Introducción</li>
+                                <li>2. Alcance</li>
+                                <li>3. Definiciones</li>
+                                <li>4. Requisitos</li>
+                                <li>5. Metodología</li>
+                                <li>6. Conclusiones</li>
+                                <li>7. Referencias</li>
+                            </ul>
+                        </div>
+
+                        <!-- Introducción -->
+                        <div class="page">
+                            <h3 style="font-size: 14px; font-weight: bold;">1. Introducción</h3>
+                            <p>Aquí se describe la introducción de la norma ISO, detallando el propósito y contexto.</p>
+                        </div>
+
+                        <!-- Alcance -->
+                        <div class="page">
+                            <h3 style="font-size: 14px; font-weight: bold;">2. Alcance</h3>
+                            <p>Este documento cubre las especificaciones para la implementación de normas en el
+                                ámbito...
+                            </p>
+                        </div>
+
+                        <!-- Definiciones -->
+                        <div class="page">
+                            <h3 style="font-size: 14px; font-weight: bold;">3. Definiciones</h3>
+                            <p>Definición de los términos clave utilizados en la norma.</p>
+                        </div>
+
+                        <!-- Requisitos -->
+                        <div class="page">
+                            <h3 style="font-size: 14px; font-weight: bold;">4. Requisitos</h3>
+                            <p>Este apartado describe los requisitos técnicos y operacionales necesarios para cumplir
+                                con la norma...
+                            </p>
+                            <table style="width: 100%; border: 1px solid #000; border-collapse: collapse; font-size: 12px;">
+                                <thead>
+                                    <tr>
+                                        <th style="border: 1px solid #000; padding: 5px; text-align: left;">Requisito
+                                        </th>
+                                        <th style="border: 1px solid #000; padding: 5px; text-align: left;">
+                                            Descripción
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.order_line" t-as="line">
+                                        <tr>
+                                            <td style="border: 1px solid #000; padding: 5px;">
+                                                <t t-esc="line.product_id.name"/>
+                                            </td>
+                                            <td style="border: 1px solid #000; padding: 5px;">
+                                                <t t-esc="line.name"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Metodología -->
+                        <div class="page">
+                            <h3 style="font-size: 14px; font-weight: bold;">5. Metodología</h3>
+                            <p>Aquí se describe cómo se debe implementar la norma en la práctica, incluyendo los pasos y
+                                recursos necesarios.
+                            </p>
+                        </div>
+
+                        <!-- Conclusiones -->
+                        <div class="page">
+                            <h3 style="font-size: 14px; font-weight: bold;">6. Conclusiones</h3>
+                            <p>Se proporcionan las conclusiones derivadas de la implementación de la norma, con
+                                recomendaciones finales.
+                            </p>
+                        </div>
+
+                        <!-- Referencias -->
+                        <div class="page">
+                            <h3 style="font-size: 14px; font-weight: bold;">7. Referencias</h3>
+                            <ul style="font-size: 14px; padding-left: 20px;">
+                                <li>Norma ISO 9001:2015</li>
+                                <li>Norma ISO 14001:2015</li>
+                                <li>Otras normativas relacionadas...</li>
+                            </ul>
+                        </div>
+
+                        <!-- Pie de página -->
+                        <div class="page">
+                            <div style="text-align: center; font-size: 12px; margin-top: 30px;">
+                                <p>Este documento es confidencial y propiedad exclusiva de la organización.</p>
+                                <p>© 2024 Norma ISO, Todos los derechos reservados.</p>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>
