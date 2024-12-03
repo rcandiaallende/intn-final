@@ -237,12 +237,20 @@ class CustomerPortal(CustomerPortal):
 
     @http.route('/nuevo_presupuesto', type='http', auth="user", website=True)
     def nuevo_presupuesto(self, **kw):
-        # Buscar productos que sean servicios
+        # Buscar laboratorios y productos que sean servicios
+        laboratorios = request.env['intn.laboratorios'].sudo().search([])
         servicios = request.env['product.product'].sudo().search([('type', '=', 'service')])
 
-        # Renderizar el formulario con los servicios disponibles
+        # Convertir laboratorios y servicios en listas serializables
+        laboratorios_list = [{'id': lab.id, 'name': lab.name} for lab in laboratorios]
+        servicios_list = [{'id': srv.id, 'name': srv.name, 'price': srv.lst_price,
+                           'laboratorio_id': srv.laboratorio_id.id if srv.laboratorio_id else None} for srv in
+                          servicios]
+
+        # Renderizar el formulario con los laboratorios y servicios disponibles
         return request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto', {
-            'servicios': servicios
+            'laboratorios': laboratorios_list,
+            'servicios': servicios_list,
         })
 
     @http.route('/submit/nuevo_presupuesto', type='http', auth="user", website=True, methods=['POST'])
