@@ -391,9 +391,10 @@
                                     <tr class="item-row" data-index="0">
                                         <td>
                                             <div class="form-group">
-                                                <select name="laboratorio_0" class="form-select"
+                                                <label for="laboratorio_0">Laboratorio</label>
+                                                <select name="laboratorio_0" id="laboratorio_0" class="form-select"
                                                         onchange="filterServices(this)"
-                                                        data-servicios='<t t-esc="json.dumps(servicios)"/>'>
+                                                        t-att-data-servicios="json.dumps(servicios)">
                                                     <t t-foreach="laboratorios" t-as="laboratorio">
                                                         <option t-att-value="laboratorio['id']">
                                                             <t t-esc="laboratorio['name']"/>
@@ -401,6 +402,7 @@
                                                     </t>
                                                 </select>
                                             </div>
+
                                         </td>
                                         <td>
                                             <div class="form-group">
