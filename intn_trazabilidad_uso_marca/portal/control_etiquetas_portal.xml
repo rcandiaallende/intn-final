@@ -46,7 +46,7 @@
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
             <t t-call="portal.portal_searchbar">
-                <t t-set="title">Sistema de Gestion de Solicitudes(METCI)</t>
+                <t t-set="title">Solicitud de Calibración de Balanzas</t>
             </t>
             <a role="button" class="btn btn-primary" name="nuevaSolicitudMetci" type="submit" href="/new/control-metci">
                 <i class="fa fa-plus-square-o"/>
@@ -89,29 +89,9 @@
                                             <i class="fa fa-clock-o" aria-title="Fecha/Hora" title="Fecha/Hora"></i>
                                             <t t-esc="control_etiquetas.fecha_hora"/>
                                         </p>
-                                        <!--span t-if="control_etiquetas.state == 'cancel'" class="badge badge-pill badge-secondary"><i class="fa fa-fw fa-remove"/> Cancelado</span>
-                                        <span t-if="control_etiquetas.state == 'verificado'" class="badge badge-pill badge-success"><i class="fa fa-fw fa-check-square-o"/> Verificado</span>
-                                        <span t-if="control_etiquetas.state == 'draft'" class="badge badge-pill badge-primary"><i class="fa fa-fw fa-clock-o"/> Vuevo</span>
-                                    -->
                                     </div>
                                 </li>
                             </t>
-
-                            <!--li class="list-group-item flex-grow-1">
-                                <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
-                                    <div class="btn-group flex-grow-1 mr-1 mb-1">
-                                        <a class="btn btn-secondary btn-block o_download_btn" t-att-href="control_etiquetas.get_portal_url(report_type='pdf', download=True)" title="Download"><i class="fa fa-download"/> Descargar</a>
-                                    </div>
-                                    <div class="btn-group flex-grow-1 mb-1">
-                                        <a class="btn btn-secondary btn-block o_print_btn o_portal_invoice_print" t-att-href="control_etiquetas.get_portal_url(report_type='pdf')" id="print_invoice_report" title="Print" target="_blank"><i class="fa fa-print"/> Imprimir</a>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="navspy list-group-item pl-0 flex-grow-1" t-ignore="true" role="complementary">
-                                <ul class="nav flex-column bs-sidenav"></ul>
-                            </li-->
-
 
                             <li t-if="control_etiquetas.user_id" class="list-group-item flex-grow-1">
                                 <div class="small mb-1">
@@ -140,32 +120,6 @@
                         </ul>
                     </t>
                 </t>
-
-                <!-- Page Content
-                <div id="invoice_content" class="o_portal_page_content col-12 col-lg d-flex flex-column align-items-end">
-                    <div class="o_portal_page_size">
-                        <t t-if="error or warning" t-call="account.portal_invoice_error"/>
-                        <t t-if="success and (not error and not warning)" t-call="account.portal_invoice_success"/>
-
-                        <div class="o_portal_html_view shadow">
-                            <div class="o_portal_html_loader text-center">
-                                <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw text-black-50"/>
-                            </div>
-                            <iframe style="min-height:800px;" id="invoice_html" class="mt8 mb8" width="100%" height="100%" frameborder="0" scrolling="no" t-att-src="control_etiquetas.get_portal_url(report_type='html')"/>
-
-                        </div>
-
-                        <div id="sale_order_communication" class="mt-4">
-                            <h2>Comunicación</h2>
-                            <t t-call="portal.message_thread">
-                                <t t-set="object" t-value="control_etiquetas"/>
-                            </t>
-                        </div>
-                    </div>
-
-                </div>
-                 -->
-
 
             </div>
         </xpath>
@@ -425,6 +379,7 @@
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
+                                        <th style="width: 200px">Laboratorios</th>
                                         <th style="width: 400px">Servicio</th>
                                         <th style="width: 100px">Cantidad</th>
                                         <th style="width: 140px">Precio Total</th>
@@ -436,17 +391,20 @@
                                     <tr class="item-row" data-index="0">
                                         <td>
                                             <div class="form-group">
-                                                <select name="servicio_0" class="form-select"
-                                                        onchange="calculateLineTotal(this)">
-                                                    <t t-foreach="servicios" t-as="servicio">
-                                                        <option t-att-value="servicio['id']"
-                                                                t-att-data-precio="servicio['price']"
-                                                                t-att-data-additional-cost="servicio['additional_cost']">
-                                                            <t t-esc="servicio['name']"/>
-                                                            - Precio Gs:
-                                                            <t t-esc="servicio['price']"/>
+                                                <select name="laboratorio_0" class="form-select"
+                                                        onchange="filterServices(this)"
+                                                        data-servicios='<t t-esc="json.dumps(servicios)"/>'>
+                                                    <t t-foreach="laboratorios" t-as="laboratorio">
+                                                        <option t-att-value="laboratorio['id']">
+                                                            <t t-esc="laboratorio['name']"/>
                                                         </option>
                                                     </t>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <select name="servicio_0" class="form-select">
                                                 </select>
                                             </div>
                                         </td>
@@ -465,8 +423,7 @@
                                         <td style="text-align: center">
                                             <div class="form-group">
                                                 <input type="text" name="additional_cost_0" class="form-control"
-                                                       readonly="1"
-                                                       t-att-value="servicio and servicio['additional_cost'] or 'N/A'"/>
+                                                       readonly="1"/>
                                             </div>
                                         </td>
                                         <td style="text-align: center">
@@ -521,7 +478,7 @@
                 const row = button.closest('tr');
                 if (document.querySelectorAll('.item-row').length > 1) {
                 row.remove();
-                calculateTotal();
+                calculateTotals();
                 } else {
                 alert('Debe haber al menos un ítem.');
                 }
@@ -529,7 +486,7 @@
 
                 function calculateLineTotal(element) {
                 const row = element.closest('.item-row');
-                const servicio = row.querySelector('select').selectedOptions[0];
+                const servicio = row.querySelector('select[name^="servicio"]').selectedOptions[0];
                 const precio = parseFloat(servicio.getAttribute('data-precio') || 0);
                 const cantidad = parseFloat(row.querySelector('input[name^="cantidad"]').value || 0);
                 const lineTotal = row.querySelector('input[name^="line_total"]');
@@ -544,6 +501,24 @@
                 totalGeneral += total;
                 });
                 document.getElementById('monto_total_general').value = totalGeneral.toFixed(2);
+                }
+
+                function filterServices(selectElement) {
+                const laboratorioId = parseInt(selectElement.value);
+                const row = selectElement.closest('.item-row');
+                const servicioSelect = row.querySelector('select[name^="servicio"]');
+                const servicios = JSON.parse(selectElement.dataset.servicios);
+
+                // Agregar servicios relacionados al laboratorio seleccionado
+                servicios
+                .filter(servicio => servicio.laboratorio_id === laboratorioId)
+                .forEach(servicio => {
+                const option = document.createElement('option');
+                option.value = servicio.id;
+                option.setAttribute('data-precio', servicio.price);
+                option.textContent = `${servicio.name} - Precio Gs: ${servicio.price}`;
+                servicioSelect.appendChild(option);
+                });
                 }
             </script>
         </div>
