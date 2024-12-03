@@ -15,3 +15,4 @@ from . import tecnico_metrologia
 from . import sale_order
 from . import calibration_request
 from . import jerarquias
+from . import account_invoice

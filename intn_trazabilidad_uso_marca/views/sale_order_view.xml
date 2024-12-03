@@ -12,7 +12,7 @@
                             attrs="{'invisible': [('state', 'not in', ['pending'])]}"/>
                 </xpath>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
-                    <field name="calibration_request_id" readonly="1"/>
+                    <field name="calibration_request_id"/>
                 </xpath>
             </field>
         </record>
