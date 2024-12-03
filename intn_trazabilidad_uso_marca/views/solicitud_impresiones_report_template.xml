@@ -1,0 +1,42 @@
+<odoo>
+    <template id="solicitud_impresiones_report_template">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="web.html_container">
+                <div class="page">
+                    <h2>Solicitud de Impresiones: <span t-esc="doc.name"/></h2>
+                    <p><strong>Fecha de Solicitud:</strong> <span t-esc="doc.fecha_solicitud"/></p>
+                    <p><strong>Empresa:</strong> <span t-esc="doc.partner_id.name"/></p>
+                    <p><strong>Usuario:</strong> <span t-esc="doc.user_id.name"/></p>
+                    <p><strong>Estado:</strong> <span t-esc="dict(doc._fields['state'].selection).get(doc.state)"/></p>
+                    <p><strong>Licencia por Uso de Marca:</strong> <span t-esc="doc.licencia_id.name or ''"/></p>
+
+                    <h3>Etiquetas Solicitadas:</h3>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Etiquetas</th>
+                                <th>Cantidad</th>
+                                <th>Kg/L por unidad</th>
+                                <th>Kg/L Total</th>
+                                <th>Certificados</th>
+                                <th>Facturas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="doc.solicitud_impresiones_lines" t-as="line">
+                                <tr>
+                                    <td><span t-esc="line.product_id.name"/></td>
+                                    <td><span t-esc="line.qty"/></td>
+                                    <td><span t-esc="line.kg_polvo"/></td>
+                                    <td><span t-esc="line.kg_polvo_total"/></td>
+                                    <td><span t-esc="line.certificado_ids.name"/></td>
+                                    <td><span t-esc="line.factura_ids.name"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
