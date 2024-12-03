@@ -5,11 +5,6 @@ from re import findall as regex_findall, split as regex_split
 
 from psycopg2 import OperationalError, Error
 
-from odoo.osv import expression
-
-
-from odoo.exceptions import UserError, ValidationError
-from odoo.tools.float_utils import float_round, float_compare, float_is_zero
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
@@ -27,3 +22,4 @@ class ProductTemplate(models.Model):
 
     determinacion_ids= fields.One2many('intn_trazabilidad_uso_marca.determinacion_productos','product_id',string="Determinaciones")
     observaciones_certificado= fields.Html(string="Observaciones")
+    additional_cost = fields.Boolean(string="Aplica a costos adicionales", default=False)

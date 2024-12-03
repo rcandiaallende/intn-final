@@ -2,6 +2,7 @@
 
 import hashlib
 from odoo import models, fields, api, _, exceptions
+from odoo.exceptions import AccessError, MissingError, UserError
 
 
 class SaleOrder(models.Model):
@@ -12,6 +13,7 @@ class SaleOrder(models.Model):
                                     selection=[('onn_normas', 'ONN Normas'),
                                                ('metci', 'METCI'),
                                                ('reprint_onn_normas', 'Reimpresión ONN Normas')])
+    calibration_request_id = fields.Many2one('calibration.request', string='Solicitud de Calibracion')
     document_printing_count = fields.Integer(string='Cantidad Impresa', default=0)
     re_printing_so_ids = fields.Many2many(
         'sale.order',
@@ -20,6 +22,7 @@ class SaleOrder(models.Model):
         'reprinting_id',  # Campo de referencia a las reimpresiones
         string='Re-impresiones asociadas'
     )
+    work_date = fields.Date(string="Fecha de programacion de Trabajo")
 
     def generate_unique_hash(self):
         order_id = str(self.id)  # Convertir el ID a cadena
@@ -37,3 +40,5 @@ class SaleOrder(models.Model):
     def approve_so(self):
         for rec in self:
             rec.action_confirm()
+            if rec.calibration_request_id:
+                rec.calibration_request_id.state = 'approved'

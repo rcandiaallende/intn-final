@@ -79,7 +79,7 @@ class CustomerPortal(CustomerPortal):
 
         domain = [
             ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
-            ('state', 'in', ['sale', 'done'])
+            ('state', 'in', ['sale', 'done', 'pending'])
         ]
 
         searchbar_sortings = {
@@ -197,10 +197,12 @@ class CustomerPortal(CustomerPortal):
         # Obtener el laboratorio por nombre
         laboratorio = request.env['intn.laboratorios'].sudo().search([])
 
-        #productos = request.env['product.product'].sudo().search([('product_tmpl_id.unidad_id', '=', 39)])
+        # productos = request.env['product.product'].sudo().search([('product_tmpl_id.unidad_id', '=', 39)])
         productos = request.env['product.product'].sudo().search([])
 
-        productos_list = [{'id': producto.id, 'name': producto.name, 'price': producto.lst_price} for producto in productos]
+        productos_list = [{'id': producto.id, 'name': producto.name, 'price': producto.lst_price,
+                           'additional_cost': 'Si' if producto.product_tmpl_id.additional_cost else 'No'} for producto
+                          in productos]
 
         # for producto in productos:
         #     precio = producto.lst_price
@@ -273,8 +275,11 @@ class CustomerPortal(CustomerPortal):
         # Crear un nuevo presupuesto en el modelo sale.order
         sale_order = request.env['sale.order'].sudo().create({
             'partner_id': partner.id,
-            'state': 'draft',
+            'state': 'pending',
+            'service_type': 'metci',
         })
+        calibration_request = request.env['calibration.request'].sudo().create({'state': 'revision'})
+        sale_order.calibration_request = calibration_request.id
 
         # Crear las líneas del presupuesto
         for servicio_id, cantidad, line_total in zip(servicios, cantidades, line_totals):

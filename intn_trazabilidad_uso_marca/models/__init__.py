@@ -13,3 +13,5 @@ from . import factura_comprobante, control_comprobantes, gestion_comprobantes
 from . import color_anillos
 from . import tecnico_metrologia
 from . import sale_order
+from . import calibration_request
+from . import jerarquias

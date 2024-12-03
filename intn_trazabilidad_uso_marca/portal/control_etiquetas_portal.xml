@@ -257,6 +257,7 @@
                 </div>
             </div>
         </t>
+
     </template>
 
     <template id="formulario_crear_presupuesto" name="Formulario Crear Presupuesto">
@@ -410,6 +411,9 @@
                     <h2>Crear Nuevo Presupuesto</h2>
                     <form action="/submit/nuevo_presupuesto" method="POST">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="alert alert-info" style="font-size: 14px;">
+                            Algunos servicios están sujetos a un costo adicional.
+                        </div>
                         <div class="form-group">
                             <label for="sucursal">Sucursal</label>
                             <select name="sucursal" id="sucursal" class="form-control">
@@ -424,6 +428,7 @@
                                         <th style="width: 400px">Servicio</th>
                                         <th style="width: 100px">Cantidad</th>
                                         <th style="width: 140px">Precio Total</th>
+                                        <th style="width: 120px">Costo Adicional</th>
                                         <th style="width: 80px"></th>
                                     </tr>
                                 </thead>
@@ -435,7 +440,8 @@
                                                         onchange="calculateLineTotal(this)">
                                                     <t t-foreach="servicios" t-as="servicio">
                                                         <option t-att-value="servicio['id']"
-                                                                t-att-data-precio="servicio['price']">
+                                                                t-att-data-precio="servicio['price']"
+                                                                t-att-data-additional-cost="servicio['additional_cost']">
                                                             <t t-esc="servicio['name']"/>
                                                             - Precio Gs:
                                                             <t t-esc="servicio['price']"/>
@@ -456,7 +462,14 @@
                                                        readonly="1"/>
                                             </div>
                                         </td>
-                                        <td style="text-align:center">
+                                        <td style="text-align: center">
+                                            <div class="form-group">
+                                                <input type="text" name="additional_cost_0" class="form-control"
+                                                       readonly="1"
+                                                       t-att-value="servicio and servicio['additional_cost'] or 'N/A'"/>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: center">
                                             <button type="button" class="btn btn-danger" onclick="removeItem(this)">
                                                 <span>x</span>
                                             </button>

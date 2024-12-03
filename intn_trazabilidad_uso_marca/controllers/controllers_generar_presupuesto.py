@@ -119,7 +119,7 @@ class GenerarPresupuestoPortal(http.Controller):
         if norma.document_printing_count > 0:
             raise UserError(_("Sólo puede imprimir una vez el Documente, solicite una reimpresión!',"))
 
-        norma.document_printing_count = norma.document_printing_count + 1
+        norma.document_printing_count += 1
 
         # Usamos la referencia del reporte 'report_norma_onn'
         report = request.env.ref('intn_trazabilidad_uso_marca.action_report_norma_onn')
