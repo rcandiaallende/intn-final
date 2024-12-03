@@ -16,7 +16,7 @@ import base64
 
 class CustomerPortal(CustomerPortal):
 
-    @http.route(['/my/control-etiquetas', '/my/control-etiquetas/page/<int:page>'], type='http', auth="user",
+    @http.route(['/my/control-etiquetas', '/my/cont0rol-etiquetas/page/<int:page>'], type='http', auth="user",
                 website=True)
     def portal_my_control_etiquetas(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
         values = self._prepare_portal_layout_values()
@@ -197,18 +197,18 @@ class CustomerPortal(CustomerPortal):
         # Obtener el laboratorio por nombre
         laboratorio = request.env['intn.laboratorios'].sudo().search([])
 
-        productos = request.env['product.product'].sudo().search([('product_tmpl_id.unidad_id', '=', 39)])
+        #productos = request.env['product.product'].sudo().search([('product_tmpl_id.unidad_id', '=', 39)])
+        productos = request.env['product.product'].sudo().search([])
 
-        productos_list = [{'id': producto.id, 'name': producto.name, 'price': producto.lst_price, 'determinacion': producto.product_tmpl_id.determinacion} for producto in productos]
-
+        productos_list = [{'id': producto.id, 'name': producto.name, 'price': producto.lst_price} for producto in productos]
 
         # for producto in productos:
         #     precio = producto.lst_price
 
-        if not laboratorio:
-            return request.render('error_template', {
-                'error_message': 'El laboratorio seleccionado no existe.',
-            })
+        # if not laboratorio:
+        #     return request.render('error_template', {
+        #         'error_message': 'El laboratorio seleccionado no existe.',
+        #     })
         # csrf_token = self.csrf_token()
 
         return http.request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto',
@@ -235,45 +235,25 @@ class CustomerPortal(CustomerPortal):
 
     @http.route('/nuevo_presupuesto', type='http', auth="user", website=True)
     def nuevo_presupuesto(self, **kw):
-        # Obtener todos los laboratorios
-        laboratorios = request.env['intn.laboratorios'].sudo().search([])
+        # Buscar productos que sean servicios
+        servicios = request.env['product.product'].sudo().search([('type', '=', 'service')])
 
-        # Renderizar el formulario con los laboratorios y servicios (inicialmente vacío)
+        # Renderizar el formulario con los servicios disponibles
         return request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto', {
-            'laboratorios': laboratorios,
-            'servicios': []  # Se llenará después de seleccionar el laboratorio
+            'servicios': servicios
         })
-
-    @http.route('/filtrar_servicios', type='json', auth="user")
-    def filtrar_servicios(self, laboratorio_id):
-        # Buscar los servicios asociados al laboratorio seleccionado
-        servicios = request.env['product.product'].sudo().search([
-            ('product_tmpl_id.unidad_id', '=', 39),
-            ('laboratorio_id', '=', int(laboratorio_id))
-        ])
-
-        # Crear una lista de servicios con los datos necesarios
-        servicios_list = [{'id': servicio.id, 'name': servicio.name, 'price': servicio.lst_price} for servicio in
-                          servicios]
-        return servicios_list
 
     @http.route('/submit/nuevo_presupuesto', type='http', auth="user", website=True, methods=['POST'])
     def submit_nuevo_presupuesto(self, **post):
         # Obtener los datos del formulario
         sucursal = post.get('sucursal')
-        laboratory = []
+
+        # Inicializar listas para los ítems
         servicios = []
         cantidades = []
         line_totals = []
 
-        # Obtener el laboratorio por nombre
-        # laboratorio = request.env['intn.laboratorios'].sudo().search([('name', '=', laboratory)], limit=1)
-
-        # if not laboratorio:
-        #     return request.render('error_template', {
-        #         'error_message': 'El laboratorio seleccionado no existe.',
-        #     })
-
+        # Recorrer los datos del formulario y agregar a las listas
         index = 0
         while f"servicio_{index}" in post:
             servicios.append(int(post.get(f"servicio_{index}")))
@@ -281,6 +261,7 @@ class CustomerPortal(CustomerPortal):
             line_totals.append(float(post.get(f"line_total_{index}")))
             index += 1
 
+        # Verificar que todas las listas tengan el mismo tamaño
         if not (len(servicios) == len(cantidades) == len(line_totals)):
             return request.render('error_template', {
                 'error_message': 'Los datos de los ítems no coinciden en tamaño.',
@@ -292,8 +273,6 @@ class CustomerPortal(CustomerPortal):
         # Crear un nuevo presupuesto en el modelo sale.order
         sale_order = request.env['sale.order'].sudo().create({
             'partner_id': partner.id,
-            'sucursal': sucursal,
-            # 'laboratory': laboratory,
             'state': 'draft',
         })
 

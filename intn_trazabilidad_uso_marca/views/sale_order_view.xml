@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="sale_order_form_view" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="priority">5</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@id='action_confirm']" position="after">
+                    <button name="approve_so" id="action_confirm" string="Aprobar" class="btn-primary" type="object"
+                            attrs="{'invisible': [('state', 'not in', ['pending'])]}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

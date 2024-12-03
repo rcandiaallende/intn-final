@@ -42,29 +42,33 @@ class CustomerPortal(CustomerPortal):
             ('state', 'in', ['done', 'cancel'])
         ])
 
-        #partner_habilitado = partner.commercial_partner_id.state_uso_marca == 'habilitado' or partner.commercial_partner_id.mapped('licencia_servicios_ids').filtered(lambda x: x.state == 'done' and x.fecha_vencimiento >= fields.Date.today())
+        # partner_habilitado = partner.commercial_partner_id.state_uso_marca == 'habilitado' or partner.commercial_partner_id.mapped('licencia_servicios_ids').filtered(lambda x: x.state == 'done' and x.fecha_vencimiento >= fields.Date.today())
         partner_habilitado = True
 
         solicitud_impresion = request.env['solicitud.impresiones']
         solicitud_impresion_count = solicitud_impresion.search_count([
             ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
-            ('state', 'in', ['draft','verificado', 'asignado','cancel'])
+            ('state', 'in', ['draft', 'verificado', 'asignado', 'cancel'])
         ])
 
         control_etiquetas = request.env['control.etiquetas']
         control_etiquetas_count = control_etiquetas.search_count([
             ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id])
         ])
-
+        onn_normas = request.env['sale.order']
+        onn_normas_count = onn_normas.search_count([
+            ('service_type', '=', 'onn_normas')
+        ])
 
         values.update({
             'licencia_conformidad_count': licencia_conformidad_count,
             'licencia_conformidad_dos_count': licencia_conformidad_dos_count,
             'licencia_servicios_count': licencia_servicios_count,
             'certificado_conformidad_count': certificado_conformidad_count,
-            'partner_habilitado':partner_habilitado,
-            'solicitud_impresion_count':solicitud_impresion_count,
-            'control_etiquetas_count':control_etiquetas_count
+            'partner_habilitado': partner_habilitado,
+            'solicitud_impresion_count': solicitud_impresion_count,
+            'control_etiquetas_count': control_etiquetas_count,
+            'onn_normas_count': onn_normas_count,
         })
 
         return values
@@ -108,7 +112,7 @@ class CustomerPortal(CustomerPortal):
         )
         # search the count to display, according to the pager data
         licencia_conformidad = licencia_conformidad.search(domain, order=sort_order, limit=self._items_per_page,
-                                                               offset=pager['offset'])
+                                                           offset=pager['offset'])
         request.session['my_licencia_conformidad_history'] = licencia_conformidad.ids[:100]
 
         values.update({
@@ -125,10 +129,11 @@ class CustomerPortal(CustomerPortal):
         return request.render("intn_trazabilidad_uso_marca.portal_my_licencia_conformidad", values)
 
     @http.route(['/my/licencia-conformidad/<int:licencia_id>'], type='http', auth="public", website=True)
-    def portal_licencia_conformidad_page(self, licencia_id, report_type=None, access_token=None, message=False,download=False, **kw):
+    def portal_licencia_conformidad_page(self, licencia_id, report_type=None, access_token=None, message=False,
+                                         download=False, **kw):
         try:
             licencia_conformidad_sudo = self._document_check_access('licencia.conformidad', licencia_id,
-                                                          access_token=access_token)
+                                                                    access_token=access_token)
         except (AccessError, MissingError):
             return request.redirect('/my')
 
@@ -171,7 +176,8 @@ class CustomerPortal(CustomerPortal):
 
         return request.render('intn_trazabilidad_uso_marca.licencia_conformidad_portal_template', values)
 
-    @http.route(['/my/licencia-conformidad-dos', '/my/licencia-conformidad-dos/page/<int:page>'], type='http', auth="user",
+    @http.route(['/my/licencia-conformidad-dos', '/my/licencia-conformidad-dos/page/<int:page>'], type='http',
+                auth="user",
                 website=True)
     def portal_my_licencia_conformidad_dos(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
         values = self._prepare_portal_layout_values()
@@ -210,7 +216,7 @@ class CustomerPortal(CustomerPortal):
         )
         # search the count to display, according to the pager data
         licencia_conformidad_dos = licencia_conformidad_dos.search(domain, order=sort_order, limit=self._items_per_page,
-                                                               offset=pager['offset'])
+                                                                   offset=pager['offset'])
         request.session['my_licencia_conformidad_dos_history'] = licencia_conformidad_dos.ids[:100]
 
         values.update({
@@ -228,11 +234,11 @@ class CustomerPortal(CustomerPortal):
 
     @http.route(['/my/licencia-conformidad-dos/<int:certificado_id>'], type='http', auth="public", website=True)
     def portal_licencia_conformidad_dos_page(self, certificado_id, report_type=None, access_token=None, message=False,
-                                           download=False,
-                                           **kw):
+                                             download=False,
+                                             **kw):
         try:
             licencia_conformidad_dos_sudo = self._document_check_access('licencia.conformidad.dos', certificado_id,
-                                                          access_token=access_token)
+                                                                        access_token=access_token)
         except (AccessError, MissingError):
             return request.redirect('/my')
 
@@ -250,7 +256,8 @@ class CustomerPortal(CustomerPortal):
                 'view_quote_%s' % licencia_conformidad_dos_sudo.id) != now and request.env.user.share and access_token:
             request.session['view_quote_%s' % licencia_conformidad_dos_sudo.id] = now
             body = _('Licencia vista por el cliente')
-            _message_post_helper(res_model='licencia.conformidad.dos', res_id=licencia_conformidad_dos_sudo.id, message=body,
+            _message_post_helper(res_model='licencia.conformidad.dos', res_id=licencia_conformidad_dos_sudo.id,
+                                 message=body,
                                  token=licencia_conformidad_dos_sudo.access_token, message_type='notification',
                                  subtype="mail.mt_note",
                                  partner_ids=licencia_conformidad_dos_sudo.solicitante_id.user_id.sudo().partner_id.ids)
@@ -314,7 +321,7 @@ class CustomerPortal(CustomerPortal):
         )
         # search the count to display, according to the pager data
         licencia_servicios = licencia_servicios.search(domain, order=sort_order, limit=self._items_per_page,
-                                                               offset=pager['offset'])
+                                                       offset=pager['offset'])
         request.session['my_licencia_servicios_history'] = licencia_servicios.ids[:100]
 
         values.update({
@@ -332,11 +339,11 @@ class CustomerPortal(CustomerPortal):
 
     @http.route(['/my/licencia-servicios/<int:certificado_id>'], type='http', auth="public", website=True)
     def portal_licencia_servicios_page(self, certificado_id, report_type=None, access_token=None, message=False,
-                                           download=False,
-                                           **kw):
+                                       download=False,
+                                       **kw):
         try:
             licencia_servicios_sudo = self._document_check_access('licencia.servicios', certificado_id,
-                                                          access_token=access_token)
+                                                                  access_token=access_token)
         except (AccessError, MissingError):
             return request.redirect('/my')
 
@@ -379,7 +386,8 @@ class CustomerPortal(CustomerPortal):
 
         return request.render('intn_trazabilidad_uso_marca.licencia_servicios_portal_template', values)
 
-    @http.route(['/my/certificado-conformidad', '/my/certificado-conformidad/page/<int:page>'], type='http', auth="user", website=True)
+    @http.route(['/my/certificado-conformidad', '/my/certificado-conformidad/page/<int:page>'], type='http',
+                auth="user", website=True)
     def portal_my_certificado_conformidad(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
@@ -417,7 +425,7 @@ class CustomerPortal(CustomerPortal):
         )
         # search the count to display, according to the pager data
         certificado_conformidad = certificado_conformidad.search(domain, order=sort_order, limit=self._items_per_page,
-                                         offset=pager['offset'])
+                                                                 offset=pager['offset'])
         request.session['my_certificado_conformidad_history'] = certificado_conformidad.ids[:100]
 
         values.update({
@@ -433,12 +441,15 @@ class CustomerPortal(CustomerPortal):
 
         return request.render("intn_trazabilidad_uso_marca.portal_my_certificado_conformidad", values)
 
-    @http.route(['/my/certificado-conformidad/<int:certificado_conformidad_id>'], type='http', auth="public", website=True)
-    def portal_certificado_conformidad_page(self, certificado_conformidad_id, report_type=None, access_token=None, message=False, download=False,
-                               **kw):
+    @http.route(['/my/certificado-conformidad/<int:certificado_conformidad_id>'], type='http', auth="public",
+                website=True)
+    def portal_certificado_conformidad_page(self, certificado_conformidad_id, report_type=None, access_token=None,
+                                            message=False, download=False,
+                                            **kw):
         try:
-            certificado_conformidad_sudo = self._document_check_access('certificado.conformidad', certificado_conformidad_id,
-                                                          access_token=access_token)
+            certificado_conformidad_sudo = self._document_check_access('certificado.conformidad',
+                                                                       certificado_conformidad_id,
+                                                                       access_token=access_token)
         except (AccessError, MissingError):
             return request.redirect('/my')
 
@@ -455,7 +466,8 @@ class CustomerPortal(CustomerPortal):
                 'view_quote_%s' % certificado_conformidad_sudo.id) != now and request.env.user.share and access_token:
             request.session['view_quote_%s' % certificado_conformidad_sudo.id] = now
             body = _('certificado_conformidad vista por el cliente')
-            _message_post_helper(res_model='certificado.conformidad', res_id=certificado_conformidad_sudo.id, message=body,
+            _message_post_helper(res_model='certificado.conformidad', res_id=certificado_conformidad_sudo.id,
+                                 message=body,
                                  token=certificado_conformidad_sudo.access_token, message_type='notification',
                                  subtype="mail.mt_note",
                                  partner_ids=certificado_conformidad_sudo.solicitante_id.user_id.sudo().partner_id.ids)
@@ -479,5 +491,3 @@ class CustomerPortal(CustomerPortal):
         values.update(get_records_pager(history, certificado_conformidad_sudo))
 
         return request.render('intn_trazabilidad_uso_marca.certificado_conformidad_portal_template', values)
-
-
