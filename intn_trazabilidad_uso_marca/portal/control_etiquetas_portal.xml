@@ -46,12 +46,50 @@
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
             <t t-call="portal.portal_searchbar">
-                <t t-set="title">Solicitud de Calibración de Balanzas</t>
+                <t t-set="title">Solicitud de Calibración - METCI</t>
             </t>
             <a role="button" class="btn btn-primary" name="nuevaSolicitudMetci" type="submit" href="/new/control-metci">
                 <i class="fa fa-plus-square-o"/>
                 Nueva Solicitud de Laboratorio
             </a>
+            <!-- Tabla de normas -->
+            <t t-if="orders" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                        <th>Tipo Servicio</th>
+                        <th>Estado Factura</th>
+                        <th>Estado Solicitud</th>
+                    </tr>
+                </thead>
+                <t t-foreach="orders" t-as="order">
+                    <tr>
+                        <td>
+                            <a>
+                                <t t-esc="order.id"/>
+                            </a>
+                        </td>
+                        <td>
+                            <t t-esc="order.name"/>
+                        </td>
+                        <td>
+                            <t t-esc="order.state"/>
+                        </td>
+                        <td>
+                            <t t-esc="order.service_type"/>
+                        </td>
+                        <td>
+                            <span t-if="order.is_paid()" class="badge badge-success">Pagado</span>
+                            <span t-if="not order.is_paid()" class="badge badge-danger">No Pagado</span>
+                        </td>
+                        <td>
+                            <t t-esc="order.calibration_request_id.get_state_string(order.calibration_request_id.state)"/>
+                        </td>
+                    </tr>
+                </t>
+            </t>
         </t>
     </template>
 
@@ -123,6 +161,7 @@
             </div>
         </xpath>
     </template>
+
     <template id="nueva_control_etiquetas" name="Nuevo Control de Etiquetas">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
@@ -377,7 +416,6 @@
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th style="width: 200px">Laboratorio</th>
                                         <th style="width: 400px">Servicio</th>
                                         <th style="width: 100px">Cantidad</th>
                                         <th style="width: 140px">Precio Total</th>
@@ -387,17 +425,6 @@
                                 </thead>
                                 <tbody>
                                     <tr class="item-row" data-index="0">
-                                        <td>
-                                            <div class="form-group">
-                                                <select name="laboratorio_0" class="form-select">
-                                                    <t t-foreach="laboratorios" t-as="laboratorio">
-                                                        <option t-att-value="laboratorio['id']">
-                                                            <t t-esc="laboratorio['name']"/>
-                                                        </option>
-                                                    </t>
-                                                </select>
-                                            </div>
-                                        </td>
                                         <td>
                                             <div class="form-group">
                                                 <select name="servicio_0" class="form-select"
@@ -512,6 +539,7 @@
             </script>
         </div>
     </template>
+
 
     <template id="control_etiquetas_creada" name="Control de Etiquetas Creada">
         <t t-call="portal.portal_layout">

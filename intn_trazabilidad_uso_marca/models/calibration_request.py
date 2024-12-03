@@ -11,6 +11,8 @@ class CalibrationRequest(models.Model):
                                         ('scheduled', 'Orden de trabajo programada')], reaonly=True)
 
     work_date = fields.Date(string="Fecha de programacion de Trabajo")
+    workorder_id = fields.Many2one('mrp.workorder', string='Orden de trabajo')
+    document = fields.Binary("Documento", attachment=True)
 
     def get_state_string(self, state):
         return dict(self._fields['state'].selection).get(state)
