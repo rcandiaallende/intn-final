@@ -246,18 +246,6 @@ class CustomerPortal(CustomerPortal):
         return request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto', {
             'servicios': servicios
         })
-        # for producto in productos:
-        #     precio = producto.lst_price
-
-        # if not laboratorio:
-        #     return request.render('error_template', {
-        #         'error_message': 'El laboratorio seleccionado no existe.',
-        #     })
-        # csrf_token = self.csrf_token()
-
-        return http.request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto',
-                                   {'fecha_actual': fecha_actual, 'servicios': productos_list,
-                                    'partner': partner, 'page_name': 'control_etiquetas'})
 
     @http.route('/submit/nuevo_presupuesto', type='http', auth="user", website=True, methods=['POST'])
     def submit_nuevo_presupuesto(self, **post):
