@@ -198,7 +198,7 @@ class CustomerPortal(CustomerPortal):
         laboratorio = request.env['intn.laboratorios'].sudo().search([])
 
         # productos = request.env['product.product'].sudo().search([('product_tmpl_id.unidad_id', '=', 39)])
-        productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', 6072)])
+        productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', 207)])
         servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', productos.ids)])
 
         productos_list = [{'id': producto.id, 'name': producto.name, 'price': producto.lst_price,
@@ -239,12 +239,25 @@ class CustomerPortal(CustomerPortal):
     @http.route('/nuevo_presupuesto', type='http', auth="user", website=True)
     def nuevo_presupuesto(self, **kw):
         # Buscar productos que sean servicios
-        productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', 6072)])
+        productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', 207)])
         servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', productos.ids)])
 
         # Renderizar el formulario con los servicios disponibles
         return request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto', {
-            'servicios': servicios})
+            'servicios': servicios
+        })
+        # for producto in productos:
+        #     precio = producto.lst_price
+
+        # if not laboratorio:
+        #     return request.render('error_template', {
+        #         'error_message': 'El laboratorio seleccionado no existe.',
+        #     })
+        # csrf_token = self.csrf_token()
+
+        return http.request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto',
+                                   {'fecha_actual': fecha_actual, 'servicios': productos_list,
+                                    'partner': partner, 'page_name': 'control_etiquetas'})
 
     @http.route('/submit/nuevo_presupuesto', type='http', auth="user", website=True, methods=['POST'])
     def submit_nuevo_presupuesto(self, **post):
