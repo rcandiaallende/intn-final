@@ -198,12 +198,12 @@ class CustomerPortal(CustomerPortal):
         laboratorio = request.env['intn.laboratorios'].sudo().search([])
 
         # productos = request.env['product.product'].sudo().search([('product_tmpl_id.unidad_id', '=', 39)])
-        productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', 207)])
-        servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', productos.ids)])
+        productos_1 = request.env['product.template'].sudo().search([('laboratorio_id', '=', 207)])
+        servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', productos_1.ids)])
 
         productos_list = [{'id': producto.id, 'name': producto.name, 'price': producto.lst_price,
                            'additional_cost': 'Si' if producto.product_tmpl_id.additional_cost else 'No'} for producto
-                          in productos]
+                          in servicios]
 
         # for producto in productos:
         #     precio = producto.lst_price
