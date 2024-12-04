@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_wizard_motivo_rechazo" model="ir.ui.view">
+        <field name="name">Motivo Rechazo</field>
+        <field name="model">wizard.motivo.rechazo</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="reason_selection" widget="selection"/>
+                </group>
+                <footer>
+                    <button name="confirm_cancel" string="Confirmar" type="object" class="oe_highlight"/>
+                    <button string="Cancelar" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_motivo_rechazo" model="ir.actions.act_window">
+        <field name="name">Motivo Rechazo</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wizard.motivo.rechazo</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_wizard_motivo_rechazo"/>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

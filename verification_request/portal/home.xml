@@ -1,0 +1,420 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <template id="portal_my_home_bascula" name="Portal My Home : Basculas" inherit_id="portal.portal_my_home"
+                  priority="10">
+            <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+                <!--            <t t-if="solicitud_count">-->
+                <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
+                   href="/my/bascule_verification" title="Solicitudes de verificacion de camiones">
+                    Solicitudes de verificaciones para Básculas
+                    <span class="badge badge-secondary badge-pill">
+                        <t t-esc="solicitudes_camiones_count"/>
+                    </span>
+                </a>
+
+            </xpath>
+        </template>
+
+        <template id="portal_my_control_bascula" name="Solicitud Vericacion Basculas">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Solicitudes de verificaciones de Básculas</t>
+                </t>
+                <a role="button" class="btn btn-primary" name="nuevaSolicitudBascula" type="submit"
+                   href="/new/control-bascula">
+                    <i class="fa fa-plus-square-o"/>
+                    Nueva Solicitud de Verificacion para Basculas
+                </a>
+            </t>
+        </template>
+        <template id="portal_my_certificado_inspeccion" name="Mis Certificados de Inspeccion">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Certificados de Inspección de tanque cisterna</t>
+                </t>
+                <t t-if="not certificado_inspeccion">
+                    <p>Actualmente no tiene Certificados de Inspección de tanque cisterna.</p>
+                </t>
+                <t t-if="certificado_inspeccion" t-call="portal.portal_table">
+                    <thead>
+                        <tr class="active">
+                            <th>Certificado de Inspección de tanque cisterna #</th>
+                            <th class="text-right">Fecha de creación</th>
+                            <th class="text-right">Entrada N°</th>
+                            <th class="text-center"/>
+                            <!--                        <th class="text-right">Total</th>-->
+                        </tr>
+                    </thead>
+                    <t t-foreach="certificado_inspeccion" t-as="ci">
+                        <tr>
+                            <td>
+                                <a t-att-href="ci.get_portal_url()">
+                                    <t t-esc="ci.name"/>
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <span t-field="ci.create_date"/>
+                            </td>
+                            <td class="text-right">
+                                <t t-foreach="ci.order_ids" t-as="o">
+                                    <t t-esc="o.name"/>
+                                </t>
+                            </td>
+                            <td class="text-center">
+                                <span t-if="ci.state == 'cancel'" class="badge badge-pill badge-secondary">
+                                    <i class="fa fa-fw fa-remove"/>
+                                    Cancelado
+                                </span>
+                                <span t-if="ci.state == 'done'" class="badge badge-pill badge-success">
+                                    <i class="fa fa-fw fa-check-square-o"/>
+                                    Confirmado
+                                </span>
+                                <span t-if="ci.state == 'pending'" class="badge badge-pill badge-primary">
+                                    <i class="fa fa-fw fa-clock-o"/>
+                                    Pendiente
+                                </span>
+                            </td>
+                            <!--                        <td class="text-right">-->
+                            <!--                            <span t-field="quotation.amount_total"/>-->
+                            <!--                        </td>-->
+                        </tr>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <template id="certificado_inspeccion_portal_template" name="Certificados de Inspeccion Portal Template"
+                  inherit_id="portal.portal_sidebar" primary="True">
+            <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+                <!--t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
+                    <t t-call="portal.portal_back_in_edit_mode">
+                        <t t-set="backend_url" t-value="'/web#return_label=Website&amp;model=%s&amp;id=%s&amp;action=%s&amp;view_type=form' % (certificado_inspeccion._name, certificado_inspeccion.id)"/>
+                    </t>
+                </t-->
+
+                <div class="row mt16 o_portal_sale_sidebar">
+                    <!-- Sidebar -->
+                    <t t-call="portal.portal_record_sidebar">
+                        <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
+
+                        <!--                    <t t-set="title">-->
+                        <!--                        <h2 class="mb-0"><b t-field="sale_order.amount_total" data-id="total_amount"/> </h2>-->
+                        <!--                    </t>-->
+                        <t t-set="entries">
+                            <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                                <t t-if="certificado_inspeccion.state in ['pending','draft', 'done','cancel']">
+                                    <li class="list-group-item">
+                                        <div class="card-body text-center pb-2 pt-3">
+
+                                            <h3>
+                                                <t t-esc="certificado_inspeccion.name"/>
+                                            </h3>
+
+                                            <p>
+                                                Fecha
+                                            </p>
+                                            <p>
+                                                <i class="fa fa-clock-o" aria-title="Fecha de certificado_inspeccion"
+                                                   title="Fecha"></i>
+                                                <t t-esc="certificado_inspeccion.create_date"/>
+                                            </p>
+                                            <span t-if="certificado_inspeccion.state == 'cancel'"
+                                                  class="badge badge-pill badge-secondary">
+                                                <i class="fa fa-fw fa-remove"/>
+                                                Cancelado
+                                            </span>
+                                            <span t-if="certificado_inspeccion.state == 'done'"
+                                                  class="badge badge-pill badge-success">
+                                                <i class="fa fa-fw fa-check-square-o"/>
+                                                Confirmado
+                                            </span>
+                                            <span t-if="certificado_inspeccion.state == 'pending'"
+                                                  class="badge badge-pill badge-primary">
+                                                <i class="fa fa-fw fa-clock-o"/>
+                                                Pendiente
+                                            </span>
+                                        </div>
+                                    </li>
+                                </t>
+
+                                <li class="list-group-item flex-grow-1">
+                                    <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
+                                        <div class="btn-group flex-grow-1 mr-1 mb-1">
+                                            <a class="btn btn-secondary btn-block o_download_btn"
+                                               t-att-href="certificado_inspeccion.get_portal_url(report_type='pdf', download=True)"
+                                               title="Download">
+                                                <i class="fa fa-download"/>
+                                                Descargar
+                                            </a>
+                                        </div>
+                                        <div class="btn-group flex-grow-1 mb-1">
+                                            <a class="btn btn-secondary btn-block o_print_btn o_portal_invoice_print"
+                                               t-att-href="certificado_inspeccion.get_portal_url(report_type='pdf')"
+                                               id="print_invoice_report" title="Print" target="_blank">
+                                                <i class="fa fa-print"/>
+                                                Imprimir
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li class="navspy list-group-item pl-0 flex-grow-1" t-ignore="true"
+                                    role="complementary">
+                                    <ul class="nav flex-column bs-sidenav"></ul>
+                                </li>
+
+                                <li t-if="certificado_inspeccion.user_id" class="list-group-item flex-grow-1">
+                                    <div class="small mb-1">
+                                        <strong class="text-muted">Su Contacto</strong>
+                                    </div>
+                                    <div class="row flex-nowrap">
+                                        <div class="col flex-grow-0 pr-2">
+                                            <img class="rounded-circle mr4 float-left o_portal_contact_img"
+                                                 t-if="certificado_inspeccion.user_id.image"
+                                                 t-att-src="image_data_uri(certificado_inspeccion.user_id.image)"
+                                                 alt="Contacto"/>
+                                            <img class="rounded-circle mr4 float-left o_portal_contact_img"
+                                                 t-if="not certificado_inspeccion.user_id.image"
+                                                 src="/web/static/src/img/placeholder.png" alt="Contacto"/>
+                                        </div>
+                                        <div class="col pl-0" style="min-width: user_id">
+                                            <span t-field="certificado_inspeccion.user_id"
+                                                  t-options='{"widget": "contact", "fields": ["name", "phone"], "no_marker": True}'/>
+                                            <a href="#discussion" class="small">
+                                                <i class="fa fa-comment"></i>
+                                                Enviar mensaje
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </t>
+                    </t>
+
+                    <!-- Page Content -->
+                    <div id="certificado_inspeccion_content"
+                         class="o_portal_page_content col-12 col-lg d-flex flex-column align-items-end">
+                        <div class="o_portal_page_size">
+                            <t t-if="error or warning" t-call="account.portal_invoice_error"/>
+                            <t t-if="success and (not error and not warning)" t-call="account.portal_invoice_success"/>
+
+                            <div class="o_portal_html_view shadow">
+                                <div class="o_portal_html_loader text-center">
+                                    <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw text-black-50"/>
+                                </div>
+                                <iframe style="min-height:1400px;" id="invoice_html" class="mt8 mb8" width="100%"
+                                        height="100%" frameborder="0" scrolling="no"
+                                        t-att-src="certificado_inspeccion.get_portal_url(report_type='html')"/>
+
+                            </div>
+
+                            <div id="sale_order_communication" class="mt-4">
+                                <h2>Comunicación</h2>
+                                <t t-call="portal.message_thread">
+                                    <t t-set="object" t-value="certificado_inspeccion"/>
+                                </t>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </xpath>
+        </template>
+
+        <template id="portal_my_certificado_verificacion" name="Mis Certificados de Verificacion">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Certificados de Verificación de camiones tanque</t>
+                </t>
+                <t t-if="not certificado_verificacion">
+                    <p>Actualmente no tiene Certificados de Verificación de camiones tanque.</p>
+                </t>
+                <t t-if="certificado_verificacion" t-call="portal.portal_table">
+                    <thead>
+                        <tr class="active">
+                            <th>Certificado de Verificación de camiones tanque #</th>
+                            <th class="text-right">Fecha</th>
+                            <th class="text-right">Entrada N°</th>
+                            <th class="text-center"/>
+                            <!--                        <th class="text-right">Total</th>-->
+                        </tr>
+                    </thead>
+                    <t t-foreach="certificado_verificacion" t-as="ci">
+                        <tr>
+                            <td>
+                                <a t-att-href="ci.get_portal_url()">
+                                    <t t-esc="ci.name"/>
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <span t-field="ci.create_date"/>
+                            </td>
+                            <td class="text-right">
+                                <span t-field="ci.order_id.name"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-if="ci.state == 'cancel'" class="badge badge-pill badge-secondary">
+                                    <i class="fa fa-fw fa-remove"/>
+                                    Cancelado
+                                </span>
+                                <span t-if="ci.state == 'done'" class="badge badge-pill badge-success">
+                                    <i class="fa fa-fw fa-check-square-o"/>
+                                    Confirmado
+                                </span>
+                                <span t-if="ci.state == 'pending'" class="badge badge-pill badge-primary">
+                                    <i class="fa fa-fw fa-clock-o"/>
+                                    Pendiente
+                                </span>
+                            </td>
+                            <!--                        <td class="text-right">-->
+                            <!--                            <span t-field="quotation.amount_total"/>-->
+                            <!--                        </td>-->
+                        </tr>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <template id="certificado_verificacion_portal_template" name="Certificados de Verificacion Portal Template"
+                  inherit_id="portal.portal_sidebar" primary="True">
+            <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+                <!--t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
+                    <t t-call="portal.portal_back_in_edit_mode">
+                        <t t-set="backend_url" t-value="'/web#return_label=Website&amp;model=%s&amp;id=%s&amp;action=%s&amp;view_type=form' % (certificado_verificacion._name, certificado_verificacion.id)"/>
+                    </t>
+                </t-->
+
+                <div class="row mt16 o_portal_sale_sidebar">
+                    <!-- Sidebar -->
+                    <t t-call="portal.portal_record_sidebar">
+                        <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
+
+                        <!--                    <t t-set="title">-->
+                        <!--                        <h2 class="mb-0"><b t-field="sale_order.amount_total" data-id="total_amount"/> </h2>-->
+                        <!--                    </t>-->
+                        <t t-set="entries">
+                            <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                                <t t-if="certificado_verificacion.state in ['pending','draft', 'done','cancel']">
+                                    <li class="list-group-item">
+                                        <div class="card-body text-center pb-2 pt-3">
+
+                                            <h3>
+                                                <t t-esc="certificado_verificacion.name"/>
+                                            </h3>
+
+                                            <p>
+                                                Fecha
+                                            </p>
+                                            <p>
+                                                <i class="fa fa-clock-o" aria-title="Fecha de certificado "
+                                                   title="Fecha"></i>
+                                                <t t-esc="certificado_verificacion.create_date"/>
+                                            </p>
+                                            <span t-if="certificado_verificacion.state == 'cancel'"
+                                                  class="badge badge-pill badge-secondary">
+                                                <i class="fa fa-fw fa-remove"/>
+                                                Cancelado
+                                            </span>
+                                            <span t-if="certificado_verificacion.state == 'done'"
+                                                  class="badge badge-pill badge-success">
+                                                <i class="fa fa-fw fa-check-square-o"/>
+                                                Confirmado
+                                            </span>
+                                            <span t-if="certificado_verificacion.state == 'pending'"
+                                                  class="badge badge-pill badge-primary">
+                                                <i class="fa fa-fw fa-clock-o"/>
+                                                Pendiente
+                                            </span>
+                                        </div>
+                                    </li>
+                                </t>
+
+                                <li class="list-group-item flex-grow-1">
+                                    <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
+                                        <div class="btn-group flex-grow-1 mr-1 mb-1">
+                                            <a class="btn btn-secondary btn-block o_download_btn"
+                                               t-att-href="certificado_verificacion.get_portal_url(report_type='pdf', download=True)"
+                                               title="Download">
+                                                <i class="fa fa-download"/>
+                                                Descargar
+                                            </a>
+                                        </div>
+                                        <div class="btn-group flex-grow-1 mb-1">
+                                            <a class="btn btn-secondary btn-block o_print_btn o_portal_invoice_print"
+                                               t-att-href="certificado_verificacion.get_portal_url(report_type='pdf')"
+                                               id="print_invoice_report" title="Print" target="_blank">
+                                                <i class="fa fa-print"/>
+                                                Imprimir
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li class="navspy list-group-item pl-0 flex-grow-1" t-ignore="true"
+                                    role="complementary">
+                                    <ul class="nav flex-column bs-sidenav"></ul>
+                                </li>
+
+                                <!--li t-if="v.user_id" class="list-group-item flex-grow-1">
+                                    <div class="small mb-1"><strong class="text-muted">Su Contacto</strong></div>
+                                    <div class="row flex-nowrap">
+                                        <div class="col flex-grow-0 pr-2">
+                                            <img class="rounded-circle mr4 float-left o_portal_contact_img" t-if="certificado_verificacion.user_id.image" t-att-src="image_data_uri(certificado_verificacion.user_id.image)" alt="Contacto"/>
+                                            <img class="rounded-circle mr4 float-left o_portal_contact_img" t-if="not certificado_verificacion.user_id.image" src="/web/static/src/img/placeholder.png" alt="Contacto"/>
+                                        </div>
+                                        <div class="col pl-0" style="min-width: user_id">
+                                            <span t-field="certificado_verificacion.user_id" t-options='{"widget": "contact", "fields": ["name", "phone"], "no_marker": True}'/>
+                                            <a href="#discussion" class="small"><i class="fa fa-comment"></i> Enviar mensaje</a>
+                                        </div>
+                                    </div>
+                                </li-->
+                            </ul>
+                        </t>
+                    </t>
+
+                    <!-- Page Content -->
+                    <div id="certificado_verificacion_content"
+                         class="o_portal_page_content col-12 col-lg d-flex flex-column align-items-end">
+                        <div class="o_portal_page_size">
+                            <t t-if="error or warning" t-call="account.portal_invoice_error"/>
+                            <t t-if="success and (not error and not warning)" t-call="account.portal_invoice_success"/>
+
+                            <div class="o_portal_html_view shadow">
+                                <div class="o_portal_html_loader text-center">
+                                    <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw text-black-50"/>
+                                </div>
+                                <iframe style="min-height:1400px;" id="invoice_html" class="mt8 mb8" width="100%"
+                                        height="100%" frameborder="0" scrolling="no"
+                                        t-att-src="certificado_verificacion.get_portal_url(report_type='html')"/>
+
+                            </div>
+
+                            <div id="sale_order_communication" class="mt-4">
+                                <h2>Comunicación</h2>
+                                <t t-call="portal.message_thread">
+                                    <t t-set="object" t-value="certificado_verificacion"/>
+                                </t>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </xpath>
+        </template>
+
+
+    </data>
+
+</odoo>

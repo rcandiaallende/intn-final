@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Vista de árbol -->
+    <record id="view_annual_route_sheet_tree" model="ir.ui.view">
+        <field name="name">annual.route.sheet.tree</field>
+        <field name="model">annual.route.sheet</field>
+        <field name="arch" type="xml">
+            <tree string="Hojas de Ruta Anual Basculas">
+                <field name="state_id" widget="many2many_tags"/>
+                <field name="month"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de formulario -->
+    <record id="view_annual_route_sheet_form" model="ir.ui.view">
+        <field name="name">annual.route.sheet.form</field>
+        <field name="model">annual.route.sheet</field>
+        <field name="arch" type="xml">
+            <form string="Hojas de Ruta Anual Basculas">
+                <sheet>
+                    <group>
+                        <field name="state_id" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                        <field name="month" required="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para acceder al modelo -->
+    <record id="action_annual_route_sheet" model="ir.actions.act_window">
+        <field name="name">Hojas de Ruta Anual Basculas</field>
+        <field name="res_model">annual.route.sheet</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menú para el modelo -->
+    <menuitem id="menu_annual_route_sheet_root" name="Hoja de Ruta" sequence="10" />
+    <menuitem id="menu_annual_route_sheet" name="Hojas de Ruta Anual Basculas"
+              parent="menu_annual_route_sheet_root"
+              action="action_annual_route_sheet"
+              sequence="20"/>
+</odoo>

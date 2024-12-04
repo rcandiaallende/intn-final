@@ -1,0 +1,35 @@
+# -*- coding: utf-8 -*-
+{
+    "name": "Verification Request",
+    "version": "12.0.0.0",
+    "depends": ['base_setup', 'base', 'mrp', 'portal', 'registro_medicion', 'sale', 'segel_factura_electronica'],
+    "author": "Segel S.A.",
+    "summary": "Verification request",
+    "description": """
+            Verification Request
+    """,
+    'category': 'General',
+    "data": [
+        'security/ir.model.access.csv',
+        'data/ir_sequence_data.xml',
+        'views/verification_request_views.xml',
+        'views/annual_route_sheet.xml',
+        'views/instrument_views.xml',
+        'views/mobile_views.xml',
+        'views/impossibility_views.xml',
+        'views/last_scale_check_views.xml',
+        'views/cron_app_basculas.xml',
+        'views/menuitem.xml',
+        # 'views/account_invoice.xml',
+        # 'views/tecnico_metrologia.xml',
+        'portal/home.xml',
+        # 'portal/registry_portal.xml',
+        'portal/solicitud_agendamiento.xml',
+        'reports/impossibility_template.xml',
+        'reports/report_configs.xml',
+        # 'wizard/motivo_rechazo.xml',
+    ],
+    'qweb': [],
+    "auto_install": False,
+    "installable": True,
+}

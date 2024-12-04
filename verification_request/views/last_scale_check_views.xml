@@ -1,0 +1,39 @@
+<odoo>
+    <record id="view_last_scale_check_tree" model="ir.ui.view">
+        <field name="name">last.scale.check.tree</field>
+        <field name="model">last.scale.check</field>
+        <field name="arch" type="xml">
+            <tree string="Ultima fecha verificacion bascula">
+                <field name="cliente_id"/>
+                <field name="ultima_fecha_verificacion"/>
+                <field name="fecha_vencimiento"/>
+                <field name="resultado_ultima_verificacion"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_last_scale_check_form" model="ir.ui.view">
+        <field name="name">last.scale.check.form</field>
+        <field name="model">last.scale.check</field>
+        <field name="arch" type="xml">
+            <form string="Last Scale Check">
+                <sheet>
+                    <group>
+                        <field name="cliente_id"/>
+                        <field name="ultima_fecha_verificacion"/>
+                        <field name="fecha_vencimiento" readonly="1"/>
+                        <field name="resultado_ultima_verificacion"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_last_scale_check" model="ir.actions.act_window">
+        <field name="name">Ultima fecha verificacion bascula</field>
+        <field name="res_model">last.scale.check</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_last_scale_check_root" name="Ultima fecha verificacion bascula" sequence="10" parent="base.menu_custom" action="action_last_scale_check"/>
+</odoo>

@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access.verification.request,verification.request,model_verification_request,,1,1,1,1
+access.annual.route.sheet,annual.route.sheet,model_annual_route_sheet,,1,1,1,1
+access.last.scale.check,last.scale.check,model_last_scale_check,,1,1,1,1
+access.instrument,instrument,model_instrument,,1,1,1,1
+access.impossibility_act,impossibility_act,model_impossibility_act,,1,1,1,1
+access.mobile,mobile,model_mobile,,1,1,1,1
+access_wizard_motivo_rechazo,wizard.motivo.rechazo,model_wizard_motivo_rechazo,,1,1,1,1

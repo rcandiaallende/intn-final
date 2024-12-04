@@ -1,0 +1,762 @@
+<odoo>
+    <data>
+        <template id="verification_request.portal_my_bascule_verification" name="Mis Solicitudes">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Solicitudes</t>
+                </t>
+                <a role="button" class="btn btn-primary" href="/verification_request/new/solicitud">
+                    <i class="fa fa-plus-square-o"/>
+                    Nueva Solicitud
+                </a>
+                <br></br>
+                <br></br>
+                <t t-if="not quotations">
+                    <p>Actualmente no tiene solicitudes.</p>
+                </t>
+                <t t-if="quotations" t-call="portal.portal_table">
+                    <thead>
+                        <tr class="active">
+                            <th>Solicitud #</th>
+                            <th class="text-right">Fecha de solicitud</th>
+                            <th class="text-right">Técnico</th>
+                            <th class="text-right">Estado</th>
+                            <th class="text-center">Documento</th>
+                        </tr>
+                    </thead>
+                    <t t-foreach="quotations" t-as="solicitud">
+                        <tr>
+                            <td>
+                                <a>
+                                    <t t-esc="solicitud.name"/>
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <span t-field="solicitud.request_date"/>
+                            </td>
+                            <td class="text-right">
+                                <span t-field="solicitud.designation"/>
+                            </td>
+                            <td class="text-right">
+                                <span t-field="solicitud.state"/>
+                                <i t-att-class="solicitud.get_state_icon(solicitud.state)"/>
+                            </td>
+                            <td class="text-center">
+                                <t t-if="solicitud.state not in ['cancel','pending', 'canceled_due_closure']">
+                                    <a class="btn btn-secondary btn-block o_download_btn"
+                                       t-att-href="solicitud.get_portal_url(report_type='pdf', download=True)"
+                                       title="Download">
+                                        <i class="fa fa-print"/>
+                                        Descargar
+                                    </a>
+                                </t>
+                                <t t-else="">
+                                    <span class="badge badge-pill badge-secondary">No Disponible</span>
+                                </t>
+                            </td>
+                        </tr>
+                    </t>
+                </t>
+            </t>
+        </template>
+        <template id="nueva_solicitud" name="Nueva Solicitud">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Solicitudes de Verificación</t>
+                </t>
+
+                <div class="o_portal_page_content col-12 col-lg d-flex flex-column shadow"
+                     style="padding:0 !important;background:white;">
+                    <div class="o_portal_page_size">
+                        <div class="container" style="padding:15px !important;margin-left:auto;margin-right:auto;">
+                            <style>
+                                label{
+                                padding-top:10px;padding-bottom:10px;
+                                font-size:14px;
+                                }
+                                input[type=text],input[type=date],input[type=datetime],input[type=file], select {
+                                width: 100% !important;
+                                padding: 12px 20px;
+                                margin: 8px 0;
+                                display: inline-block;
+                                border: 1px solid #ccc;
+                                border-radius: 4px;
+                                box-sizing: border-box;
+                                }
+
+                                input[type=submit] {
+                                width: 100%;
+                                background-color: #4CAF50;
+                                color: white;
+                                padding: 14px 20px;
+                                margin: 8px 0;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                }
+
+                                input[type=submit]:hover {
+                                background-color: #45a049;
+                                }
+
+                                .div-form {
+                                border-radius: 5px;
+                                background-color: #f2f2f2;
+                                padding: 20px;
+                                }
+                                .title{
+                                font-weight: bold;
+                                font-size: 16px;
+                                margin-top: 15px;
+                                margin-bottom: 15px;
+                                }
+                            </style>
+
+                            <h1 style="text-align:center">Nueva Solicitud de verificación</h1>
+                            <br></br>
+                            <div class="div-form">
+                                <form id="formServicio" action="/verification_request/save/solicitud" method="post"
+                                      enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label for="partner">Cliente:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <input type="text" id="partner" name="partner" t-att-value="partner.name"
+                                                   disabled="disabled" style="width:100%"
+                                                   required="required"/>
+                                        </div>
+
+
+                                        <div class="col-md-2">
+                                            <label for="quantity">Instrumento</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <select name="instrument" id="quantity" required="required"
+                                            >
+                                                <option value=""></option>
+                                                <t t-if="instruments">
+                                                    <t t-foreach="instruments" t-as="b">
+                                                        <option t-att-value="b.id" t-esc="b.description"
+                                                                selected="selected" id="instrument"/>
+                                                    </t>
+                                                </t>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label for="quantity">Cantidad:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <input type="number" placeholder="1" id="quantity" name="quantity"
+                                                   required="required"
+                                            />
+                                            <br/>
+                                            * Solo valores numéricos.
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="request_date">Fecha de solicitud:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <input type="date" id="request_date"
+                                                   name="request_date"/>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="request_date2">Fecha de agendamiento:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <input type="date" id="request_date2"
+                                                   name="request_date2"/>
+                                        </div>
+                                    </div>
+                                    <!--                                    <div class="row">-->
+                                    <!--                                        <div class="col-md-12">-->
+                                    <!--                                            <span class="title">-->
+                                    <!--                                                Datos de Contacto-->
+                                    <!--                                            </span>-->
+                                    <!--                                        </div>-->
+                                    <!--                                        <div class="col-md-2">-->
+                                    <!--                                            <label for="nombre_contacto">Nombre:</label>-->
+                                    <!--                                        </div>-->
+                                    <!--                                        <div class="col-md-10">-->
+                                    <!--                                            <input type="text" id="nombre_contacto" name="nombre_contacto"-->
+                                    <!--                                                   required="required" onchange="cambioFecha()"/>-->
+                                    <!--                                        </div>-->
+                                    <!--                                        <div class="col-md-2">-->
+                                    <!--                                            <label for="telefono_contacto">Teléfono:</label>-->
+                                    <!--                                        </div>-->
+                                    <!--                                        <div class="col-md-10">-->
+                                    <!--                                            <input type="text" id="telefono_contacto" name="telefono_contacto"-->
+                                    <!--                                                   required="required" onchange="cambioFecha()"/>-->
+                                    <!--                                        </div>-->
+                                    <!--                                    </div>-->
+                                    <!--                                    <div class="row">-->
+                                    <!--                                        <div class="col-md-12">-->
+                                    <!--                                            <span class="title">-->
+                                    <!--                                                Datos del representante y/o encargado del emblema-->
+                                    <!--                                            </span>-->
+                                    <!--                                        </div>-->
+                                    <!--                                        <div class="col-md-2">-->
+                                    <!--                                            <label for="emblema_contacto">Nombre:</label>-->
+                                    <!--                                        </div>-->
+                                    <!--                                        <div class="col-md-10">-->
+                                    <!--                                            <input type="text" id="emblema_contacto" name="emblema_contacto"-->
+                                    <!--                                                   required="required" onchange="cambioFecha()"/>-->
+                                    <!--                                        </div>-->
+                                    <!--                                        <div class="col-md-2">-->
+                                    <!--                                            <label for="telefono_emblema_contacto">Teléfono:</label>-->
+                                    <!--                                        </div>-->
+                                    <!--                                        <div class="col-md-10">-->
+                                    <!--                                            <input type="text" id="telefono_emblema_contacto"-->
+                                    <!--                                                   name="telefono_emblema_contacto" required="required"-->
+                                    <!--                                                   onchange="cambioFecha()"/>-->
+                                    <!--                                        </div>-->
+                                    <!--                                        <div class="col-md-12" style="font-size:16px;color:orange">-->
+                                    <!--                                            &lt;!&ndash;                                            Todo lo declarado en ésta solicitud se tomará como una declaración jurada.&ndash;&gt;-->
+                                    <!--                                            &lt;!&ndash;                                            <br/>&ndash;&gt;-->
+                                    <!--                                            &lt;!&ndash;                                            Se solicita avisar 48 hs antes si tienen algún inconveniente para asistir.&ndash;&gt;-->
+
+                                    <!--                                            <p>El presente documento y los datos consignados tendrá carácter de-->
+                                    <!--                                                declaración jurada, y su parciamiento hará-->
+                                    <!--                                                responsable civil y penalmente al recurrente.-->
+                                    <!--                                            </p>-->
+                                    <!--                                            <p>Se solicita avisar 48 hs antes si tienen algún inconveniente para-->
+                                    <!--                                                asistir.-->
+                                    <!--                                            </p>-->
+                                    <!--                                        </div>-->
+                                    <!--                                    </div>-->
+                                    <br></br>
+                                    <div class="col-md-12" id="mensaje" style="font-size:16px;color:red"/>
+                                    <label for="observation">Observaciones</label>
+                                    <input type="text"
+                                           name="observation" id="observation"/>
+                                    <div class="table-responsive">
+                                        <div style="padding-top:20px">
+                                            <button type="submit" id="guardarSolicitud"
+                                                    class="btn btn-primary">Guardar
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                </form>
+                                <!-- Modal -->
+                                <div class="modal fade" id="modalCamionNuevo" role="dialog">
+                                    <style>
+                                        label{
+                                        padding-top:10px;padding-bottom:10px;
+                                        font-size:14px;
+                                        }
+                                        input[type=text],input[type=date],input[type=number], select {
+                                        width: 100% !important;
+                                        padding: 12px 20px;
+                                        margin: 8px 0;
+                                        display: inline-block;
+                                        border: 1px solid #ccc;
+                                        border-radius: 4px;
+                                        box-sizing: border-box;
+                                        }
+
+                                        input[type=submit] {
+                                        width: 100%;
+                                        background-color: #4CAF50;
+                                        color: white;
+                                        padding: 14px 20px;
+                                        margin: 8px 0;
+                                        border: none;
+                                        border-radius: 4px;
+                                        cursor: pointer;
+                                        }
+
+                                        input[type=submit]:hover {
+                                        background-color: #45a049;
+                                        }
+
+                                        .div-form {
+                                        border-radius: 5px;
+                                        background-color: #f2f2f2;
+                                        padding: 20px;
+                                        }
+                                        .title{
+                                        font-weight: bold;
+                                        font-size: 16px;
+                                        margin-top: 15px;
+                                        margin-bottom: 15px;
+                                        }
+                                    </style>
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Crear un nuevo camión</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="true">x</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="div-form">
+                                                    <form id="formCamion" action="/verification_request/save/solicitud">
+                                                        <div class="row">
+                                                            <div class="col-md-3">
+                                                                <label for="marca">Marca:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <select name="marca" id="marca" required="required">
+                                                                    <option value=""></option>
+                                                                    <t t-foreach="marcas" t-as="m">
+                                                                        <option t-att-value="m.id" t-esc="m.name"/>
+                                                                    </t>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label for="marca">Modelo:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <select name="modelo" id="modelo">
+                                                                    <option value=""></option>
+                                                                    <t t-foreach="modelos" t-as="m">
+                                                                        <option t-att-value="m.id" t-esc="m.name"/>
+                                                                    </t>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label for="fecha_solicitud">Año:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="number" id="year" name="year"
+                                                                       required="required"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Chasis:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" id="chasis" name="chasis"
+                                                                       required="required"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Fabricante cisterna:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <select name="fabricante" id="fabricante"
+                                                                        required="required">
+                                                                    <option value=""></option>
+                                                                    <t t-foreach="marcas" t-as="b">
+                                                                        <option t-att-value="b.id" t-esc="b.name"/>
+                                                                    </t>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Año de Fabricación:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="number" id="year_fabricacion"
+                                                                       name="year_fabricacion" required="required"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Emblema:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <select name="emblema" id="emblema" required="required">
+                                                                    <option value=""></option>
+                                                                    <t t-foreach="emblemas" t-as="b">
+                                                                        <option t-att-value="b.id" t-esc="b.name"/>
+                                                                    </t>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Código del Emblema:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" id="codigo_emblema"
+                                                                       name="codigo_emblema" required="required"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Matricula del camión:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" id="matricula_camion"
+                                                                       name="matricula_camion" required="required"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Matricula de la cisterna:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" id="matricula_cisterna"
+                                                                       name="matricula_cisterna" required="required"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Cantidad de compartimientos:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="number" id="cantidad_compartimientos"
+                                                                       name="cantidad_compartimientos"
+                                                                       required="required"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Capacidad:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="number" id="capacidad" name="capacidad"
+                                                                       required="required"/>
+                                                            </div>
+                                                            <input type="text" readonly="1" style="display:none"
+                                                                   t-att-value="partner.id" name="partner"
+                                                                   id="partner"/>
+                                                            <div class="table-responsive">
+                                                                <div style="padding:20px">
+                                                                    <button id="guardarCamion" name="guardarCamion"
+                                                                            type="submit" class="btn btn-primary"
+                                                                            onclick="return confirm('¿Confirma los datos cargados?')">
+                                                                        Guardar
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                        Cerrar
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="modalAcopladoNuevo" role="dialog">
+                                    <style>
+                                        label{
+                                        padding-top:10px;padding-bottom:10px;
+                                        font-size:14px;
+                                        }
+                                        input[type=text],input[type=date],input[type=number], select {
+                                        width: 100% !important;
+                                        padding: 12px 20px;
+                                        margin: 8px 0;
+                                        display: inline-block;
+                                        border: 1px solid #ccc;
+                                        border-radius: 4px;
+                                        box-sizing: border-box;
+                                        }
+
+                                        input[type=submit] {
+                                        width: 100%;
+                                        background-color: #4CAF50;
+                                        color: white;
+                                        padding: 14px 20px;
+                                        margin: 8px 0;
+                                        border: none;
+                                        border-radius: 4px;
+                                        cursor: pointer;
+                                        }
+
+                                        input[type=submit]:hover {
+                                        background-color: #45a049;
+                                        }
+
+                                        .div-form {
+                                        border-radius: 5px;
+                                        background-color: #f2f2f2;
+                                        padding: 20px;
+                                        }
+                                        .title{
+                                        font-weight: bold;
+                                        font-size: 16px;
+                                        margin-top: 15px;
+                                        margin-bottom: 15px;
+                                        }
+                                    </style>
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Crear un nuevo acoplado</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="true">x</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="div-form">
+                                                    <form id="formAcoplado" action="/camiones/save/acoplado">
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <label for="marca">Marca:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <select name="marca_acople" id="marca_acople"
+                                                                        required="required">
+                                                                    <option value=""></option>
+                                                                    <t t-foreach="marcas" t-as="m">
+                                                                        <option t-att-value="m.id" t-esc="m.name"/>
+                                                                    </t>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Fabricante cisterna:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <select name="fabricante_acople" id="fabricante_acople"
+                                                                        required="required">
+                                                                    <option value=""></option>
+                                                                    <t t-foreach="marcas" t-as="b">
+                                                                        <option t-att-value="b.id" t-esc="b.name"/>
+                                                                    </t>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Año de Fabricación:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="number" id="year_fabricacion_acople"
+                                                                       name="year_fabricacion_acople"
+                                                                       required="required"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Chasis:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" id="chasis_acople"
+                                                                       name="chasis_acople" required="required"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Matricula:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" id="matricula_acople"
+                                                                       name="matricula_acople" required="required"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Cantidad de compartimientos:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="number"
+                                                                       id="cantidad_compartimientos_acople"
+                                                                       name="cantidad_compartimientos_acople"
+                                                                       required="required"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Capacidad:</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="number" id="capacidad_acople"
+                                                                       name="capacidad_acople" required="required"/>
+                                                            </div>
+                                                            <input type="text" readonly="1" style="display:none"
+                                                                   t-att-value="partner.id" name="partner"
+                                                                   id="partner"/>
+                                                            <div class="table-responsive">
+                                                                <div style="padding:20px">
+                                                                    <button id="guardarAcoplado" name="guardarAcoplado"
+                                                                            type="submit" class="btn btn-primary"
+                                                                            onclick="return confirm('¿Confirma los datos cargados?')">
+                                                                        Guardar
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                        Cerrar
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="solicitud_creada" name="Solicitud Creada">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Solicitudes</t>
+                </t>
+
+                <div class="o_portal_page_content col-12 col-lg d-flex flex-column shadow"
+                     style="padding:0 !important;background:white;">
+                    <div class="o_portal_page_size">
+                        <div class="container" style="padding:15px !important;margin-left:auto;margin-right:auto;">
+
+                            <h3 style="text-align:center">SE HA CREADO SU AGENDAMIENTO CORRECTAMENTE CON EL NÚMERO
+                                <a href="/my/bascule_verification">
+                                    <t t-esc="solicitud.name"/>
+                                </a>
+                            </h3>
+                            <h2 style="text-align:center">
+                                Le esperamos en la fecha agendada
+                                <a href="/my/bascule_verification">
+                                    <t t-esc="solicitud.request_date2.strftime('%d/%m/%Y')"/>
+                                </a>
+                                , por favor avisar 48 hs antes si tienen algún inconveniente para asistir.
+
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="solicitud_agendamiento_portal_template" name="Solicitudes de verificación de camiones"
+                  inherit_id="portal.portal_sidebar" primary="True">
+            <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+                <!--t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
+                    <t t-call="portal.portal_back_in_edit_mode">
+                        <t t-set="backend_url" t-value="'/web#return_label=Website&amp;model=%s&amp;id=%s&amp;action=%s&amp;view_type=form' % (solicitud.name, solicitud.id)"/>
+                    </t>
+                </t-->
+
+                <div class="row mt16 o_portal_sale_sidebar">
+                    <!-- Sidebar -->
+                    <t t-call="portal.portal_record_sidebar">
+                        <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
+
+                        <!--                    <t t-set="title">-->
+                        <!--                        <h2 class="mb-0"><b t-field="sale_order.amount_total" data-id="total_amount"/> </h2>-->
+                        <!--                    </t>-->
+                        <t t-set="entries">
+                            <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                                <t t-if="solicitud.state in ['pending','draft', 'done','cancel']">
+                                    <li class="list-group-item">
+                                        <div class="card-body text-center pb-2 pt-3">
+
+                                            <h3>
+                                                <t t-esc="solicitud.name"/>
+                                            </h3>
+
+                                            <p>
+                                                Fecha de Solicitud
+                                            </p>
+                                            <p>
+                                                <i class="fa fa-clock-o" aria-title="Fecha de Solicitud"
+                                                   title="Fecha de solicitud"></i>
+                                                <t t-if="solicitud.fecha_solicitud">
+                                                    <t t-esc="solicitud.fecha_solicitud.strftime('%d/%m/%Y')"/>
+                                                </t>
+                                            </p>
+                                            <span t-if="solicitud.state == 'cancel'"
+                                                  class="badge badge-pill badge-secondary">
+                                                <i class="fa fa-fw fa-remove"/>
+                                                Cancelado
+                                            </span>
+                                            <span t-if="solicitud.state == 'done'"
+                                                  class="badge badge-pill badge-success">
+                                                <i class="fa fa-fw fa-check-square-o"/>
+                                                Confirmado
+                                            </span>
+                                            <span t-if="solicitud.state == 'reagendado'"
+                                                  class="badge badge-pill badge-success">
+                                                <i class="fa fa-fw fa-check-square-o"/>
+                                                Reagendado
+                                            </span>
+                                            <span t-if="solicitud.state == 'pending'"
+                                                  class="badge badge-pill badge-primary">
+                                                <i class="fa fa-fw fa-clock-o"/>
+                                                Pendiente
+                                            </span>
+                                        </div>
+                                    </li>
+                                </t>
+
+                                <li class="list-group-item flex-grow-1">
+                                    <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
+                                        <div class="btn-group flex-grow-1 mr-1 mb-1">
+                                            <a class="btn btn-secondary btn-block o_download_btn"
+                                               t-att-href="solicitud.get_portal_url(report_type='pdf', download=True)"
+                                               title="Download">
+                                                <i class="fa fa-download"/>
+                                                Descargar
+                                            </a>
+                                        </div>
+                                        <div class="btn-group flex-grow-1 mb-1">
+                                            <a class="btn btn-secondary btn-block o_print_btn o_portal_invoice_print"
+                                               t-att-href="solicitud.get_portal_url(report_type='pdf')"
+                                               id="print_invoice_report" title="Print" target="_blank">
+                                                <i class="fa fa-print"/>
+                                                Imprimir
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li class="navspy list-group-item pl-0 flex-grow-1" t-ignore="true"
+                                    role="complementary">
+                                    <ul class="nav flex-column bs-sidenav"></ul>
+                                </li>
+
+
+                                <li t-if="solicitud.user_id" class="list-group-item flex-grow-1">
+                                    <div class="small mb-1">
+                                        <strong class="text-muted">Su Contacto</strong>
+                                    </div>
+                                    <div class="row flex-nowrap">
+                                        <div class="col flex-grow-0 pr-2">
+                                            <img class="rounded-circle mr4 float-left o_portal_contact_img"
+                                                 t-if="solicitud.user_id.image"
+                                                 t-att-src="image_data_uri(solicitud.user_id.image)" alt="Contacto"/>
+                                            <img class="rounded-circle mr4 float-left o_portal_contact_img"
+                                                 t-if="not solicitud.user_id.image"
+                                                 src="/web/static/src/img/placeholder.png" alt="Contacto"/>
+                                        </div>
+                                        <div class="col pl-0" style="min-width: user_id">
+                                            <span t-field="solicitud.user_id"
+                                                  t-options='{"widget": "contact", "fields": ["name", "phone"], "no_marker": True}'/>
+                                            <a href="#discussion" class="small">
+                                                <i class="fa fa-comment"></i>
+                                                Enviar mensaje
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </t>
+                    </t>
+
+                    <!-- Page Content -->
+                    <div id="invoice_content"
+                         class="o_portal_page_content col-12 col-lg d-flex flex-column align-items-end">
+                        <div class="o_portal_page_size">
+                            <t t-if="error or warning" t-call="account.portal_invoice_error"/>
+                            <t t-if="success and (not error and not warning)" t-call="account.portal_invoice_success"/>
+
+                            <div class="o_portal_html_view shadow">
+                                <div class="o_portal_html_loader text-center">
+                                    <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw text-black-50"/>
+                                </div>
+                                <iframe style="min-height:800px;" id="invoice_html" class="mt8 mb8" width="100%"
+                                        height="100%" frameborder="0" scrolling="no"
+                                        t-att-src="solicitud.get_portal_url(report_type='html')"/>
+
+                            </div>
+
+                            <div id="sale_order_communication" class="mt-4">
+                                <h2>Comunicación</h2>
+                                <t t-call="portal.message_thread">
+                                    <t t-set="object" t-value="solicitud"/>
+                                </t>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </xpath>
+        </template>
+
+
+    </data>
+</odoo>

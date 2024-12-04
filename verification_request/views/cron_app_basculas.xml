@@ -1,0 +1,17 @@
+<odoo>
+    <data>
+
+        <!-- Cron job to execute every 10 minutes -->
+        <record id="ir_cron_verification_request" model="ir.cron">
+            <field name="name">Verificar Basculas cada 1 minutos</field>
+            <field name="model_id" ref="model_verification_request"/>
+            <field name="state">code</field>
+            <field name="code">model._verify_data_app()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>  <!-- -1 means it runs indefinitely -->
+            <field name="active">False</field>
+        </record>
+
+    </data>
+</odoo>

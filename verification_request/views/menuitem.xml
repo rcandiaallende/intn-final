@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_verification_request"
+                  name="Planificación"
+                  parent="contacts.res_partner_menu_config"
+                  action="verification_request_view_action"/>
+
+        <menuitem id="menu_instrument"
+                  name="Instrumentos"
+                  parent="contacts.res_partner_menu_config"
+                  action="instrument_view_action"/>
+
+        <menuitem id="menu_mobile"
+                  name="Vehículos"
+                  parent="contacts.res_partner_menu_config"
+                  action="mobile_view_action"/>
+    </data>
+</odoo>

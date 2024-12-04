@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <template id="registry_portal" name="Registry Portal" inherit_id="portal.registry_portal">
+            <xpath expr="//div[@id='portal_content']" position="replace">
+                <div id="portal_registry_entries">
+                    <h2>Registro de Certificados</h2>
+                    <form action="/registry/search" method="POST">
+                        <input type="text" name="search" placeholder="Buscar por documento"/>
+                        <t t-set="countries" t-value="request.env['res.country'].sudo().search([])"/>
+                        <select name="country_id">
+                            <option value="">Seleccione un país</option>
+                            <t t-foreach="countries" t-as="country">
+                                <option t-att-value="country.id">
+                                    <t t-esc="country.name"/>
+                                </option>
+                            </t>
+                        </select>
+                        <button type="submit">Buscar</button>
+                    </form>
+<!--                    <t t-if="registry_entries">-->
+<!--                        <ul>-->
+<!--                            <t t-foreach="registry_entries" t-as="entry">-->
+<!--                                <li>-->
+<!--                                    <span>-->
+<!--                                        <t t-esc="entry.name"/>-->
+<!--                                    </span>-->
+<!--                                    <span>-->
+<!--                                        <t t-esc="entry.document_number"/>-->
+<!--                                    </span>-->
+<!--                                    <span>-->
+<!--                                        <t t-esc="entry.country_id.name"/>-->
+<!--                                    </span> &lt;!&ndash; Mostrar País &ndash;&gt;-->
+<!--                                    <span>-->
+<!--                                        <t t-esc="entry.registration_date"/>-->
+<!--                                    </span>-->
+<!--                                    <span>-->
+<!--                                        <t t-esc="entry.status"/>-->
+<!--                                    </span>-->
+<!--                                </li>-->
+<!--                            </t>-->
+<!--                        </ul>-->
+<!--                    </t>-->
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

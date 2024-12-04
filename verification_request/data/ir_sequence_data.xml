@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_verification_request" model="ir.sequence">
+            <field name="name">Verification Request</field>
+            <field name="code">sequence.verification.request</field>
+            <field name="prefix">SV</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+    <data noupdate="1">
+        <record id="seq_impossibility_act" model="ir.sequence">
+            <field name="name">Imposibility Act</field>
+            <field name="code">sequence.impossibility.act</field>
+            <field name="prefix">AI</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+
+    <data noupdate="1">
+        <record id="seq_instrument" model="ir.sequence">
+            <field name="name">Instrument</field>
+            <field name="code">sequence.instrument</field>
+            <field name="prefix">INST</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+    <data noupdate="1">
+        <record id="seq_mobile" model="ir.sequence">
+            <field name="name">mobile</field>
+            <field name="code">sequence.mobile</field>
+            <field name="prefix">MBL</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+
+</odoo>

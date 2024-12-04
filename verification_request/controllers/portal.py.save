@@ -1,0 +1,530 @@
+
+from odoo import fields, http, _
+from odoo.exceptions import AccessError, MissingError
+from odoo.http import request
+from odoo.addons.portal.controllers.mail import _message_post_helper
+from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager, get_records_pager
+import json
+import datetime
+import pytz
+from datetime import datetime, timedelta
+import base64
+
+
+class CustomerPortal(CustomerPortal):
+
+    def _prepare_portal_layout_values(self):
+        values = super(CustomerPortal, self)._prepare_portal_layout_values()
+
+        session_uid = request.session.uid
+        if session_uid:
+            partner = request.env['res.users'].browse(request.session.uid).partner_id
+
+        solicitudes = request.env['intn_camiones_tanque.solicitudes']
+        solicitud_count = solicitudes.search_count([
+            ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
+            ('state', 'in', ['draft', 'confirmado', 'reagendado', 'cancel'])
+        ])
+
+        certificado_inspeccion = request.env['certificado.inspeccion']
+        inspeccion_count = certificado_inspeccion.search_count([
+            ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
+            ('state', 'in', [ 'done', 'cancel'])
+        ])
+
+        certificado_verificacion = request.env['registro.medicion']
+        verificacion_count = certificado_verificacion.search_count([
+            ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
+            ('state', 'in', ['done', 'cancel'])
+        ])
+
+        values.update({
+            'solicitudes_camiones_count': solicitud_count,
+            'inspeccion_count': inspeccion_count,
+            'verificacion_count': verificacion_count,
+        })
+
+        return values
+
+    @http.route(['/my/camiones/solicitudes/<int:solicitud_id>'], type='http', auth="public", website=True)
+    def solicitud_camion_info(self, solicitud_id, report_type=None, access_token=None, message=False, download=False,
+                              **kw):
+        try:
+            solicitud_sudo = self._document_check_access('intn_camiones_tanque.solicitudes', solicitud_id,
+                                                         access_token=access_token)
+        except (AccessError, MissingError):
+            return request.redirect('/my')
+
+        if report_type in ('html', 'pdf', 'text'):
+            return self._show_report(model=solicitud_sudo, report_type=report_type,
+                                     report_ref='intn_camiones_tanque.reporte_solicitud', download=download)
+
+        # use sudo to allow accessing/viewing orders for public user
+        # only if he knows the private token
+        now = fields.Date.today()
+
+        # Log only once a day
+        if solicitud_sudo and request.session.get(
+                'view_quote_%s' % solicitud_sudo.id) != now and request.env.user.share and access_token:
+            request.session['view_quote_%s' % solicitud_sudo.id] = now
+            body = _('Solicitud vista por el cliente')
+            _message_post_helper(res_model='intn_camiones_tanque.solicitudes', res_id=solicitud_sudo.id, message=body,
+                                 token=solicitud_sudo.access_token, message_type='notification', subtype="mail.mt_note",
+                                 partner_ids=solicitud_sudo.partner_id.user_id.sudo().partner_id.ids)
+
+        values = {
+            'solicitud': solicitud_sudo,
+            'message': message,
+            'token': access_token,
+            'bootstrap_formatting': True,
+            'partner_id': solicitud_sudo.partner_id.id,
+            'report_type': 'html',
+            'page_name': 'solicitud',
+        }
+        if solicitud_sudo.company_id:
+            values['res_company'] = solicitud_sudo.company_id
+
+        if solicitud_sudo.state in ('draft', 'done', 'reagendado','cancel'):
+            history = request.session.get('my_agendamientos_history', [])
+        else:
+            history = request.session.get('my_agendamientos_history', [])
+        values.update(get_records_pager(history, solicitud_sudo))
+
+        return request.render('intn_camiones_tanque.solicitud_agendamiento_portal_template', values)
+
+    @http.route(['/my/camiones', '/my/camiones/page/<int:page>'], type='http', auth="user", website=True)
+    def listar(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
+        values = self._prepare_portal_layout_values()
+        partner = request.env.user.partner_id
+        solicitudes = request.env['intn_camiones_tanque.solicitudes']
+
+        domain = [
+            ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
+            ('state', 'in', [ 'draft', 'confirmado', 'reagendado','cancel'])
+        ]
+
+        searchbar_sortings = {
+            'date_solicitud': {'label': _('Fecha Solicitud'), 'order': 'fecha_solicitud desc'},
+            'date_agendamiento': {'label': _('Fecha Agendamiento'), 'order': 'fecha_agendamiento desc'},
+            'name': {'label': _('Referencia'), 'order': 'name'},
+            'stage': {'label': _('Estado'), 'order': 'state'},
+        }
+
+        # default sortby order
+        if not sortby:
+            sortby = 'date_solicitud'
+        sort_order = searchbar_sortings[sortby]['order']
+
+        archive_groups = self._get_archive_groups('intn_camiones_tanque.solicitudes', domain)
+        if date_begin and date_end:
+            domain += [('create_date', '>', date_begin), ('create_date', '<=', date_end)]
+
+        #count for pager
+        quotation_count = solicitudes.search_count(domain)
+        # make pager
+        pager = portal_pager(
+            url="/my/camiones/",
+            url_args={'date_begin': date_begin, 'date_end': date_end, 'sortby': sortby},
+            total=quotation_count,
+            page=page,
+            step=self._items_per_page
+        )
+        # search the count to display, according to the pager data
+        quotations = solicitudes.search(domain, order=sort_order, limit=self._items_per_page,
+                                                offset=pager['offset'])
+        request.session['my_solicitudes_camiones_history'] = quotations.ids[:100]
+
+        values.update({
+            'date': date_begin,
+            'quotations': quotations.sudo(),
+            'page_name': 'solicitud',
+            'pager': pager,
+            'archive_groups': archive_groups,
+            'default_url': '/my/camiones',
+            'searchbar_sortings': searchbar_sortings,
+            'sortby': sortby,
+        })
+
+        
+        return request.render("intn_camiones_tanque.portal_my_solicitudes_camiones", values)
+    
+    @http.route(['/camiones/new/solicitud'], type='http', auth="user", website=True)
+    def new_solicitud(self, **kw):
+        session_uid = request.session.uid
+        if session_uid:
+            partner = request.env['res.users'].browse(request.session.uid).partner_id
+            sucursales = partner.child_ids
+
+        fecha_actual = datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime("%d/%m/%Y %H:%M")
+        fecha_actual_diez = datetime.now(pytz.timezone(partner.tz or 'GMT')) + timedelta(days=1)
+        fecha_actual_diez = fecha_actual_diez.strftime("%Y-%m-%d")
+
+        camiones = []
+
+        marcas = request.env['fleet.vehicle.model.brand'].search([('name','!=',False)])
+        modelos = request.env['fleet.vehicle.model'].search([])
+        emblemas = request.env['emblemas'].search([('active','=',True)])
+
+        if partner.camiones_ids:
+            camiones = partner.camiones_ids
+
+        if partner.child_ids:
+            child_camiones = partner.mapped('child_ids').mapped('camiones_ids')
+            if not partner.camiones_ids:
+                camiones = child_camiones
+            else:
+                camiones = camiones + child_camiones
+
+        return http.request.render('intn_camiones_tanque.nueva_solicitud',
+                                   {'fecha_actual': fecha_actual, 'partner': partner,'page_name':'solicitud','sucursales':sucursales,'camiones':camiones,'marcas':marcas,
+                                    'modelos':modelos,'emblemas':emblemas,'camionC':False,'fecha_actual_diez':fecha_actual_diez})
+
+    @http.route('/camiones/save/solicitud', auth='user', website=True, )
+    def save_solicitud_agendamiento(self, **kw):
+        partner = kw['partner']
+
+        my_datetime = datetime.strptime(kw['fecha_agendamiento'] + ' 10:00:00', '%Y-%m-%d %H:%M:%S')
+
+
+        if 'camion_nuevo' in kw:
+            cn= True
+        else:
+            cn = False
+
+        if cn==False and not kw['camion']:
+            return
+
+        fecha_actual = datetime.strptime(kw['fecha_actual'],"%d/%m/%Y %H:%M") + timedelta(hours=3)
+
+
+        values = {
+            'partner_id': partner,
+            'fecha_solicitud': fecha_actual,
+            'tipo_solicitud': kw['tipo_solicitud'],
+            'tipo_factura': kw['tipo_factura'],
+            'nombre_contacto': kw['nombre_contacto'],
+            'telefono_contacto': kw['telefono_contacto'],
+            'emblema_contacto': kw['emblema_contacto'],
+            'telefono_emblema_contacto': kw['telefono_emblema_contacto'],
+            'camion_id': kw['camion'],
+            'fecha_agendamiento': my_datetime,
+            'camion_nuevo':cn,
+            'capacidad': kw['capacidad'],
+            'producto_transportado': kw['producto_transportado'],
+        }
+
+        try:
+            solicitud = request.env['intn_camiones_tanque.solicitudes'].sudo().create(values)
+
+            documentos = kw['documentos']
+
+            doc = documentos.read()
+            doc = base64.b64encode(doc)
+            vals = {
+                'datas':doc,
+                'name':documentos.filename,
+                'datas_fname':documentos.filename,
+                'type': 'binary'
+            }
+            solicitud.write({'documentos':[(0,0,vals)]})
+
+            return http.request.render('intn_camiones_tanque.solicitud_creada',
+                                       {'solicitud': solicitud, 'page_name': 'solicitud'})
+        except ValueError:
+            return False
+
+
+    @http.route('/camiones/save/camion', auth='user', website=True)
+    def save_camion(self, **kw):
+        partner = kw['partner']
+
+        if 'modelo' in kw :
+            modelo = kw['modelo']
+        else:
+            modelo = False
+
+        values = {
+            'partner_id': partner,
+            'marca_id' : kw['marca'],
+            'modelo_id' : modelo,
+            'year' : kw['year'],
+            'chasis' : kw['chasis'],
+            'fabricante_cisterna' : kw['fabricante'],
+            'year_fabricacion' : kw['year_fabricacion'],
+            'emblema_id' : kw['emblema'],
+            'codigo_emblema_char' : kw['codigo_emblema'],
+            'matricula_camion' : kw['matricula_camion'],
+            'matricula_cisterna' : kw['matricula_cisterna'],
+            'cantidad_compartimientos' : kw['cantidad_compartimientos'],
+            'capacidad' : kw['capacidad']
+        }
+
+        camion = request.env['camiones.cisterna'].sudo().create(values)
+
+        session_uid = request.session.uid
+        if session_uid:
+            partner = request.env['res.users'].browse(request.session.uid).partner_id
+            sucursales = partner.child_ids
+
+        fecha_actual = datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime("%d/%m/%Y %H:%M")
+        fecha_actual_diez = datetime.now(pytz.timezone(partner.tz or 'GMT')) + timedelta(days=1)
+        fecha_actual_diez = fecha_actual_diez.strftime("%Y-%m-%d")
+
+        camiones = []
+
+        marcas = request.env['fleet.vehicle.model.brand'].search([('name', '!=', False)])
+        modelos = request.env['fleet.vehicle.model'].search([])
+        emblemas = request.env['emblemas'].search([('active', '=', True)])
+
+        if partner.camiones_ids:
+            camiones = partner.camiones_ids
+
+        if partner.child_ids:
+            child_camiones = partner.mapped('child_ids').mapped('camiones_ids')
+            if not partner.camiones_ids:
+                camiones = child_camiones
+            else:
+                camiones = camiones + child_camiones
+
+        return http.request.render('intn_camiones_tanque.nueva_solicitud',
+                                   {'fecha_actual': fecha_actual, 'partner': partner, 'page_name': 'solicitud',
+                                    'sucursales': sucursales, 'camiones': camiones, 'marcas': marcas,
+                                    'modelos': modelos, 'emblemas': emblemas,'camionC':camion,'fecha_actual_diez':fecha_actual_diez})
+
+    @http.route(['/get-camiones/<int:partner_id>'], type='http', auth="public", website=True)
+    def get_camiones(self, partner_id, **kw):
+        if partner_id != 0:
+            partner = request.env['res.partner'].browse(partner_id)
+        else:
+            partner = request.env['res.users'].browse(request.session.uid).partner_id
+
+        camiones = request.env['camiones.cisterna'].sudo().search(
+            ['|', ('partner_id', '=', partner.id), ('partner_id.parent_id', '=', partner_id)])
+        camiones_a_enviar = []
+        if camiones:
+            for b in camiones:
+                p = {'id': b.id, 'name': b.codigo_emblema_char + '-' + b.emblema_id.name}
+
+                camiones_a_enviar.append(p)
+
+        return json.dumps(camiones_a_enviar)
+
+        agendamientos =request.env['intn_camiones_tanque.solicitudes'].sudo().search(
+            [('state', 'not in', ['cancel'])])
+        agendamientos_fecha = agendamientos.filtered(lambda x: x.fecha_agendamiento.strftime('%Y-%m-%d') == fecha)
+        print(agendamientos_fecha)
+        capacidad_agendada= 0
+        capacidad_maxima = int(request.env['ir.config_parameter'].sudo().get_param('capacidad_maxima_agendamiento_parameter'))
+        for af in agendamientos_fecha:
+            capacidad_agendada = capacidad_agendada + af.capacidad
+
+        capacidad_agendada = capacidad_agendada + capacidad
+        if capacidad_agendada > capacidad_maxima:
+            return json.dumps({'code': 400, 'mensaje': 'Se ha alcanzado la capacidad límite para la fecha.'})
+        else:
+            return json.dumps({'code': 200})
+
+    @http.route(['/my/certificado-inspeccion', '/my/certificado-inspeccion/page/<int:page>'], type='http', auth="user", website=True)
+    def portal_my_certificado_inspeccion(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
+        values = self._prepare_portal_layout_values()
+        partner = request.env.user.partner_id
+        certificado_inspeccion = request.env['certificado.inspeccion']
+
+        domain = [
+            ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
+            ('state', 'in', ['done', 'cancel'])
+        ]
+
+        searchbar_sortings = {
+            'date': {'label': _('Fecha de Creación'), 'order': 'create_date desc'},
+            'name': {'label': _('Referencia'), 'order': 'name'},
+            'stage': {'label': _('Estado'), 'order': 'state'},
+        }
+
+        # default sortby order
+        if not sortby:
+            sortby = 'date'
+        sort_order = searchbar_sortings[sortby]['order']
+
+        archive_groups = self._get_archive_groups('certificado.inspeccion', domain)
+        if date_begin and date_end:
+            domain += [('create_date', '>', date_begin), ('create_date', '<=', date_end)]
+
+        # count for pager
+        quotation_count = certificado_inspeccion.search_count(domain)
+        # make pager
+        pager = portal_pager(
+            url="/my/certificado-inspeccion",
+            url_args={'date_begin': date_begin, 'date_end': date_end, 'sortby': sortby},
+            total=quotation_count,
+            page=page,
+            step=self._items_per_page
+        )
+        # search the count to display, according to the pager data
+        certificado_inspeccion = certificado_inspeccion.search(domain, order=sort_order, limit=self._items_per_page,
+                                         offset=pager['offset'])
+        request.session['my_certificado_inspeccion_history'] = certificado_inspeccion.ids[:100]
+
+        values.update({
+            'date': date_begin,
+            'certificado_inspeccion': certificado_inspeccion.sudo(),
+            'page_name': 'certificado_inspeccion',
+            'pager': pager,
+            'archive_groups': archive_groups,
+            'default_url': '/my/certificado-inspeccion',
+            'searchbar_sortings': searchbar_sortings,
+            'sortby': sortby,
+        })
+
+        return request.render("intn_camiones_tanque.portal_my_certificado_inspeccion", values)
+
+    @http.route(['/my/certificado-inspeccion/<int:certificado_id>'], type='http', auth="public", website=True)
+    def portal_certificado_inspeccion_page(self, certificado_id, report_type=None, access_token=None, message=False, download=False,
+                               **kw):
+        try:
+            inspeccion_sudo = self._document_check_access('certificado.inspeccion', certificado_id,
+                                                          access_token=access_token)
+        except (AccessError, MissingError):
+            return request.redirect('/my')
+
+        if report_type in ('html', 'pdf', 'text'):
+            return self._show_report(model=inspeccion_sudo, report_type=report_type,
+                                     report_ref='intn_camiones_tanque.reporte_certificado_inspeccion', download=download)
+
+        # use sudo to allow accessing/viewing orders for public user
+        # only if he knows the private token
+        now = fields.Date.today()
+
+        # Log only once a day
+        if inspeccion_sudo and request.session.get(
+                'view_quote_%s' % inspeccion_sudo.id) != now and request.env.user.share and access_token:
+            request.session['view_quote_%s' % inspeccion_sudo.id] = now
+            body = _('Certificado visto por el cliente')
+            _message_post_helper(res_model='certificado.inspeccion', res_id=inspeccion_sudo.id, message=body,
+                                 token=inspeccion_sudo.access_token, message_type='notification',
+                                 subtype="mail.mt_note",
+                                 partner_ids=inspeccion_sudo.partner_id.user_id.sudo().partner_id.ids)
+
+        values = {
+            'certificado_inspeccion': inspeccion_sudo,
+            'message': message,
+            'token': access_token,
+            'bootstrap_formatting': True,
+            'partner_id': inspeccion_sudo.partner_id.id,
+            'report_type': 'html',
+            'page_name': 'certificado_inspeccion',
+        }
+        if inspeccion_sudo.company_id:
+            values['res_company'] = inspeccion_sudo.company_id
+
+        if inspeccion_sudo.state in ('done', 'cancel'):
+            history = request.session.get('my_certificado_inspeccion_history', [])
+        else:
+            history = request.session.get('my_certificado_inspeccion_history', [])
+        values.update(get_records_pager(history, inspeccion_sudo))
+
+        return request.render('intn_camiones_tanque.certificado_inspeccion_portal_template', values)
+
+    @http.route(['/my/certificado-verificacion', '/my/certificado-verificacion/page/<int:page>'], type='http', auth="user",
+                website=True)
+    def portal_my_certificado_verificacion(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
+        values = self._prepare_portal_layout_values()
+        partner = request.env.user.partner_id
+        certificado_verificacion = request.env['registro.medicion']
+
+        domain = [
+            ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id]),
+            ('state', 'in', ['done', 'cancel'])
+        ]
+
+        searchbar_sortings = {
+            'date': {'label': _('Fecha de Creación'), 'order': 'create_date desc'},
+            'name': {'label': _('Referencia'), 'order': 'name'},
+            'stage': {'label': _('Estado'), 'order': 'state'},
+        }
+
+        # default sortby order
+        if not sortby:
+            sortby = 'date'
+        sort_order = searchbar_sortings[sortby]['order']
+
+        archive_groups = self._get_archive_groups('registro.medicion', domain)
+        if date_begin and date_end:
+            domain += [('create_date', '>', date_begin), ('create_date', '<=', date_end)]
+
+        # count for pager
+        quotation_count = certificado_verificacion.search_count(domain)
+        # make pager
+        pager = portal_pager(
+            url="/my/certificado-verificacion",
+            url_args={'date_begin': date_begin, 'date_end': date_end, 'sortby': sortby},
+            total=quotation_count,
+            page=page,
+            step=self._items_per_page
+        )
+        # search the count to display, according to the pager data
+        certificado_verificacion = certificado_verificacion.search(domain, order=sort_order, limit=self._items_per_page,
+                                                               offset=pager['offset'])
+        request.session['my_certificado_verificacion_history'] = certificado_verificacion.ids[:100]
+
+        values.update({
+            'date': date_begin,
+            'certificado_verificacion': certificado_verificacion.sudo(),
+            'page_name': 'certificado_verificacion',
+            'pager': pager,
+            'archive_groups': archive_groups,
+            'default_url': '/my/certificado-verificacion',
+            'searchbar_sortings': searchbar_sortings,
+            'sortby': sortby,
+        })
+
+        return request.render("intn_camiones_tanque.portal_my_certificado_verificacion", values)
+
+    @http.route(['/my/certificado-verificacion/<int:certificado_id>'], type='http', auth="public", website=True)
+    def portal_certificado_verificacion_page(self, certificado_id, report_type=None, access_token=None, message=False,
+                                           download=False,
+                                           **kw):
+        try:
+            verificacion_sudo = self._document_check_access('registro.medicion', certificado_id,
+                                                          access_token=access_token)
+        except (AccessError, MissingError):
+            return request.redirect('/my')
+
+        if report_type in ('html', 'pdf', 'text'):
+            return self._show_report(model=verificacion_sudo, report_type=report_type,
+                                     report_ref='intn_camiones_tanque.reporte_certificado_verificacion',
+                                     download=download)
+
+        # use sudo to allow accessing/viewing orders for public user
+        # only if he knows the private token
+        now = fields.Date.today()
+
+        # Log only once a day
+        if verificacion_sudo and request.session.get(
+                'view_quote_%s' % verificacion_sudo.id) != now and request.env.user.share and access_token:
+            request.session['view_quote_%s' % verificacion_sudo.id] = now
+            body = _('Certificado visto por el cliente')
+            _message_post_helper(res_model='registro.medicion', res_id=verificacion_sudo.id, message=body,
+                                 token=verificacion_sudo.access_token, message_type='notification',
+                                 subtype="mail.mt_note",
+                                 partner_ids=verificacion_sudo.partner_id.user_id.sudo().partner_id.ids)
+
+        values = {
+            'certificado_verificacion': verificacion_sudo,
+            'message': message,
+            'token': access_token,
+            'bootstrap_formatting': True,
+            'partner_id': verificacion_sudo.partner_id.id,
+            'report_type': 'html',
+            'page_name': 'certificado_verificacion',
+        }
+        if verificacion_sudo.company_id:
+            values['res_company'] = verificacion_sudo.company_id
+
+        if verificacion_sudo.state in ('done', 'cancel'):
+            history = request.session.get('my_certificado_verificacion_history', [])
+        else:
+            history = request.session.get('my_certificado_verificacion_history', [])
+        values.update(get_records_pager(history, verificacion_sudo))
+
+        return request.render('intn_camiones_tanque.certificado_verificacion_portal_template', values)
