@@ -12,6 +12,75 @@ import base64
 
 class CustomerPortal(CustomerPortal):
 
+    @http.route('/verification_request/new/solicitud', type='http', auth='user', website=True)
+    def new_solicitud(self, **kw):
+        """
+        Renderiza el formulario para una nueva solicitud.
+        """
+        session_uid = request.session.uid
+        partner = None
+        if session_uid:
+            partner = request.env['res.users'].browse(request.session.uid).partner_id
+
+        fecha_actual = datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime("%d/%m/%Y %H:%M")
+        departments = request.env['res.country.state'].search([('country_id', '=', 185)])  # ID de Paraguay
+
+        return request.render('verification_request.nueva_solicitud', {
+            'fecha_actual': fecha_actual,
+            'partner': partner,
+            'page_name': 'solicitud',
+            'departments': departments
+        })
+
+    @http.route('/verification_request/save/solicitud', type='http', auth='user', website=True, csrf=True)
+    def save_solicitud(self, **kw):
+        """
+        Guarda la nueva solicitud en el modelo correspondiente.
+        """
+        try:
+            # Obtener la zona horaria del usuario y la fecha actual
+            partner = request.env['res.users'].browse(request.session.uid).partner_id
+            fecha_actual = datetime.now(pytz.timezone(partner.tz or 'GMT')).date()  # Fecha en formato YYYY-MM-DD
+
+            values = {
+                'partner_id': partner.id,
+                'state_id': [(6, 0, [int(dep) for dep in kw.get('department', '').split(',')])],
+                'month': kw.get('month'),
+                'observation': kw.get('observation'),
+                'request_date': fecha_actual,  # Fecha de solicitud automática
+                'request_date2':  fecha_actual
+            }
+
+            solicitud = request.env['verification.request'].sudo().create(values)
+
+            return request.render('verification_request.solicitud_creada', {
+                'solicitud': solicitud,
+                'page_name': 'solicitud'
+            })
+        except Exception as e:
+            request.env.cr.rollback()  # Asegúrate de finalizar la transacción fallida
+            return request.render('verification_request.solicitud_error', {
+                'error': str(e),
+                'page_name': 'solicitud'
+            })
+
+    @http.route('/get_months_by_department', type='json', auth='user')
+    def get_months_by_department(self, state_ids):
+        """
+        Devuelve los meses disponibles según los departamentos seleccionados.
+        """
+        if not state_ids:
+            return {'error': 'No se seleccionaron departamentos.'}
+
+        # Buscar registros que coincidan con los departamentos seleccionados
+        records = request.env['annual.route.sheet'].search([('state_id', 'in', state_ids)])
+        months = {rec.month for rec in records}
+
+        # Obtener los nombres de los meses desde las selecciones del modelo
+        month_labels = dict(request.env['annual.route.sheet']._fields['month'].selection)
+
+        return {'months': [{'value': month, 'label': month_labels[month]} for month in months]}
+
     def _prepare_portal_layout_values(self):
         values = super(CustomerPortal, self)._prepare_portal_layout_values()
         partner = None
@@ -131,21 +200,21 @@ class CustomerPortal(CustomerPortal):
 
         return request.render("verification_request.portal_my_bascule_verification", values)
 
-    @http.route(['/verification_request/new/solicitud'], type='http', auth="user", website=True)
-    def new_solicitud(self, **kw):
-        session_uid = request.session.uid
-        partner = None
-        if session_uid:
-            partner = request.env['res.users'].browse(request.session.uid).partner_id
-
-        fecha_actual = datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime("%d/%m/%Y %H:%M")
-
-        instruments = request.env['instrument'].search([('name', '!=', False)])
-
-        return http.request.render('verification_request.nueva_solicitud',
-                                   {'fecha_actual': fecha_actual, 'partner': partner, 'page_name': 'solicitud',
-                                    'instruments': instruments,
-                                    })
+    # @http.route(['/verification_request/new/solicitud'], type='http', auth="user", website=True)
+    # def new_solicitud(self, **kw):
+    #     session_uid = request.session.uid
+    #     partner = None
+    #     if session_uid:
+    #         partner = request.env['res.users'].browse(request.session.uid).partner_id
+    #
+    #     fecha_actual = datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime("%d/%m/%Y %H:%M")
+    #
+    #     instruments = request.env['instrument'].search([('name', '!=', False)])
+    #
+    #     return http.request.render('verification_request.nueva_solicitud',
+    #                                {'fecha_actual': fecha_actual, 'partner': partner, 'page_name': 'solicitud',
+    #                                 'instruments': instruments,
+    #                                 })
 
     @http.route('/verification_request/save/solicitud', auth='user', website=True, )
     def save_solicitud_agendamiento(self, **kw):
@@ -182,42 +251,6 @@ class CustomerPortal(CustomerPortal):
                                        {'solicitud': solicitud, 'page_name': 'solicitud'})
         except ValueError:
             return False
-
-    # @http.route('/verification_request/print/solicitud', auth='user', website=True, )
-    # def save_solicitud_agendamiento(self, **kw):
-    #     partner = request.env['res.users'].browse(request.session.uid).partner_id.id
-    #
-    #     my_datetime = kw['request_date2']
-    #     fecha_actual = kw['request_date']
-    #
-    #     values = {
-    #         'partner_id': partner,
-    #         'request_date': fecha_actual,
-    #         'request_date2': my_datetime,
-    #         'instrument': kw['instrument'],
-    #         'quantity': kw['quantity'],
-    #         'observation': kw['observation'],
-    #     }
-    #
-    #     try:
-    #         solicitud = request.env['verification.request'].sudo().create(values)
-    #
-    #         # documentos = kw['documentos']
-    #         #
-    #         # doc = documentos.read()
-    #         # doc = base64.b64encode(doc)
-    #         # vals = {
-    #         #     'datas': doc,
-    #         #     'name': documentos.filename,
-    #         #     'datas_fname': documentos.filename,
-    #         #     'type': 'binary'
-    #         # }
-    #         # solicitud.write({'documentos': [(0, 0, vals)]})
-    #
-    #         return http.request.render('verification_request.solicitud_creada',
-    #                                    {'solicitud': solicitud, 'page_name': 'solicitud'})
-    #     except ValueError:
-    #         return False
 
 
 @http.route('/camiones/save/camion', auth='user', website=True)

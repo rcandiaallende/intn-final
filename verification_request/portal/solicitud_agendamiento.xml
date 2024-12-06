@@ -74,11 +74,12 @@
                     <div class="o_portal_page_size">
                         <div class="container" style="padding:15px !important;margin-left:auto;margin-right:auto;">
                             <style>
-                                label{
-                                padding-top:10px;padding-bottom:10px;
-                                font-size:14px;
+                                label {
+                                padding-top: 10px;
+                                padding-bottom: 10px;
+                                font-size: 14px;
                                 }
-                                input[type=text],input[type=date],input[type=datetime],input[type=file], select {
+                                input[type=text], select {
                                 width: 100% !important;
                                 padding: 12px 20px;
                                 margin: 8px 0;
@@ -108,7 +109,8 @@
                                 background-color: #f2f2f2;
                                 padding: 20px;
                                 }
-                                .title{
+
+                                .title {
                                 font-weight: bold;
                                 font-size: 16px;
                                 margin-top: 15px;
@@ -116,8 +118,8 @@
                                 }
                             </style>
 
-                            <h1 style="text-align:center">Nueva Solicitud de verificación</h1>
-                            <br></br>
+                            <h1 style="text-align:center">Nueva Solicitud de Verificación</h1>
+                            <br/>
                             <div class="div-form">
                                 <form id="formServicio" action="/verification_request/save/solicitud" method="post"
                                       enctype="multipart/form-data">
@@ -128,456 +130,75 @@
                                         </div>
                                         <div class="col-md-10">
                                             <input type="text" id="partner" name="partner" t-att-value="partner.name"
-                                                   disabled="disabled" style="width:100%"
-                                                   required="required"/>
+                                                   disabled="disabled" style="width:100%" required="required"/>
                                         </div>
-
 
                                         <div class="col-md-2">
-                                            <label for="quantity">Instrumento</label>
+                                            <label for="department">Departamento:</label>
                                         </div>
                                         <div class="col-md-10">
-                                            <select name="instrument" id="quantity" required="required"
-                                            >
-                                                <option value=""></option>
-                                                <t t-if="instruments">
-                                                    <t t-foreach="instruments" t-as="b">
-                                                        <option t-att-value="b.id" t-esc="b.description"
-                                                                selected="selected" id="instrument"/>
-                                                    </t>
+                                            <select id="department" name="department" required="required" style="width:100%">
+                                                <t t-foreach="departments" t-as="dep">
+                                                    <option t-att-value="dep.id" t-esc="dep.name"/>
                                                 </t>
                                             </select>
                                         </div>
 
                                         <div class="col-md-2">
-                                            <label for="quantity">Cantidad:</label>
+                                            <label for="month">Mes:</label>
                                         </div>
                                         <div class="col-md-10">
-                                            <input type="number" placeholder="1" id="quantity" name="quantity"
-                                                   required="required"
-                                            />
-                                            <br/>
-                                            * Solo valores numéricos.
+                                            <select id="month" name="month" required="required" style="width:100%">
+                                                <option value="january">Enero</option>
+                                                <option value="february">Febrero</option>
+                                                <option value="march">Marzo</option>
+                                                <option value="april">Abril</option>
+                                                <option value="may">Mayo</option>
+                                                <option value="june">Junio</option>
+                                                <option value="july">Julio</option>
+                                                <option value="august">Agosto</option>
+                                                <option value="september">Septiembre</option>
+                                                <option value="october">Octubre</option>
+                                                <option value="november">Noviembre</option>
+                                                <option value="december">Diciembre</option>
+                                            </select>
                                         </div>
-                                        <div class="col-md-2">
-                                            <label for="request_date">Fecha de solicitud:</label>
-                                        </div>
-                                        <div class="col-md-10">
-                                            <input type="date" id="request_date"
-                                                   name="request_date"/>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label for="request_date2">Fecha de agendamiento:</label>
-                                        </div>
-                                        <div class="col-md-10">
-                                            <input type="date" id="request_date2"
-                                                   name="request_date2"/>
-                                        </div>
-                                    </div>
-                                    <!--                                    <div class="row">-->
-                                    <!--                                        <div class="col-md-12">-->
-                                    <!--                                            <span class="title">-->
-                                    <!--                                                Datos de Contacto-->
-                                    <!--                                            </span>-->
-                                    <!--                                        </div>-->
-                                    <!--                                        <div class="col-md-2">-->
-                                    <!--                                            <label for="nombre_contacto">Nombre:</label>-->
-                                    <!--                                        </div>-->
-                                    <!--                                        <div class="col-md-10">-->
-                                    <!--                                            <input type="text" id="nombre_contacto" name="nombre_contacto"-->
-                                    <!--                                                   required="required" onchange="cambioFecha()"/>-->
-                                    <!--                                        </div>-->
-                                    <!--                                        <div class="col-md-2">-->
-                                    <!--                                            <label for="telefono_contacto">Teléfono:</label>-->
-                                    <!--                                        </div>-->
-                                    <!--                                        <div class="col-md-10">-->
-                                    <!--                                            <input type="text" id="telefono_contacto" name="telefono_contacto"-->
-                                    <!--                                                   required="required" onchange="cambioFecha()"/>-->
-                                    <!--                                        </div>-->
-                                    <!--                                    </div>-->
-                                    <!--                                    <div class="row">-->
-                                    <!--                                        <div class="col-md-12">-->
-                                    <!--                                            <span class="title">-->
-                                    <!--                                                Datos del representante y/o encargado del emblema-->
-                                    <!--                                            </span>-->
-                                    <!--                                        </div>-->
-                                    <!--                                        <div class="col-md-2">-->
-                                    <!--                                            <label for="emblema_contacto">Nombre:</label>-->
-                                    <!--                                        </div>-->
-                                    <!--                                        <div class="col-md-10">-->
-                                    <!--                                            <input type="text" id="emblema_contacto" name="emblema_contacto"-->
-                                    <!--                                                   required="required" onchange="cambioFecha()"/>-->
-                                    <!--                                        </div>-->
-                                    <!--                                        <div class="col-md-2">-->
-                                    <!--                                            <label for="telefono_emblema_contacto">Teléfono:</label>-->
-                                    <!--                                        </div>-->
-                                    <!--                                        <div class="col-md-10">-->
-                                    <!--                                            <input type="text" id="telefono_emblema_contacto"-->
-                                    <!--                                                   name="telefono_emblema_contacto" required="required"-->
-                                    <!--                                                   onchange="cambioFecha()"/>-->
-                                    <!--                                        </div>-->
-                                    <!--                                        <div class="col-md-12" style="font-size:16px;color:orange">-->
-                                    <!--                                            &lt;!&ndash;                                            Todo lo declarado en ésta solicitud se tomará como una declaración jurada.&ndash;&gt;-->
-                                    <!--                                            &lt;!&ndash;                                            <br/>&ndash;&gt;-->
-                                    <!--                                            &lt;!&ndash;                                            Se solicita avisar 48 hs antes si tienen algún inconveniente para asistir.&ndash;&gt;-->
 
-                                    <!--                                            <p>El presente documento y los datos consignados tendrá carácter de-->
-                                    <!--                                                declaración jurada, y su parciamiento hará-->
-                                    <!--                                                responsable civil y penalmente al recurrente.-->
-                                    <!--                                            </p>-->
-                                    <!--                                            <p>Se solicita avisar 48 hs antes si tienen algún inconveniente para-->
-                                    <!--                                                asistir.-->
-                                    <!--                                            </p>-->
-                                    <!--                                        </div>-->
-                                    <!--                                    </div>-->
-                                    <br></br>
-                                    <div class="col-md-12" id="mensaje" style="font-size:16px;color:red"/>
-                                    <label for="observation">Observaciones</label>
-                                    <input type="text"
-                                           name="observation" id="observation"/>
+                                        <div class="col-md-12">
+                                            <label for="observation">Observaciones:</label>
+                                            <input type="text" name="observation" id="observation" style="width:100%"/>
+                                        </div>
+
+                                    </div>
+                                    <br/>
+                                    <div class="col-md-12" id="mensaje" style="font-size:16px;color:red"></div>
                                     <div class="table-responsive">
                                         <div style="padding-top:20px">
-                                            <button type="submit" id="guardarSolicitud"
-                                                    class="btn btn-primary">Guardar
+                                            <button type="submit" id="guardarSolicitud" class="btn btn-primary">
+                                                Guardar
                                             </button>
-
                                         </div>
                                     </div>
                                 </form>
-                                <!-- Modal -->
-                                <div class="modal fade" id="modalCamionNuevo" role="dialog">
-                                    <style>
-                                        label{
-                                        padding-top:10px;padding-bottom:10px;
-                                        font-size:14px;
-                                        }
-                                        input[type=text],input[type=date],input[type=number], select {
-                                        width: 100% !important;
-                                        padding: 12px 20px;
-                                        margin: 8px 0;
-                                        display: inline-block;
-                                        border: 1px solid #ccc;
-                                        border-radius: 4px;
-                                        box-sizing: border-box;
-                                        }
-
-                                        input[type=submit] {
-                                        width: 100%;
-                                        background-color: #4CAF50;
-                                        color: white;
-                                        padding: 14px 20px;
-                                        margin: 8px 0;
-                                        border: none;
-                                        border-radius: 4px;
-                                        cursor: pointer;
-                                        }
-
-                                        input[type=submit]:hover {
-                                        background-color: #45a049;
-                                        }
-
-                                        .div-form {
-                                        border-radius: 5px;
-                                        background-color: #f2f2f2;
-                                        padding: 20px;
-                                        }
-                                        .title{
-                                        font-weight: bold;
-                                        font-size: 16px;
-                                        margin-top: 15px;
-                                        margin-bottom: 15px;
-                                        }
-                                    </style>
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Crear un nuevo camión</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                    <span aria-hidden="true">x</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="div-form">
-                                                    <form id="formCamion" action="/verification_request/save/solicitud">
-                                                        <div class="row">
-                                                            <div class="col-md-3">
-                                                                <label for="marca">Marca:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <select name="marca" id="marca" required="required">
-                                                                    <option value=""></option>
-                                                                    <t t-foreach="marcas" t-as="m">
-                                                                        <option t-att-value="m.id" t-esc="m.name"/>
-                                                                    </t>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <label for="marca">Modelo:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <select name="modelo" id="modelo">
-                                                                    <option value=""></option>
-                                                                    <t t-foreach="modelos" t-as="m">
-                                                                        <option t-att-value="m.id" t-esc="m.name"/>
-                                                                    </t>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label for="fecha_solicitud">Año:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="number" id="year" name="year"
-                                                                       required="required"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Chasis:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="text" id="chasis" name="chasis"
-                                                                       required="required"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Fabricante cisterna:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <select name="fabricante" id="fabricante"
-                                                                        required="required">
-                                                                    <option value=""></option>
-                                                                    <t t-foreach="marcas" t-as="b">
-                                                                        <option t-att-value="b.id" t-esc="b.name"/>
-                                                                    </t>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Año de Fabricación:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="number" id="year_fabricacion"
-                                                                       name="year_fabricacion" required="required"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Emblema:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <select name="emblema" id="emblema" required="required">
-                                                                    <option value=""></option>
-                                                                    <t t-foreach="emblemas" t-as="b">
-                                                                        <option t-att-value="b.id" t-esc="b.name"/>
-                                                                    </t>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Código del Emblema:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="text" id="codigo_emblema"
-                                                                       name="codigo_emblema" required="required"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Matricula del camión:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="text" id="matricula_camion"
-                                                                       name="matricula_camion" required="required"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Matricula de la cisterna:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="text" id="matricula_cisterna"
-                                                                       name="matricula_cisterna" required="required"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Cantidad de compartimientos:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="number" id="cantidad_compartimientos"
-                                                                       name="cantidad_compartimientos"
-                                                                       required="required"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Capacidad:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="number" id="capacidad" name="capacidad"
-                                                                       required="required"/>
-                                                            </div>
-                                                            <input type="text" readonly="1" style="display:none"
-                                                                   t-att-value="partner.id" name="partner"
-                                                                   id="partner"/>
-                                                            <div class="table-responsive">
-                                                                <div style="padding:20px">
-                                                                    <button id="guardarCamion" name="guardarCamion"
-                                                                            type="submit" class="btn btn-primary"
-                                                                            onclick="return confirm('¿Confirma los datos cargados?')">
-                                                                        Guardar
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                        Cerrar
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal fade" id="modalAcopladoNuevo" role="dialog">
-                                    <style>
-                                        label{
-                                        padding-top:10px;padding-bottom:10px;
-                                        font-size:14px;
-                                        }
-                                        input[type=text],input[type=date],input[type=number], select {
-                                        width: 100% !important;
-                                        padding: 12px 20px;
-                                        margin: 8px 0;
-                                        display: inline-block;
-                                        border: 1px solid #ccc;
-                                        border-radius: 4px;
-                                        box-sizing: border-box;
-                                        }
-
-                                        input[type=submit] {
-                                        width: 100%;
-                                        background-color: #4CAF50;
-                                        color: white;
-                                        padding: 14px 20px;
-                                        margin: 8px 0;
-                                        border: none;
-                                        border-radius: 4px;
-                                        cursor: pointer;
-                                        }
-
-                                        input[type=submit]:hover {
-                                        background-color: #45a049;
-                                        }
-
-                                        .div-form {
-                                        border-radius: 5px;
-                                        background-color: #f2f2f2;
-                                        padding: 20px;
-                                        }
-                                        .title{
-                                        font-weight: bold;
-                                        font-size: 16px;
-                                        margin-top: 15px;
-                                        margin-bottom: 15px;
-                                        }
-                                    </style>
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Crear un nuevo acoplado</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                    <span aria-hidden="true">x</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="div-form">
-                                                    <form id="formAcoplado" action="/camiones/save/acoplado">
-                                                        <div class="row">
-                                                            <div class="col-md-4">
-                                                                <label for="marca">Marca:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <select name="marca_acople" id="marca_acople"
-                                                                        required="required">
-                                                                    <option value=""></option>
-                                                                    <t t-foreach="marcas" t-as="m">
-                                                                        <option t-att-value="m.id" t-esc="m.name"/>
-                                                                    </t>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Fabricante cisterna:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <select name="fabricante_acople" id="fabricante_acople"
-                                                                        required="required">
-                                                                    <option value=""></option>
-                                                                    <t t-foreach="marcas" t-as="b">
-                                                                        <option t-att-value="b.id" t-esc="b.name"/>
-                                                                    </t>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Año de Fabricación:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="number" id="year_fabricacion_acople"
-                                                                       name="year_fabricacion_acople"
-                                                                       required="required"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Chasis:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="text" id="chasis_acople"
-                                                                       name="chasis_acople" required="required"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Matricula:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="text" id="matricula_acople"
-                                                                       name="matricula_acople" required="required"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Cantidad de compartimientos:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="number"
-                                                                       id="cantidad_compartimientos_acople"
-                                                                       name="cantidad_compartimientos_acople"
-                                                                       required="required"/>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Capacidad:</label>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="number" id="capacidad_acople"
-                                                                       name="capacidad_acople" required="required"/>
-                                                            </div>
-                                                            <input type="text" readonly="1" style="display:none"
-                                                                   t-att-value="partner.id" name="partner"
-                                                                   id="partner"/>
-                                                            <div class="table-responsive">
-                                                                <div style="padding:20px">
-                                                                    <button id="guardarAcoplado" name="guardarAcoplado"
-                                                                            type="submit" class="btn btn-primary"
-                                                                            onclick="return confirm('¿Confirma los datos cargados?')">
-                                                                        Guardar
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                                                        Cerrar
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </t>
         </template>
+
+        <template id="solicitud_error" name="Error en la Solicitud">
+            <t t-call="portal.portal_layout">
+                <h2 style="text-align: center; color: red;">¡Error al crear la solicitud!</h2>
+                <p style="text-align: center;">Ocurrió el siguiente error:
+                    <t t-esc="error"/>
+                </p>
+                <p style="text-align: center;">
+                    <a href="/verification_request/new/solicitud" class="btn btn-primary">Volver</a>
+                </p>
+            </t>
+        </template>
+
         <template id="solicitud_creada" name="Solicitud Creada">
             <t t-call="portal.portal_layout">
                 <t t-set="breadcrumbs_searchbar" t-value="True"/>
@@ -596,14 +217,14 @@
                                     <t t-esc="solicitud.name"/>
                                 </a>
                             </h3>
-                            <h2 style="text-align:center">
+                            <!--<h2 style="text-align:center">
                                 Le esperamos en la fecha agendada
                                 <a href="/my/bascule_verification">
                                     <t t-esc="solicitud.request_date2.strftime('%d/%m/%Y')"/>
                                 </a>
                                 , por favor avisar 48 hs antes si tienen algún inconveniente para asistir.
 
-                            </h2>
+                            </h2>-->
                         </div>
                     </div>
                 </div>
