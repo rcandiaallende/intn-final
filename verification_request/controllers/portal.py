@@ -12,6 +12,27 @@ import base64
 
 class CustomerPortal(CustomerPortal):
 
+    @http.route('/my/imprimir-certificado/<int:certificado_id>', type='http', auth="user", website=True)
+    def imprimir_norma(self, certificado_id, **kw):
+        certificado = request.env['verification.request'].browse(certificado_id)
+
+        certificado = certificado.sudo()
+
+        if not certificado.exists():
+            return "Registro no encontrada"
+
+        if certificado.state == 'verified':
+            report = request.env.ref('verification_request.action_report_certificado_aprobado')
+        else:
+            report = request.env.ref('verification_request.action_report_impossibility')
+
+        pdf_content, content_type = report.sudo().render_qweb_pdf([certificado.id])
+
+        if not pdf_content:
+            return "Error al generar el PDF"
+
+        return request.make_response(pdf_content, headers=[('Content-Type', content_type), ('Content-Disposition', 'attachment; filename="reporte.pdf"')])
+
     @http.route('/verification_request/new/solicitud', type='http', auth='user', website=True)
     def new_solicitud(self, **kw):
         """
@@ -48,7 +69,7 @@ class CustomerPortal(CustomerPortal):
                 'month': kw.get('month'),
                 'observation': kw.get('observation'),
                 'request_date': fecha_actual,  # Fecha de solicitud automática
-                'request_date2':  fecha_actual
+                'request_date2': fecha_actual
             }
 
             solicitud = request.env['verification.request'].sudo().create(values)

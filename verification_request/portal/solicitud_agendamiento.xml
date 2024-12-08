@@ -44,10 +44,9 @@
                                 <i t-att-class="solicitud.get_state_icon(solicitud.state)"/>
                             </td>
                             <td class="text-center">
-                                <t t-if="solicitud.state not in ['cancel','pending', 'canceled_due_closure']">
-                                    <a class="btn btn-secondary btn-block o_download_btn"
-                                       t-att-href="solicitud.get_portal_url(report_type='pdf', download=True)"
-                                       title="Download">
+                                <t t-if="solicitud.state in ['verified', 'impossibility']">
+                                    <a role="button" class="btn btn-info"
+                                       t-att-href="'/my/imprimir-certificado/' + str(solicitud['id'])">
                                         <i class="fa fa-print"/>
                                         Descargar
                                     </a>
@@ -137,7 +136,8 @@
                                             <label for="department">Departamento:</label>
                                         </div>
                                         <div class="col-md-10">
-                                            <select id="department" name="department" required="required" style="width:100%">
+                                            <select id="department" name="department" required="required"
+                                                    style="width:100%">
                                                 <t t-foreach="departments" t-as="dep">
                                                     <option t-att-value="dep.id" t-esc="dep.name"/>
                                                 </t>
