@@ -13,6 +13,14 @@ class LastScaleCheck(models.Model):
         string='Resultado Última Verificación',
         required=True
     )
+    marca_verificacion = fields.Char(string='Marca Verificacion')
+    tipo_instrumento = fields.Char(string='Tipo de Instrumento')
+    fabricante = fields.Char(string='Fabricante')
+    modelo = fields.Char(string='Modelo')
+    nro_serie = fields.Char(string='Nro. de Serie')
+    ubicacion = fields.Char(string='Ubicacion del instrumento')
+    destinado = fields.Char(string='Destinado a')
+    id_ultima_verificacion = fields.Many2one('verification.request', string='Id ultima verificacion')
 
     @api.depends('ultima_fecha_verificacion')
     def _compute_fecha_vencimiento(self):

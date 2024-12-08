@@ -74,50 +74,30 @@ class VerificationRequest(models.Model):
     observation = fields.Text(string="Observaciones")
 
 
-    @api.depends('static_bascula')
-    def _verify_data_app(self):
-        for rec in self:
-            if rec.static_bascula:
-                bascula = self.env['app.basculas'].search([('id_planificacion', '=', rec.name)], limit=1)
-                if bascula:
-                    json_app = bascula.data_receive
-                    rec.state = 'verified'
-                    self.env['last.scale.check'].create({
-                        'cliente_id': rec.partner_id.id,
-                        'ultima_fecha_verificacion': fields.Date.today(),
-                        'fecha_vencimiento': rec._compute_fecha_vencimiento(),
-                        'resultado_ultima_verificacion': 'aprobado',
-                        'bascula': bascula.id,
-                    })
-                    if self._compute_compute_paid_state == True:
-                        pass
-                    else:
-                        raise UserError('No se puede generar certificado, pendiente de pago')
+    expediente = fields.Char(string='Expediente')
 
-    @api.depends('static_bascula')
+    def search_tecnico_ci(self, id_tecnico):
+        tecnico = self.env('tenico.metrologia').search('usuario', '=', id_tecnico)
+        if tecnico:
+            return tecnico.cedula
+
+    def get_tecnico_name(self, id_tecnico):
+        tecnico = self.env('res.users').search('id', '=', id_tecnico)
+        if tecnico:
+            return tecnico.name
+
+
     def verificar_app(self):  # Método público
         for rec in self:
-            if rec.static_bascula:
+            if rec.state == 'programmed' and not rec.dynamic_bascula:
                 # Buscar la bascula relacionada con el id_planificacion
                 bascula = self.env['app.basculas'].search([('id_planificacion', '=', rec.name)], limit=1)
                 if bascula:
                     # Actualizar el campo 'procesado' de 'app.basculas' a True
                     bascula.update({'procesado': True})
-
                     # Obtener el campo 'data_receive' que contiene el JSON
                     json_app = bascula.data_receive
-
-                    # Si el campo data_receive es un string JSON, lo convertimos a un diccionario
-                    if isinstance(json_app, str):
-                        json_app = json.loads(json_app)
-
-                    # Obtener 'fechaCreacion' del objeto anidado 'ensayos'
-                    fecha_creacion = json_app.get('ensayos', {}).get('fechaCreacion', False)
-                    estados = json_app.get('estados', {})
-                    if any(estados.values()):
-                        resultado = 'aprobado'
-                    else:
-                        resultado = 'reprobado'
+                    self.procces_data_app(json_app)
                     if bascula.imposibility == True:
                         resultado = 'imposibilidad'
 
@@ -127,17 +107,225 @@ class VerificationRequest(models.Model):
                         rec.state = 'impossibility'
 
 
-                    last_scale_check = self.env['last.scale.check'].create({
-                        'cliente_id': rec.partner_id.id,
-                        'ultima_fecha_verificacion': fecha_creacion,
-                        'resultado_ultima_verificacion': resultado,
+    def procces_data_app(self, json_app):
+        for rec in self:
+            # Si el campo data_receive es un string JSON, lo convertimos a un diccionario
+            if isinstance(json_app, str):
+                json_app = json.loads(json_app)
+
+            # Obtener 'fechaCreacion' del objeto anidado 'ensayos'
+            fecha_creacion = json_app.get('ensayos', {}).get('fechaCreacion', False)
+            estados = json_app.get('estados', {})
+            marca_verificacion = json_app.get('clientApproves', {}).get('marcaVerificacion', False)
+
+            instrumento = json_app.get('ensayos', {}).get('instrumento', {})
+            tipo_instrumento = instrumento.get('instrumento', '')
+            fabricante = instrumento.get('fabricante', '')
+            modelo = instrumento.get('modelo', '')
+            nro_serie = instrumento.get('nSerie', '')
+            ubicacion = instrumento.get('ubicado', '')
+            destinado = ", ".join(instrumento.get('destinado', []))
+            id_ultima_verificacion = rec.id
+            codigo_interno = instrumento.get('codigoInterno', '')
+            carga_maxima = instrumento.get('cargaMaximaInput', '')
+            tipo_bascula = instrumento.get('tipoBalanza', '')
+            division1 = instrumento.get('divisionInput', '')
+            rango_minimo = instrumento.get('cargaMinima', '')
+            rango_maximo = instrumento.get('maxPrimerRango', '')
+            visualizacion = instrumento.get('visualizacionInstrumento', '')
+            influencia_posicion_carga = json_app.get('ensayos', {}).get('influenciaPosicionCarga', [])
+            desempeno_carga = json_app.get('ensayos', {}).get('desempenoCarga', [])
+            max_balanza_peso_sensible = max(
+                (item.get("balanzaPesoSensible", 0) for item in desempeno_carga), default=0
+            )
+            c_exactitud = json_app["ensayos"]["instrumento"]["cExactitud"]
+            tecnico1 = json_app["ensayos"]["instrumento"]["tecnico1"]
+            if tecnico1:
+                cedula_tecnico1 = self.search_tecnico_ci(tecnico1)
+                name_tenico1 = self.get_tecnico_name(tecnico1)
+            tecnico2 = json_app["ensayos"]["instrumento"]["tecnico2"]
+            if tecnico2:
+                cedula_tecnico2 = self.search_tecnico_ci(tecnico2)
+                name_tenico2 = self.get_tecnico_name(tecnico2)
+            ci_client = json_app["clientApproves"]["ciClient"]
+            clientName = json_app["clientApproves"]["clientName"]
+            observations = json_app.get("clientApproves", {}).get("obervations", "")
+            observation = json_app.get("clientApproves", {}).get("observation", "")
+            concatenated_value = f"{observations}  - {observation}"
+
+            # discriminacion es balanzaPesoSensible
+            if any(estados.values()):
+                resultado = 'aprobado'
+                self.create_so()
+                certificado_aprobado = self.env['certificado.bascula.aprobado'].create({
+                    'verification_service_id': self.id,
+                    'tipo_instrumento': tipo_instrumento,
+                    'fabricante': fabricante,
+                    'modelo': modelo,
+                    'nro_serie': nro_serie,
+                    'identificacion': codigo_interno,
+                    'ubicacion': ubicacion,
+                    'nro_expediente': rec.expediente,
+                    'date': fecha_creacion,
+                    'marca': fabricante,
+                    'carga_maxima': carga_maxima,
+                    'destinado': destinado,
+                    'tipo_bascula': tipo_bascula,
+                    'division1': division1,
+                    'division2': division1,
+                    'rango_minimo': str(rango_minimo),
+                    'rango_maximo': rango_maximo,
+                    'visualizacion': visualizacion,
+                    # 'excentricidad': resultado,
+                    # 'mep_excentricidad': resultado,
+                    'discriminacion': 'Es sensible a una carga de ',
+                    'mep_discriminacion': max_balanza_peso_sensible,
+                    'desempenho_carga': 'Maximo error encontrado',
+                    'mep_desempenho_carga': max_balanza_peso_sensible,
+                    'clase': c_exactitud,
+                    'tenico1': name_tenico1,
+                    'tecnico2': name_tenico2,
+                    'cedula_tecnico1': cedula_tecnico1,
+                    'cedula_tecnico2': cedula_tecnico2,
+                    'cliente_responsable': ci_client,
+                    'ci_cliente_responsable': clientName,
+                    'marca_verificacion': marca_verificacion,
+                    'resultado': resultado,
+                    'cliente': rec.partner_id,
+                    'cliente_direccion': rec.partner_id.street,
+                    'cliente_ruc': rec.partner_id.vat,
+                    'cliente_ciudad': rec.city,
+                    'observation': concatenated_value,
+                })
+                for idx, item in enumerate(desempeno_carga, start=1):
+                    self.env['desempeno.carga'].create({
+                        'request_id': certificado_aprobado.id,
+                        'mep': item.get('mep', 0.0),
+                        'emep': item.get('eMep', ''),
+                        'respuesta': item.get('respuesta', ''),
+                        'indicacion': item.get('indicacion', ''),
+                        'cargaAplicada': item.get('cargaAplicada', ''),
+                        'errorInstrumento': item.get('errorInstrumento', ''),
+                        'balanzaPesoSensible': item.get('balanzaPesoSensible', ''),
                     })
-                    # Verificar si el pago está realizado
-                    if self._compute_compute_paid_state == True:
-                        pass
-                    else:
-                        raise UserError('No se puede generar certificado, pendiente de pago')
-                    return last_scale_check
+                for idx, item in enumerate(influencia_posicion_carga, start=1):
+                    self.env['excentricidad'].create({
+                        'request_id': certificado_aprobado.id,
+                        'mep': item.get('mep', 0.0),
+                        'emep': item.get('eMep', ''),
+                        'medio': item.get('medio', ''),
+                        'punta1': item.get('punta1', ''),
+                        'punta2': item.get('punta2', ''),
+                        'direccion': item.get('direccion', ''),
+                        'carga_aplicada': item.get('cargaAplicada', ''),
+                        'error_instrumento': item.get('errorInstrumento', 0.0),
+                    })
+
+                    # Log para verificar que los datos se guardaron correctamente
+                certificado_aprobado.message_post(
+                    body=f"Se crearon {len(influencia_posicion_carga)} registros de excentricidad.")
+            else:
+                self.create_so()
+                resultado = 'reprobado'
+                certificado_aprobado = self.env['certificado.bascula.aprobado'].create({
+                    'verification_service_id': self.id,
+                    'tipo_instrumento': tipo_instrumento,
+                    'fabricante': fabricante,
+                    'modelo': modelo,
+                    'nro_serie': nro_serie,
+                    'identificacion': codigo_interno,
+                    'ubicacion': ubicacion,
+                    'nro_expediente': rec.expediente,
+                    'date': fecha_creacion,
+                    'marca': fabricante,
+                    'carga_maxima': carga_maxima,
+                    'destinado': destinado,
+                    'tipo_bascula': tipo_bascula,
+                    'division1': division1,
+                    'division2': division1,
+                    'rango_minimo': str(rango_minimo),
+                    'rango_maximo': rango_maximo,
+                    'visualizacion': visualizacion,
+                    # 'excentricidad': resultado,
+                    # 'mep_excentricidad': resultado,
+                    'discriminacion': 'Es sensible a una carga de ',
+                    'mep_discriminacion': max_balanza_peso_sensible,
+                    'desempenho_carga': 'Maximo error encontrado',
+                    'mep_desempenho_carga': max_balanza_peso_sensible,
+                    'clase': c_exactitud,
+                    'tenico1': name_tenico1,
+                    'tecnico2': name_tenico2,
+                    'cedula_tecnico1': cedula_tecnico1,
+                    'cedula_tecnico2': cedula_tecnico2,
+                    'cliente_responsable': clientName,
+                    'ci_cliente_responsable': ci_client,
+                    'marca_verificacion': marca_verificacion,
+                    'resultado': resultado,
+                    'cliente': rec.partner_id,
+                    'cliente_direccion': rec.partner_id.street,
+                    'cliente_ruc': rec.partner_id.vat,
+                    'cliente_ciudad': rec.city,
+                    'observation': concatenated_value,
+                })
+                for idx, item in enumerate(influencia_posicion_carga, start=1):
+                    self.env['excentricidad'].create({
+                        'request_id': certificado_aprobado.id,
+                        'mep': item.get('mep', 0.0),
+                        'emep': item.get('eMep', ''),
+                        'medio': item.get('medio', ''),
+                        'punta1': item.get('punta1', ''),
+                        'punta2': item.get('punta2', ''),
+                        'direccion': item.get('direccion', ''),
+                        'carga_aplicada': item.get('cargaAplicada', ''),
+                        'error_instrumento': item.get('errorInstrumento', 0.0),
+                    })
+                for idx, item in enumerate(desempeno_carga, start=1):
+                    self.env['desempeno.carga'].create({
+                        'request_id': certificado_aprobado.id,
+                        'mep': item.get('mep', 0.0),
+                        'emep': item.get('eMep', ''),
+                        'respuesta': item.get('respuesta', ''),
+                        'indicacion': item.get('indicacion', ''),
+                        'cargaAplicada': item.get('cargaAplicada', ''),
+                        'errorInstrumento': item.get('errorInstrumento', ''),
+                        'balanzaPesoSensible': item.get('balanzaPesoSensible', ''),
+                    })
+
+                    # Log para verificar que los datos se guardaron correctamente
+                certificado_aprobado.message_post(
+                    body=f"Se crearon {len(influencia_posicion_carga)} registros de excentricidad.")
+                last_scale_check = self.env['last.scale.check'].create({
+                    'cliente_id': rec.partner_id.id,
+                    'ultima_fecha_verificacion': fecha_creacion,
+                    'resultado_ultima_verificacion': resultado,
+                    'marca_verificacion': marca_verificacion,
+                    'tipo_instrumento': tipo_instrumento,
+                    'fabricante': fabricante,
+                    'modelo': modelo,
+                    'nro_serie': nro_serie,
+                    'ubicacion': ubicacion,
+                    'destinado': destinado,
+                    'id_ultima_verificacion': id_ultima_verificacion,
+                })
+
+                return last_scale_check
+
+    def print_certificado_bascula(self):
+        # Obtener la referencia del reporte
+        report_ref = self.env.ref('verification_request.action_report_certificado_aprobado')
+
+        for record in self:
+
+            certificado = self.env['certificado.bascula.aprobado'].search([
+                ('verification_service_id', '=', record.id)
+            ], limit=1)
+
+            if not certificado:
+                raise UserError(
+                    f"No se encontró un certificado asociado al verification_service_id {record.id}.")
+
+            # Generar el reporte para el certificado encontrado
+            return report_ref.report_action(certificado)
 
     @api.depends('request_date2')
     def _compute_week_number(self):
@@ -220,6 +408,7 @@ class VerificationRequest(models.Model):
                     "razon_social": rec.partner_id.id
                 })
                 rec.registo_medicion_bascula_id = registro_medicion.id
+                rec.registo_medicion_bascula_id = registro_medicion.id
 
     @api.model
     def _compute_compute_paid_state(self):
@@ -288,10 +477,19 @@ class VerificationRequest(models.Model):
                 "partner_id": rec.partner_id.id
             })
             rec.sale_order = sale_order.id
+            rec.expediente = sale_order.name
 
     def create_impossibility_act(self):
         for rec in self:
             act_id = rec.env['impossibility.act'].sudo().create({
+                "date": fields.Datetime.now(),
+                "verification_service_id": rec.id
+            })
+            rec.impossibility_act = act_id.id
+
+    def create_certificado_aprobado(self):
+        for rec in self:
+            act_id = rec.env['certificado.bascula.aprobado'].sudo().create({
                 "date": fields.Datetime.now(),
                 "verification_service_id": rec.id
             })

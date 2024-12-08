@@ -28,4 +28,36 @@
                 paperformat="paperformat_report_impossibility"
         />
     </data>
+
+
+    <data>
+        <record id="paperformat_report_certificado_no_aprobado" model="report.paperformat">
+            <field name="name">Certificado Bascula No Aprobado</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_width">210</field> <!-- eje X -->
+            <field name="page_height">297</field> <!-- eje Y -->
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">37</field>
+            <field name="margin_bottom">8</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_spacing">37</field>
+            <field name="dpi">95</field>
+            <field name="header_line" eval="False"/>
+        </record>
+
+        <report
+                id="action_report_certificado_no_aprobado"
+                string="Certificado Bascula No Aprobado"
+                model="certificado.bascula.no.aprobado"
+                report_type="qweb-pdf"
+                file="verification_request.certificado_no_aprobado_template"
+                name="verification_request.certificado_no_aprobado_template"
+                attachment_use="False"
+                paperformat="paperformat_report_certificado_no_aprobado"
+        />
+    </data>
+
+
 </odoo>
