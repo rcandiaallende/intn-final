@@ -35,6 +35,9 @@
                         <button name="verificar_app" type="object" string="Verificar datos app"
                                 class="oe_highlight" icon="fa-file"
                         />
+                        <button name="print_certificado_bascula" type="object" string="Test certificado"
+                                class="oe_highlight" icon="fa-file"
+                        />
 
                         <button name="" type="object" string="Acta Imposibilidad"
                                 class="oe_highlight" icon="fa-file"

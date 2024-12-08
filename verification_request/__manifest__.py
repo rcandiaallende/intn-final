@@ -2,7 +2,8 @@
 {
     "name": "Verification Request",
     "version": "12.0.0.0",
-    "depends": ['base_setup', 'base', 'mrp', 'portal', 'registro_medicion', 'sale', 'segel_factura_electronica'],
+    "depends": ['base_setup', 'base', 'mrp', 'portal', 'registro_medicion', 'sale', 'segel_factura_electronica',
+                'intn_trazabilidad_uso_marca'],
     "author": "Segel S.A.",
     "summary": "Verification request",
     "description": """
@@ -26,6 +27,9 @@
         # 'portal/registry_portal.xml',
         'portal/solicitud_agendamiento.xml',
         'reports/impossibility_template.xml',
+        'views/tecnico_metrologia.xml',
+        'reports/certificado_aprobado_template.xml',
+        'reports/certificado_no_aprobado_template.xml',
         'reports/report_configs.xml',
         # 'wizard/motivo_rechazo.xml',
     ],

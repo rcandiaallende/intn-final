@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="certificado_no_aprobado_template">
+
+        <xpath expr="//div[@class='header']" position="replace">
+            <div class="header">
+                <img src="/verification_request/static/src/img/intn_cabecera.png"/>
+            </div>
+        </xpath>
+
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <link rel="stylesheet" href="/verification_request/static/src/css/impossibility.css"/>
+                <t t-foreach="docs" t-as="doc">
+                    <div class="page">
+                        <div class="contenedor">
+                            <div style="text-align:center; font-weight:bold;">
+                                Organismo Nacional de Metrología
+                                <br/>
+                                Unidad de Metrología Legal
+                                <br/>
+                                Departamento de Verificación de Instrumentos Reglamentados
+                                <br/>
+                            </div>
+                            <br/>
+                            <div style="text-align:center; font-weight:bold; text-decoration:underline;">
+                                Acta de imposibilidad de ejecución de la verificación N°
+                                <t t-esc="doc.name"/>
+                            </div>
+                            <br/>
+                            <p>
+                                En la ciudad de<t t-esc="doc.verification_service_id.city"/>, República del Paraguay a
+                                los
+                                <t t-esc="doc.date.day"/>
+                                días del mes de
+                                <t t-esc="doc.date.month"/>
+                                del año dos mil<t t-esc="doc.date.year"/>, siendo las
+                                <t t-esc="doc.date.hour"/>
+                                horas, los funcionarios del Instituto Nacional de Tecnología Normalización y Metrología
+                                (INTN):
+                            </p>
+                            <t t-foreach="doc.verification_service_id.designation" t-as="funcionario">
+                                <span>
+                                    Señor
+                                    <span t-esc="funcionario.name"/>
+                                    con C.I.Nº<t t-esc="funcionario.partner_id.vat"/>,
+                                </span>
+                            </t>
+                            <p>
+                                se constituyen en la firma
+                                __FIRMA__
+                                propiedad de
+                                <t t-esc="doc.verification_service_id.partner_id.name"/>
+                                ubicada en
+                                <t t-esc="doc.verification_service_id.street"/>
+                                de la ciudad de
+                                <t t-esc="doc.verification_service_id.city"/>
+                                con teléfono Nº
+                                <t t-esc="doc.verification_service_id.phone"/>
+                                en presencia del Propietario/a y/o Encargado de la
+                                Firma el/la Señor/a
+                                __FIRMA__
+                                con C.I. Nº
+                                <t t-esc="doc.verification_service_id.partner_id.vat"/>
+                                en cumplimiento a la Ley 937/82 “de Metrología” el Decreto Reglamentario Nº 1988/99 y el
+                                ONM-RTM-01 vigente “Reglamento Técnico Metrológico para Instrumentos de Pesar de
+                                Funcionamiento
+                                No Automático” y demás disposiciones legales vigentes a fin de proceder a la
+                                verificación de
+                                instrumentos reglamentados en vista a la imposibilidad de realizar el servicio de
+                                verificación
+                                debido a:
+                            </p>
+                            <ul>
+                                <li>
+                                    <span t-field="doc.reason_selection"/>
+                                </li>
+                            </ul>
+                            <p>
+                                OBSERVACIONES:
+                                <br/>
+                                <t t-esc="doc.verification_service_id.observation"/>
+                            </p>
+                            <p>
+                                Por la presente se le NOTIFICA que le asiste el derecho de presentar por escrito el
+                                descargo
+                                respectivo bajo patrocinio de abogado en el término de 3 (tres) días hábiles a partir de
+                                la
+                                fecha.
+                            </p>
+                            <br/>
+                            <br/>
+                            <table class="tabla">
+                                <tr>
+                                    <t t-foreach="doc.verification_service_id.designation" t-as="funcionario">
+                                        <td style="text-align: center">
+                                            <span>--------------------------------</span>
+                                            <br/>
+                                            <t t-esc="funcionario.name"/>
+                                            <br/>
+                                            <t t-esc="funcionario.partner_id.vat"/>
+                                            <br/>
+                                            <span>Técnico responsable INTN</span>
+                                        </td>
+                                    </t>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
