@@ -7,6 +7,7 @@ access.impossibility_act,impossibility_act,model_impossibility_act,,1,1,1,1
 access.tecnico.metrologia,tecnico.metrologia,model_tecnico_metrologia,,1,1,1,1
 access.certificado.bascula.aprobado,certificado.bascula.aprobado,model_certificado_bascula_aprobado,,1,1,1,1
 access.certificado.bascula.no.aprobado,certificado.bascula.no.aprobado,model_certificado_bascula_no_aprobado,,1,1,1,1
+access.certificado.calibracion,certificado.calibracion,model_certificado_calibracion,,1,1,1,1
 access.excentricidad,certificado.excentricidad,model_excentricidad,,1,1,1,1
 access.desempeno.carga,desempeno.carga,model_desempeno_carga,,1,1,1,1
 access.mobile,mobile,model_mobile,,1,1,1,1

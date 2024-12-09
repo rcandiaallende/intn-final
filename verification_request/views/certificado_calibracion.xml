@@ -1,0 +1,45 @@
+<odoo>
+    <record id="view_certificado_calibracion_list" model="ir.ui.view">
+        <field name="name">certificado.calibracion.list</field>
+        <field name="model">certificado.calibracion</field>
+        <field name="arch" type="xml">
+            <tree string="Certificados de Calibración">
+                <field name="certificado"/>
+                <field name="due_date"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_certificado_calibracion_form" model="ir.ui.view">
+        <field name="name">certificado.calibracion.form</field>
+        <field name="model">certificado.calibracion</field>
+        <field name="arch" type="xml">
+            <form string="Certificado de Calibración">
+                <sheet>
+                    <group>
+                        <field name="certificado"/>
+                        <field name="due_date"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_certificado_calibracion" model="ir.actions.act_window">
+        <field name="name">Certificados de Calibración</field>
+        <field name="res_model">certificado.calibracion</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_create">
+                Crear un nuevo Certificado de Calibración
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_certificado_calibracion_root"
+              name="Certificados de Calibración"
+              parent="base.menu_custom"
+              action="action_certificado_calibracion"/>
+</odoo>

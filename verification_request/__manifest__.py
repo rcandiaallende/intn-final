@@ -28,6 +28,7 @@
         'portal/solicitud_agendamiento.xml',
         'reports/impossibility_template.xml',
         'views/tecnico_metrologia.xml',
+        'views/certificado_calibracion.xml',
         'reports/certificado_aprobado_template.xml',
         'reports/certificado_no_aprobado_template.xml',
         'reports/report_configs.xml',

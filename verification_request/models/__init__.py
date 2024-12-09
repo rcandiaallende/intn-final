@@ -11,3 +11,4 @@ from . import certificado_bascula_aprobado
 from . import certificado_bascula_no_aprobado
 from . import excentricidad
 from . import desempeno_carga
+from . import certificado_calibracion
