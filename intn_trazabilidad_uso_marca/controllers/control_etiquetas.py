@@ -78,7 +78,6 @@ class CustomerPortal(CustomerPortal):
         SaleOrder = request.env['sale.order']
 
         domain = [
-            ('state', 'in', ['sale', 'done', 'pending']),
             ('service_type', '=', 'metci'),
         ]
 
