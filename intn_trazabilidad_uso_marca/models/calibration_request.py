@@ -38,7 +38,7 @@ class CalibrationRequest(models.Model):
     def crear_control_ingreso(self):
         self.ensure_one()
         nuevo_control = self.env['control.ingreso.instrumentos'].create({'compromiso_entrega_fecha': self.work_date,
-                                                                         'razon_social': self.partner_id})
+                                                                         'razon_social': self.partner_id.id})
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'control.ingreso.instrumentos',
