@@ -203,7 +203,7 @@ class CustomerPortal(CustomerPortal):
 
         if laboratorio_id:
             productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', int(laboratorio_id))])
-            servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', productos.ids)])
+            servicios = request.env['product.product'].sudo().search([])
 
             servicios_list = [{'id': servicio.id, 'name': servicio.name, 'price': servicio.lst_price,
                                'additional_cost': 'Si' if servicio.product_tmpl_id.additional_cost else 'No'} for
