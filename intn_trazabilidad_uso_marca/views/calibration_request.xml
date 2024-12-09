@@ -1,0 +1,72 @@
+<odoo>
+    <!-- Vista Tree -->
+    <record id="view_calibration_request_tree" model="ir.ui.view">
+        <field name="name">calibration.request.tree</field>
+        <field name="model">calibration.request</field>
+        <field name="arch" type="xml">
+            <tree string="Solicitudes de Calibración">
+                <field name="state"/>
+                <field name="work_date"/>
+                <field name="workorder_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Form -->
+    <record id="view_calibration_request_form" model="ir.ui.view">
+        <field name="name">calibration.request.form</field>
+        <field name="model">calibration.request</field>
+        <field name="arch" type="xml">
+            <form string="Solicitud de Calibración">
+                <sheet>
+                    <group>
+                        <field name="state" readonly="1"/>
+                        <field name="work_date"/>
+                        <field name="workorder_id"/>
+                        <field name="document"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Kanban -->
+    <record id="view_calibration_request_kanban" model="ir.ui.view">
+        <field name="name">calibration.request.kanban</field>
+        <field name="model">calibration.request</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card">
+                            <div class="oe_kanban_details">
+                                <strong>
+                                    <field name="work_date"/>
+                                </strong>
+                                <div>
+                                    <field name="workorder_id"/>
+                                </div>
+                                <div>
+                                    <field name="state" widget="statusbar"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Acción -->
+    <record id="action_calibration_request" model="ir.actions.act_window">
+        <field name="name">Solicitudes de Calibración</field>
+        <field name="res_model">calibration.request</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+    </record>
+
+    <!-- Menú -->
+    <menuitem id="menu_calibration_request_root" name="Calibración"/>
+    <menuitem id="menu_calibration_request" name="Solicitudes" parent="menu_root_metci"
+              action="action_calibration_request"/>
+</odoo>

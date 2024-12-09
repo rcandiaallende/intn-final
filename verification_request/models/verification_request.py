@@ -53,6 +53,26 @@ class VerificationRequest(models.Model):
         store=False  # No necesitamos almacenar este campo
     )
     week_number = fields.Integer(string='Número de la Semana', compute='_compute_week_number')
+    state_id = fields.Many2many('res.country.state', string="Departamentos")
+    month = fields.Selection(
+        [
+            ('january', 'Enero'),
+            ('february', 'Febrero'),
+            ('march', 'Marzo'),
+            ('april', 'Abril'),
+            ('may', 'Mayo'),
+            ('june', 'Junio'),
+            ('july', 'Julio'),
+            ('august', 'Agosto'),
+            ('september', 'Septiembre'),
+            ('october', 'Octubre'),
+            ('november', 'Noviembre'),
+            ('december', 'Diciembre'),
+        ],
+        string="Mes",
+    )
+    observation = fields.Text(string="Observaciones")
+
 
     expediente = fields.Char(string='Expediente')
 

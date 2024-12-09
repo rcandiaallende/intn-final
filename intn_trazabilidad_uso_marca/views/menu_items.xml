@@ -1,0 +1,26 @@
+<odoo>
+    <menuitem id="menu_root_metci"
+              name="METCI"
+              web_icon="intn_trazabilidad_uso_marca,static/description/odoo_icon.png"
+              sequence="50"/>
+
+    <menuitem id="menu_portal_service"
+              name="Servicios"
+              parent="menu_root_metci"
+              sequence="10"/>
+
+    <!--<menuitem id="menu_work_order"
+              name="Órdenes de Trabajo"
+              parent="menu_root_metci"
+              sequence="30"
+              action="action_work_order"/>-->
+
+    <menuitem id="menu_work_order"
+              name="Control de Ingresos"
+              parent="menu_portal_service"
+              sequence="30"
+              action="action_control_ingreso"/>
+
+
+
+</odoo>

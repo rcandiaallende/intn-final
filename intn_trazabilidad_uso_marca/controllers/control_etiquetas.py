@@ -188,35 +188,33 @@ class CustomerPortal(CustomerPortal):
     def portal_new_control_metci(self, **kw):
         session_uid = request.session.uid
         if session_uid:
-            partner = request.env['res.users'].browse(request.session.uid).partner_id
+            partner = request.env['res.users'].browse(session_uid).partner_id
             if partner.parent_id:
                 partner = partner.parent_id
 
         fecha_actual = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
 
-        # Obtener el laboratorio por nombre
-        laboratorio = request.env['intn.laboratorios'].sudo().search([])
+        laboratorios = request.env['intn.laboratorios'].sudo().search([])
+        laboratorios_list = [{'id': lab.id, 'name': lab.name} for lab in laboratorios]
 
-        # productos = request.env['product.product'].sudo().search([('product_tmpl_id.unidad_id', '=', 39)])
-        productos_1 = request.env['product.template'].sudo().search([('laboratorio_id', '=', 207)])
-        servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', productos_1.ids)])
+        productos_list = []
+        servicios_list = []
+        laboratorio_id = kw.get('laboratorio_id', False)
 
-        productos_list = [{'id': producto.id, 'name': producto.name, 'price': producto.lst_price,
-                           'additional_cost': 'Si' if producto.product_tmpl_id.additional_cost else 'No'} for producto
-                          in servicios]
+        if laboratorio_id:
+            productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', int(laboratorio_id))])
+            servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', productos.ids)])
 
-        # for producto in productos:
-        #     precio = producto.lst_price
+            servicios_list = [{'id': servicio.id, 'name': servicio.name, 'price': servicio.lst_price,
+                               'additional_cost': 'Si' if servicio.product_tmpl_id.additional_cost else 'No'} for
+                              servicio
+                              in servicios]
 
-        # if not laboratorio:
-        #     return request.render('error_template', {
-        #         'error_message': 'El laboratorio seleccionado no existe.',
-        #     })
-        # csrf_token = self.csrf_token()
-
-        return http.request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto',
-                                   {'fecha_actual': fecha_actual, 'servicios': productos_list,
-                                    'partner': partner, 'page_name': 'control_etiquetas'})
+        return request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto', {
+            'fecha_actual': fecha_actual,
+            'laboratorios': laboratorios_list,
+            'servicios': servicios_list,
+        })
 
     @http.route('/new/save/control-etiquetas', auth='user', website=True, csrf=False)
     def save_control_etiquetas(self, **kw):
@@ -238,13 +236,14 @@ class CustomerPortal(CustomerPortal):
 
     @http.route('/nuevo_presupuesto', type='http', auth="user", website=True)
     def nuevo_presupuesto(self, **kw):
-        # Buscar productos que sean servicios
+
+        laboratorios = request.env['intn.laboratorios'].sudo().search([])
         productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', 207)])
         servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', productos.ids)])
 
-        # Renderizar el formulario con los servicios disponibles
         return request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto', {
-            'servicios': servicios
+            'servicios': servicios,
+            'laboratorios': laboratorios
         })
 
     @http.route('/submit/nuevo_presupuesto', type='http', auth="user", website=True, methods=['POST'])
@@ -294,4 +293,4 @@ class CustomerPortal(CustomerPortal):
             })
 
         # Redirigir al listado de presupuestos o a la página de éxito
-        return request.redirect('/my/presupuestos')
+        return request.redirect('/my/control-metci')

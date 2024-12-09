@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from odoo import fields
-
 # from odoo.intn_addons_2.intn_trazabilidad_uso_marca.models.solicitud_impresiones import SolicitudImpresionesLine
 from . import models
 from . import normas_licencia, reglamentos_licencia, determinaciones
@@ -20,3 +18,4 @@ from . import sale_order
 from . import calibration_request
 from . import jerarquias
 from . import account_invoice
+from . import control_ingreso
