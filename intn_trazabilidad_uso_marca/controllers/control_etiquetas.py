@@ -202,12 +202,12 @@ class CustomerPortal(CustomerPortal):
 
         if laboratorio_id:
             productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', int(laboratorio_id))])
-            servicios = request.env['product.product'].sudo().search([])
+        servicios = request.env['product.product'].sudo().search([])
 
-            servicios_list = [{'id': servicio.id, 'name': servicio.name, 'price': servicio.lst_price,
-                               'additional_cost': 'Si' if servicio.product_tmpl_id.additional_cost else 'No'} for
-                              servicio
-                              in servicios]
+        servicios_list = [{'id': servicio.id, 'name': servicio.name, 'price': servicio.lst_price,
+                           'additional_cost': 'Si' if servicio.product_tmpl_id.additional_cost else 'No'} for
+                          servicio
+                          in servicios]
 
         return request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto', {
             'fecha_actual': fecha_actual,
@@ -237,8 +237,8 @@ class CustomerPortal(CustomerPortal):
     def nuevo_presupuesto(self, **kw):
 
         laboratorios = request.env['intn.laboratorios'].sudo().search([])
-        productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', 207)])
-        servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', productos.ids)])
+        productos = request.env['product.template'].sudo().search([])
+        servicios = request.env['product.product'].sudo().search([])
 
         return request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto', {
             'servicios': servicios,
