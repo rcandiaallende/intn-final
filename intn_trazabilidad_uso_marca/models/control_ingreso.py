@@ -48,7 +48,7 @@ class ControlIngresoInstrumentos(models.Model):
         """
         self.ensure_one()
 
-        if not self.product_id or not self.centro_produccin:
+        if not self.product_id or not self.centro_produccion:
             raise models.ValidationError(_('Debe especificar un Producto y un Centro de Producción.'))
 
         product_uom = self.product_id.uom_id
@@ -66,7 +66,7 @@ class ControlIngresoInstrumentos(models.Model):
             'product_uom_id': product_uom.id,
             'bom_id': self.product_id.bom_ids[:1].id if self.product_id.bom_ids else False,
             'date_planned_start': self.compromiso_entrega_fecha or fields.Datetime.now(),
-            'workcenter_id': self.centro_produccin.id,
+            'workcenter_id': self.centro_produccion.id,
             'origin': self.name,
         }
         production = self.env['mrp.production'].create(production_vals)

@@ -22,7 +22,8 @@ class CalibrationRequest(models.Model):
     partner_id = fields.Many2one('res.partner', string='Cliente')
     control_ingresos = fields.One2many('control.ingreso.instrumentos', 'calibration_request',
                                        string='Control de Ingresos')
-    control_ingresos_count = fields.Integer(string='Cantidad de Controles de Ingresos', compute='_compute_control_ingresos_count', readonly=True)
+    control_ingresos_count = fields.Integer(string='Cantidad de Controles de Ingresos',
+                                            compute='_compute_control_ingresos_count', readonly=True)
 
     @api.depends('control_ingresos')
     def _compute_control_ingresos_count(self):
@@ -36,7 +37,8 @@ class CalibrationRequest(models.Model):
     @api.multi
     def crear_control_ingreso(self):
         self.ensure_one()
-        nuevo_control = self.env['control.ingreso.instrumentos'].create({'compromiso_entrega_fecha': self.work_date})
+        nuevo_control = self.env['control.ingreso.instrumentos'].create({'compromiso_entrega_fecha': self.work_date,
+                                                                         'razon_social': self.partner_id})
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'control.ingreso.instrumentos',
