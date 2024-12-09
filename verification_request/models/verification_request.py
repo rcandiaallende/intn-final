@@ -57,15 +57,10 @@ class VerificationRequest(models.Model):
     expediente = fields.Char(string='Expediente')
 
     def search_tecnico_ci(self, id_tecnico):
-        tecnico = self.env('tenico.metrologia').search('usuario', '=', id_tecnico)
+        tecnico = self.env['tecnico.metrologia'].search([('usuario', '=', id_tecnico)], limit=1)
         if tecnico:
             return tecnico.cedula
-
-    def get_tecnico_name(self, id_tecnico):
-        tecnico = self.env('res.users').search('id', '=', id_tecnico)
-        if tecnico:
-            return tecnico.name
-
+        return None
 
     def verificar_app(self):  # Método público
         for rec in self:
@@ -80,11 +75,8 @@ class VerificationRequest(models.Model):
                     self.procces_data_app(json_app)
                     if bascula.imposibility == True:
                         resultado = 'imposibilidad'
-
-                    if resultado != 'imposibilidad':
-                        rec.state = 'verified'
-                    else:
                         rec.state = 'impossibility'
+
 
 
     def procces_data_app(self, json_app):
@@ -119,19 +111,25 @@ class VerificationRequest(models.Model):
                 (item.get("balanzaPesoSensible", 0) for item in desempeno_carga), default=0
             )
             c_exactitud = json_app["ensayos"]["instrumento"]["cExactitud"]
-            tecnico1 = json_app["ensayos"]["instrumento"]["tecnico1"]
-            if tecnico1:
-                cedula_tecnico1 = self.search_tecnico_ci(tecnico1)
-                name_tenico1 = self.get_tecnico_name(tecnico1)
-            tecnico2 = json_app["ensayos"]["instrumento"]["tecnico2"]
-            if tecnico2:
-                cedula_tecnico2 = self.search_tecnico_ci(tecnico2)
-                name_tenico2 = self.get_tecnico_name(tecnico2)
+            id_tecnico1 = json_app["ensayos"]["instrumento"]["idResponsable"]["value"]
+            if id_tecnico1:
+                cedula_tecnico1 = self.search_tecnico_ci(id_tecnico1)
+                name_tenico1 = json_app["ensayos"]["instrumento"]["idResponsable"]["label"]
+            id_tecnico2 = json_app["ensayos"]["instrumento"]["idConductor"]["value"]
+            if id_tecnico2:
+                cedula_tecnico2 = self.search_tecnico_ci(id_tecnico2)
+                name_tenico2 = json_app["ensayos"]["instrumento"]["idConductor"]["label"]
             ci_client = json_app["clientApproves"]["ciClient"]
             clientName = json_app["clientApproves"]["clientName"]
             observations = json_app.get("clientApproves", {}).get("obervations", "")
             observation = json_app.get("clientApproves", {}).get("observation", "")
             concatenated_value = f"{observations}  - {observation}"
+
+            print('cliente: ' + str(rec.partner_id) +
+                  ' cliente_direccion: ' + str(rec.partner_id.street) +
+                  ' cliente_ruc: ' + str(rec.partner_id.vat) +
+                  ' cliente_ciudad: ' + str(rec.city) +
+                  ' observation: ' + str(concatenated_value))
 
             # discriminacion es balanzaPesoSensible
             if any(estados.values()):
@@ -171,10 +169,10 @@ class VerificationRequest(models.Model):
                     'ci_cliente_responsable': clientName,
                     'marca_verificacion': marca_verificacion,
                     'resultado': resultado,
-                    'cliente': rec.partner_id,
-                    'cliente_direccion': rec.partner_id.street,
-                    'cliente_ruc': rec.partner_id.vat,
-                    'cliente_ciudad': rec.city,
+                    'cliente': rec.partner_id.id,
+                    'cliente_direccion': str(rec.partner_id.street),
+                    'cliente_ruc': str(rec.partner_id.vat),
+                    'cliente_ciudad': str(rec.city),
                     'observation': concatenated_value,
                 })
                 for idx, item in enumerate(desempeno_carga, start=1):
@@ -204,6 +202,7 @@ class VerificationRequest(models.Model):
                     # Log para verificar que los datos se guardaron correctamente
                 certificado_aprobado.message_post(
                     body=f"Se crearon {len(influencia_posicion_carga)} registros de excentricidad.")
+                rec.state = 'verified'
             else:
                 self.create_so()
                 resultado = 'reprobado'
@@ -241,7 +240,7 @@ class VerificationRequest(models.Model):
                     'ci_cliente_responsable': ci_client,
                     'marca_verificacion': marca_verificacion,
                     'resultado': resultado,
-                    'cliente': rec.partner_id,
+                    'cliente': rec.partner_id.id,
                     'cliente_direccion': rec.partner_id.street,
                     'cliente_ruc': rec.partner_id.vat,
                     'cliente_ciudad': rec.city,
@@ -287,7 +286,7 @@ class VerificationRequest(models.Model):
                     'destinado': destinado,
                     'id_ultima_verificacion': id_ultima_verificacion,
                 })
-
+                rec.state = 'verified'
                 return last_scale_check
 
     def print_certificado_bascula(self):
@@ -473,7 +472,7 @@ class VerificationRequest(models.Model):
                 "date": fields.Datetime.now(),
                 "verification_service_id": rec.id
             })
-            rec.impossibility_act = act_id.id
+            return act_id
 
     def open_impossibility_act(self):
         self.ensure_one()

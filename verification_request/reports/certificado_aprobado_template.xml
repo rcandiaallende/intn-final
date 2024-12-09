@@ -9,7 +9,7 @@
             <field name="page_width">210</field> <!-- eje X -->
             <field name="page_height">297</field> <!-- eje Y -->
             <field name="orientation">Portrait</field>
-            <field name="margin_top">37</field>
+            <field name="margin_top">0</field>
             <field name="margin_bottom">8</field>
             <field name="margin_left">5</field>
             <field name="margin_right">5</field>
@@ -31,50 +31,129 @@
     </data>
 
     <template id="certificado_aprobado_template">
-        <!--        <xpath expr="//div[@class='header']" position="replace">-->
-        <!--            <div class="header">-->
-        <!--                <img src="/verification_request/static/src/img/intn_cabecera.png"/>-->
-        <!--                <h3 style="text-align:center; font-weight:bold;">Organismo Nacional de Metrología</h3>-->
-        <!--                <h4 style="text-align:center;">Unidad de Metrología Legal</h4>-->
-        <!--                <h5 style="text-align:center;">Departamento de Verificación de Instrumentos-->
-        <!--                    Reglamentados-->
-        <!--                </h5>-->
-        <!--            </div>-->
-        <!--        </xpath>-->
+
         <t t-call="web.html_container">
             <t t-foreach="docs or []" t-as="doc">
                 <t t-if="doc">
                     <t t-call="web.external_layout">
                         <div class="page">
                             <!-- Encabezado -->
+                            <style>
+                                .titulo_principal{
+                                font-size:32px;
+                                text-align:center;
+                                font-weight:bold;
+                                }
+                                .titulo_dos{
+                                font-size:28px;
+                                font-weight:bold;
+                                }
+                                .titulo_tres{
+                                font-size:24px;
+                                font-weight:bold;
+                                text-decoration: underline;
+                                margin-bottom:5px;
+                                }
+                                .footer_first_page{
+                                display: table-row;
+                                height: 0;
+                                }
+                                .header_second_page{
 
-                            <table style="border:1px solid white !important;">
-                                <tr style="border:1px solid white !important;">
-                                    <td style="width:40%;border:1px solid white !important;" class="text-center">
-                                        <img src="/verification_request/static/src/img/intn_cabecera.png"/>
-                                        <h3 style="text-align:center; font-weight:bold;">Organismo Nacional de
-                                            Metrología
-                                        </h3>
-                                        <h4 style="text-align:center;">Unidad de Metrología Legal</h4>
-                                        <h5 style="text-align:center;">Departamento de Verificación de Instrumentos
-                                            Reglamentados
-                                        </h5>
-                                    </td>
-                                </tr>
-                            </table>
+                                }
+                                .header_first_title_second_page{
+                                font-weight:bold;
+                                width:100%;
+                                text-align:center;
+                                font-size:26px;
+                                }
+                                .header_second_title_second_page{
+                                font-weight:bold;
+                                width:100%;
+                                text-align:center;
+                                font-size:22px;
+                                }
+                                .header_third_title_second_page{
+                                font-weight:bold;
+                                width:100%;
+                                text-align:center;
+                                font-size:28px;
+                                border-bottom:2px solid;
+                                }
+                                .titulo_ensayos{
+                                font-weight:bold;
+                                width:100%;
+                                text-align:center;
+                                font-size:24px;
+                                }
+                                .titulo_ensayos_dos{
+                                font-weight:bold;
+                                width:100%;
+                                font-size:24px;
+                                border-bottom:2px solid;
+                                margin-bottom:5px;
+                                margin-top:5px;
+                                }
+                                .main-navigation ul {
+                                width: 100%;
+                                display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+                                display: -ms-flexbox; /* TWEENER - IE 10 */
+                                display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+                                display: flex; /* NEW, Spec - Firefox, Chrome, Opera */
+                                -webkit-box-pack: justify;
+                                -webkit-justify-content: space-between;
+                                -ms-flex-pack: justify;
+                                justify-content: space-between;
+                                }
+
+                                .main-navigation ul li {
+                                width: 100px;
+                                background: #666;
+                                display: block;
+                                }
+                                html, body {
+                                height: 100%;
+                                width: 100%;
+                                margin: 0;
+                                display: table;
+                                }
+
+                            </style>
+
+                            <div style="width:100%;">
+                                <img style="height:90%;"
+                                     src="http://localhost:8070/verification_request/static/src/img/intn_cabecera.png"/>
+                            </div>
+
+
+                            <div style="width:100; text-align:center;margin-bottom:10px;">
+                                <span class="titulo_principal">
+                                    Organismo Nacional de Metrología
+                                    <br/>
+                                    Unidad de Metrología Legal
+                                    <br/>
+                                    Departamento de Verificación de Instrumentos
+                                    Reglamentados
+                                </span>
+                            </div>
                             <!-- Título del reporte -->
-                            <br/>
-                            <h4 style="text-align:center; font-weight:bold;">
-                                Certificado de Verificación Periódica Nro
-                                <t t-esc="doc.verification_service_name"/>
-                            </h4>
-                            <hr style="border: 1px solid #000; margin: 10px 0;"/>
+
+                            <div style="border-bottom:2px solid; display: flex;justify-content: space-between;margin-bottom:10px; width:100%;">
+                                <span class="titulo_dos">
+                                    Certificado de Verificación Periódica
+                                </span>
+                                <span class="titulo_dos">
+                                    Nro
+                                    <t t-esc="doc.verification_service_name"/>
+                                </span>
+                            </div>
+
                             <!-- Información del instrumento -->
-                            <h5 style="text-decoration: underline;">Datos del Instrumento</h5>
-                            <table style="width:100%; border-collapse: collapse; font-size: 14px;">
+                            <div class="titulo_tres">Datos del Instrumento</div>
+                            <table style="width:100%; border-collapse: collapse; font-size: 26px;">
                                 <tr>
                                     <td style="padding: 0;">
-                                        <strong>Tipo de Instrumento:</strong>
+                                        Tipo de Instrumento:
                                     </td>
                                     <td style="padding: 0;">
                                         <t t-esc="doc.tipo_instrumento"/>
@@ -82,7 +161,7 @@
                                 </tr>
                                 <tr>
                                     <td style="padding: 0;">
-                                        <strong>Fabricante:</strong>
+                                        Fabricante:
                                     </td>
                                     <td style="padding: 0;">
                                         <t t-esc="doc.fabricante"/>
@@ -90,7 +169,7 @@
                                 </tr>
                                 <tr>
                                     <td style="padding: 0;">
-                                        <strong>Modelo:</strong>
+                                        Modelo:
                                     </td>
                                     <td style="padding: 0;">
                                         <t t-esc="doc.modelo"/>
@@ -98,7 +177,7 @@
                                 </tr>
                                 <tr>
                                     <td style="padding: 0;">
-                                        <strong>N° de Serie:</strong>
+                                        Nro de Serie:
                                     </td>
                                     <td style="padding: 0;">
                                         <t t-esc="doc.nro_serie"/>
@@ -106,7 +185,7 @@
                                 </tr>
                                 <tr>
                                     <td style="padding: 0;">
-                                        <strong>Identificación:</strong>
+                                        Identificación:
                                     </td>
                                     <td style="padding: 0;">
                                         <t t-esc="doc.identificacion"/>
@@ -114,7 +193,7 @@
                                 </tr>
                                 <tr>
                                     <td style="padding: 0;">
-                                        <strong>Ubicación:</strong>
+                                        Ubicación:
                                     </td>
                                     <td style="padding: 0;">
                                         <t t-esc="doc.ubicacion"/>
@@ -123,11 +202,11 @@
                             </table>
                             <br/>
                             <!-- Información del cliente -->
-                            <h5 style="text-decoration: underline;">Datos del Cliente</h5>
-                            <table style="width:100%; border-collapse: collapse;">
+                            <div class="titulo_tres">Datos del Cliente</div>
+                            <table style="width:100%; border-collapse: collapse;font-size:26px;">
                                 <tr>
                                     <td>
-                                        <strong>Cliente:</strong>
+                                        Cliente:
                                     </td>
                                     <td>
                                         <t t-esc="doc.cliente.name"/>
@@ -135,7 +214,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <strong>Dirección:</strong>
+                                        Dirección:
                                     </td>
                                     <td>
                                         <t t-esc="doc.cliente_direccion"/>
@@ -143,7 +222,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <strong>RUC:</strong>
+                                        RUC:
                                     </td>
                                     <td>
                                         <t t-esc="doc.cliente.vat"/>
@@ -151,7 +230,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <strong>Ciudad:</strong>
+                                        Ciudad:
                                     </td>
                                     <td>
                                         <t t-esc="doc.cliente.city"/>
@@ -161,13 +240,15 @@
                             <br/>
 
                             <!-- Resultados de la verificación -->
-                            <h5 style="font-size: 12px; text-decoration: underline;">Datos de la Verificación
+
+                            <div class="titulo_tres">Datos de la Verificación
                                 Periódica
-                            </h5>
-                            <table style="width:100%; border-collapse: collapse;">
+                            </div>
+
+                            <table style="width:100%; border-collapse: collapse;font-size:26px;">
                                 <tr>
                                     <td>
-                                        <strong>Nro Expediente:</strong>
+                                        Nro Expediente:
                                     </td>
                                     <td>
                                         <t t-esc="doc.cliente.name"/>
@@ -175,7 +256,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <strong>Fecha de verificacion:</strong>
+                                        Fecha de verificacion:
                                     </td>
                                     <td>
                                         <t t-esc="doc.cliente_direccion"/>
@@ -183,54 +264,135 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <strong>Tecnicos Responsables:</strong>
+                                        Tecnicos Responsables:
                                     </td>
                                     <td>
                                         <t t-esc="doc.cliente_ruc"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <strong style="text-decoration: underline;">Marco Legal:</strong>
-                                        Ley 937/1982 "DE METROLOGIA", y su Decreto Reglamentario
+                                    <td style="text-decoration:underline; font-weight:bold;">Marco Legal:</td>
+                                    <td>Ley 937/1982 "DE METROLOGIA", y su Decreto Reglamentario
                                         1988/1999
                                     </td>
+
                                 </tr>
                             </table>
-                            <h4 style="text-decoration: underline;">Resultado de la verificación periódica</h4>
-                            <p>
-                                El instrumento verificado
-                                <strong>
-                                    <t t-if="doc.resultado == 'aprobado'">cumple</t>
-                                    <t t-if="doc.resultado == 'reprobado'">no cumple</t>
-                                </strong>
-                                con los requerimientos para ensayos de Verificación Periódica, conforme con el
-                                Reglamento
-                                Técnico Metrológico ONM-RTM-01 Rev.: 1A.
-                                <br/>
-                                Con fines de identificación se ha colocado al instrumento de medición la marca de
-                                verificación
-                                autoadhesiva
-                                <t t-esc="doc.resultado"/>
-                                - Número<t t-esc="doc.marca_verificacion"/>, correspondiente al año
-                                <t t-esc="doc.year"/>
-                                .
-                            </p>
                             <br/>
-                            <!-- Ensayos -->
-                            <h3 style="page-break-before: always; text-align: center;">Registro de Ensayos</h3>
-                            <div style="display: flex; justify-content: space-between; align-items: center; align:center">
-                                <h4 style="margin: 0;">Anexo del Certificado
-                                    <t t-esc="doc.verification_service_name"/>
-                                </h4>
-                                <h4 style="margin: 0; text-align: right;">Fecha de Verificación
-                                    <t t-esc="doc.date.strftime('%d %m %Y')"/>
-                                </h4>
+                            <div class="titulo_tres">Resultado de la verificación periódica</div>
+                            <div style="width:100%; text-align: justify;font-size:26px;">
+                                <p>
+                                    El instrumento verificado
+                                    <strong>
+                                        <t t-if="doc.resultado == 'aprobado'">cumple</t>
+                                        <t t-if="doc.resultado == 'reprobado'">no cumple</t>
+                                    </strong>
+                                    con los requerimientos para ensayos de Verificación Periódica, conforme con el
+                                    Reglamento
+                                    Técnico Metrológico ONM-RTM-01 Rev.: 1A.
+                                    <br/>
+                                    Con fines de identificación se ha colocado al instrumento de medición la marca de
+                                    verificación
+                                    autoadhesiva
+                                    <t t-esc="doc.resultado"/>
+                                    - Número<t t-esc="doc.marca_verificacion"/>, correspondiente al año
+                                    <t t-esc="doc.year"/>
+                                    .
+                                </p>
                             </div>
 
-                            <h4>1. Identificación del Instrumento</h4>
-                            <hr style="border: 1px solid #000; margin: 10px 0;"/>
-                            <table style="width:100%; border-collapse: collapse; font-size: 14px;">
+                            <!-- footer primera pagina-->
+
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <div class="footer_first_page" style="text-align:center; margin-top:50px;font-size: 16px;">
+                                <p>
+                                    <strong>Este certificado de verificación no podrá ser reproducido parcialmente
+                                        sin
+                                        la aprobación por escrito del INTN. Los certificados de verificación sin
+                                        firma y
+                                        sello no son válidos. La copia impresa de este documento no representa a una
+                                        copia
+                                        original. Este documento está firmado digitalmente y tiene validez legal de
+                                        acuerdo
+                                        a la Ley 4.017/10
+                                    </strong>
+                                </p>
+                                <hr style="border: 1px solid #000; margin: 10px 0;"/>
+                                <p>
+                                    <strong>MISIÓN:</strong>
+                                    Contribuir al desarrollo del país y bienestar de la sociedad
+                                    mediante la normalización, metrología, investigación, reglamentación, asistencia
+                                    técnica,
+                                    ensayos, inspección y certificación.
+                                </p>
+                                <p>
+                                    <strong>VISIÓN:</strong>
+                                    Ser una institución innovadora y competitiva, reconocida
+                                    nacional e internacionalmente.
+                                </p>
+                                <p>Avda. Artigas 3973 y Gral. Roa / C.C. | Teléf.: 288 6000 | www.intn.gov.py |
+                                    e-mail:
+                                    intn@intn.gov.py | Asunción – Paraguay
+                                </p>
+                                <p style="font-size:14px;">Página
+                                    1 de 2
+                                </p>
+                            </div>
+
+                            <p style="page-break-before:always;"/>
+
+                            <!-- Ensayos -->
+                            <div class="header_second_page"/>
+                            <div style="width:100%;">
+                                <img style="height:90%;"
+                                     src="http://localhost:8070/verification_request/static/src/img/intn_cabecera.png"/>
+                            </div>
+                            <div class="header_first_title_second_page">ORGANISMO NACIONAL DE METROLOGIA</div>
+                            <div class="header_second_title_second_page">Unidad de Metrología Legal
+                                Departamento de Verificación de Instrumentos Reglamentados
+                            </div>
+                            <div class="header_third_title_second_page">CERTIFICADO DE VERIFICACION PERIÓDICA DE
+                                INSTRUMENTO DE
+                                PESAJE DE FUNCIONAMIENTO NO AUTOMATICO - BÁSCULA
+                            </div>
+                            <br/>
+                            <div class="titulo_ensayos">Registro de Ensayos</div>
+
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; align:center; font-size:22px;">
+                                <span style="margin: 0;">Anexo del Certificado
+                                    <t t-esc="doc.verification_service_name"/>
+                                </span>
+                                <span style="margin: 0; text-align: right;">Fecha de Verificación
+                                    <t t-esc="doc.date.strftime('%d %m %Y')"/>
+                                </span>
+                            </div>
+                            <br/>
+
+                            <div class="titulo_ensayos_dos">1. Identificación del Instrumento</div>
+                            <table style="width:100%; border-collapse: collapse; font-size: 22px;">
                                 <tr>
                                     <td style="padding: 2px; width: 50%; vertical-align: top;">
                                         <strong>Marca:</strong>
@@ -250,7 +412,7 @@
                                     </td>
 
                                     <td>
-                                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                        <table style="width: 100%; border-collapse: collapse; font-size: 22px;">
                                             <tr>
                                                 <!-- First Column (Tipo and Details) -->
                                                 <td style="padding: 2px; width: 50%; vertical-align: top; border: 1px dotted #000;">
@@ -299,197 +461,208 @@
                                 </tr>
                             </table>
 
-                            <h5>2. Ensayos</h5>
-                            <hr style="border: 1px solid #000; margin: 10px 0;"/>
-                            <h5 style="font-size: 12px; display: inline-block; margin-right: 20px;">2.1
-                                Excentricidad
-                            </h5>
-                            <table style="width:auto; border-collapse: collapse; text-align:center; font-size: 12px; display: inline-block;">
-                                <tr>
-                                    <th style="border: 1px solid;">Punta</th> <!-- Punta 1 -->
-                                    <th style="border: 1px solid;">Medio</th>
-                                    <th style="border: 1px solid;">Punta</th> <!-- Punta 2 -->
-                                    <th style="border: 1px solid;">Error Instrumento
-                                    </th>  <!-- Error del instrumento -->
-                                    <th style="border: 1px solid;">Dirección</th>
-                                    <th style="border: 1px solid;">eMEP</th>
-                                    <th style="border: 1px solid;">Carga Aplicada</th>
-                                    <th style="border: 1px solid;">MEP</th>
-                                </tr>
-                                <t t-foreach="doc.excentricidad_ids" t-as="line">
+                            <div class="titulo_ensayos_dos">2. Ensayos</div>
+                            <div style="display:flex; justify-content: space-between; width:100%;">
+                                <span style="font-size: 22px; display: inline-block; margin-right: 20px;float:left;font-weight:bold;">
+                                    2.1
+                                    Excentricidad
+                                </span>
+                                <table style="width:auto; border-collapse: collapse; text-align:center; font-size: 22px; display: inline-block">
                                     <tr>
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.punta1"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.medio"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.punta2"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.error_instrumento"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.direccion"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.emep"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.carga_aplicada"/>
-                                        </td>
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.mep"/>
-                                        </td>
+                                        <th style="border: 1px solid;">Punta</th> <!-- Punta 1 -->
+                                        <th style="border: 1px solid;">Medio</th>
+                                        <th style="border: 1px solid;">Punta</th> <!-- Punta 2 -->
+                                        <th style="border: 1px solid;">Error Instrumento
+                                        </th>  <!-- Error del instrumento -->
+                                        <th style="border: 1px solid;">Dirección</th>
+                                        <th style="border: 1px solid;">eMEP</th>
+                                        <th style="border: 1px solid;">Carga Aplicada</th>
+                                        <th style="border: 1px solid;">MEP</th>
                                     </tr>
-                                </t>
-                            </table>
-                            <br/>
-                            <h5 style="font-size: 12px; display: inline-block; margin-right: 20px;">2.2
-                                Discriminación:
-                            </h5>
-                            <p style="font-size: 12px; display: inline-block; margin-left: 10px;">
-                                <t t-esc="doc.discriminacion"/>:
-                                <t t-esc="doc.mep_discriminacion"/>
-                            </p>
+                                    <t t-foreach="doc.excentricidad_ids" t-as="line">
+                                        <tr>
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.punta1"/>
+                                            </td>
 
-                            <br/>
-                            <h5 style="font-size: 12px; display: inline-block; margin-right: 20px;">2.3
-                                Desempeño de Carga
-                            </h5>
-                            <table style="width:auto; border-collapse: collapse; text-align:center; font-size: 12px; display: inline-block;">
-                                <tr>
-                                    <th style="border: 1px solid;">Carga aplicada</th>
-                                    <th style="border: 1px solid;">Indicacion</th>
-                                    <th style="border: 1px solid;">Error</th>
-                                    <th style="border: 1px solid;">MEP
-                                    </th>  <!-- Error del instrumento -->
-                                    <th style="border: 1px solid;">[E]MEP</th>
-                                    <th style="border: 1px solid;">Carga Sensible</th>
-                                    <th style="border: 1px solid;">Discriminacion</th>
-                                </tr>
-                                <t t-foreach="doc.desempeno_carga_ids" t-as="line">
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.medio"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.punta2"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.error_instrumento"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.direccion"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.emep"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.carga_aplicada"/>
+                                            </td>
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.mep"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </table>
+                            </div>
+
+                            <div style="display:flex; justify-content: space-between; width:100%">
+                                <span style="font-size: 22px; display: inline-block; margin-right: 20px;font-weight:bold;float:left;">
+                                    2.2
+                                    Discriminación:
+                                </span>
+                                <p style="font-size: 22px; display: inline-block; margin-left: 10px;">
+                                    <t t-esc="doc.discriminacion + ':' + doc.mep_discriminacion"/>
+                                </p>
+
+                            </div>
+                            <div style="display:flex; justify-content: space-between; width:100%">
+                                <span style="font-size: 22px; display: inline-block; margin-right: 20px;font-weight:bold;float:left;">
+                                    2.3
+                                    Desempeño de Carga
+                                </span>
+                                <table style="width:auto; border-collapse: collapse; text-align:center; font-size: 22px; display: inline-block">
                                     <tr>
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.cargaAplicada"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.indicacion"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.errorInstrumento"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.mep"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.emep"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.balanzaPesoSensible"/>
-                                        </td>
-
-                                        <td style="border: 1px solid;">
-                                            <t t-esc="line.respuesta"/>
-                                        </td>
+                                        <th style="border: 1px solid;">Carga aplicada</th>
+                                        <th style="border: 1px solid;">Indicacion</th>
+                                        <th style="border: 1px solid;">Error</th>
+                                        <th style="border: 1px solid;">MEP
+                                        </th>  <!-- Error del instrumento -->
+                                        <th style="border: 1px solid;">[E]MEP</th>
+                                        <th style="border: 1px solid;">Carga Sensible</th>
+                                        <th style="border: 1px solid;">Discriminacion</th>
                                     </tr>
-                                </t>
-                            </table>
-                            <br/>
+                                    <t t-foreach="doc.desempeno_carga_ids" t-as="line">
+                                        <tr>
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.cargaAplicada"/>
+                                            </td>
 
-                            <h5 style="font-size: 12px; display: inline-block; margin-right: 20px;">2.4
-                                Resultado final de Ensayos realizados
-                            </h5>
-                            <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; border: 1px solid #000; table-layout: auto;">
-                                <thead>
-                                    <tr>
-                                        <th style="border: 1px solid #000; padding: 5px; white-space: nowrap;">
-                                            Criterio
-                                        </th>
-                                        <th style="border: 1px solid #000; padding: 5px; white-space: nowrap;">
-                                            Aprobado
-                                        </th>
-                                        <th style="border: 1px solid #000; padding: 5px; white-space: nowrap;">No
-                                            Aprobado
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Fila Excentricidad -->
-                                    <tr>
-                                        <td style="border: 1px solid #000; padding: 5px; white-space: nowrap;">
-                                            Excentricidad
-                                        </td>
-                                        <td style="border: 1px solid #000; padding: 5px; text-align: center;">
-                                            <t t-if="doc.result_excentricidad">✔</t>
-                                            <t t-if="not doc.result_excentricidad">✘</t>
-                                        </td>
-                                        <td style="border: 1px solid #000; padding: 5px; text-align: center;">
-                                            <t t-if="not doc.result_excentricidad">✔</t>
-                                            <t t-if="doc.result_excentricidad">✘</t>
-                                        </td>
-                                    </tr>
-                                    <!-- Fila Repetitibilidad -->
-                                    <tr>
-                                        <td style="border: 1px solid #000; padding: 5px; white-space: nowrap;">
-                                            Repetitibilidad
-                                        </td>
-                                        <td style="border: 1px solid #000; padding: 5px; text-align: center;">
-                                            <t t-if="doc.result_repetitibilidad">✔</t>
-                                            <t t-if="not doc.result_repetitibilidad">✘</t>
-                                        </td>
-                                        <td style="border: 1px solid #000; padding: 5px; text-align: center;">
-                                            <t t-if="not doc.result_repetitibilidad">✔</t>
-                                            <t t-if="doc.result_repetitibilidad">✘</t>
-                                        </td>
-                                    </tr>
-                                    <!-- Fila Desempeño de Carga -->
-                                    <tr>
-                                        <td style="border: 1px solid #000; padding: 5px; white-space: nowrap;">
-                                            Desempeño
-                                            de Carga
-                                        </td>
-                                        <td style="border: 1px solid #000; padding: 5px; text-align: center;">
-                                            <t t-if="doc.result_desempenoCarga">✔</t>
-                                            <t t-if="not doc.result_desempenoCarga">✘</t>
-                                        </td>
-                                        <td style="border: 1px solid #000; padding: 5px; text-align: center;">
-                                            <t t-if="not doc.result_desempenoCarga">✔</t>
-                                            <t t-if="doc.result_desempenoCarga">✘</t>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.indicacion"/>
+                                            </td>
 
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.errorInstrumento"/>
+                                            </td>
 
-                            <h5 style="display: inline-block; margin-right: 10px;">Evaluación general del
-                                Instrumento:
-                            </h5>
-                            <strong style="text-decoration: underline; display: inline-block;">
-                                <t t-if="doc.resultado == 'aprobado'">APROBADO</t>
-                                <t t-if="doc.resultado == 'reprobado'">REPROBADO</t>
-                            </strong>
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.mep"/>
+                                            </td>
 
-                            <p>
-                                <t t-esc="doc.observation"/>
-                            </p>
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.emep"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.balanzaPesoSensible"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.respuesta"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </table>
+
+                            </div>
+
+                            <div>
+
+                                <span style="font-size: 22px; display: inline-block;font-weight:bold;margin-bottom:10px;">
+                                    2.4
+                                    Resultado final de Ensayos realizados
+                                </span>
+                                <table style="width: 100%; border-collapse: collapse; font-size: 22px; text-align: center; border: 1px solid #000; table-layout: auto;">
+                                    <thead>
+                                        <tr>
+                                            <th style="border: 1px solid #000; padding: 5px; white-space: nowrap;">
+                                                Criterio
+                                            </th>
+                                            <th style="border: 1px solid #000; padding: 5px; white-space: nowrap;">
+                                                Aprobado
+                                            </th>
+                                            <th style="border: 1px solid #000; padding: 5px; white-space: nowrap;">No
+                                                Aprobado
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Fila Excentricidad -->
+                                        <tr>
+                                            <td style="border: 1px solid #000; padding: 5px; white-space: nowrap;">
+                                                Excentricidad
+                                            </td>
+                                            <td style="border: 1px solid #000; padding: 5px; text-align: center;">
+                                                <t t-if="doc.result_excentricidad">✔</t>
+                                                <t t-if="not doc.result_excentricidad">✘</t>
+                                            </td>
+                                            <td style="border: 1px solid #000; padding: 5px; text-align: center;">
+                                                <t t-if="not doc.result_excentricidad">✔</t>
+                                                <t t-if="doc.result_excentricidad">✘</t>
+                                            </td>
+                                        </tr>
+                                        <!-- Fila Repetitibilidad -->
+                                        <tr>
+                                            <td style="border: 1px solid #000; padding: 5px; white-space: nowrap;">
+                                                Repetitibilidad
+                                            </td>
+                                            <td style="border: 1px solid #000; padding: 5px; text-align: center;">
+                                                <t t-if="doc.result_repetitibilidad">✔</t>
+                                                <t t-if="not doc.result_repetitibilidad">✘</t>
+                                            </td>
+                                            <td style="border: 1px solid #000; padding: 5px; text-align: center;">
+                                                <t t-if="not doc.result_repetitibilidad">✔</t>
+                                                <t t-if="doc.result_repetitibilidad">✘</t>
+                                            </td>
+                                        </tr>
+                                        <!-- Fila Desempeño de Carga -->
+                                        <tr>
+                                            <td style="border: 1px solid #000; padding: 5px; white-space: nowrap;">
+                                                Desempeño
+                                                de Carga
+                                            </td>
+                                            <td style="border: 1px solid #000; padding: 5px; text-align: center;">
+                                                <t t-if="doc.result_desempenoCarga">✔</t>
+                                                <t t-if="not doc.result_desempenoCarga">✘</t>
+                                            </td>
+                                            <td style="border: 1px solid #000; padding: 5px; text-align: center;">
+                                                <t t-if="not doc.result_desempenoCarga">✔</t>
+                                                <t t-if="doc.result_desempenoCarga">✘</t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div>
+                                <span style="display: inline-block; margin-right: 10px;font-weight: bold;">Evaluación
+                                    general del
+                                    Instrumento:
+                                </span>
+                                <strong style="text-decoration: underline; display: inline-block;">
+                                    <t t-if="doc.resultado == 'aprobado'">APROBADO</t>
+                                    <t t-if="doc.resultado == 'reprobado'">REPROBADO</t>
+                                </strong>
+
+                                <p>
+                                    <t t-esc="doc.observation"/>
+                                </p>
+                            </div>
 
                             <!-- Observaciones -->
-                            <h5>3. Observaciones</h5>
-                            <hr style="border: 1px solid #000; margin: 10px 0;"/>
-                            <p style="font-size: 10px;">
+                            <div class="titulo_ensayos_dos">3. Observaciones</div>
+                            <p style="font-size: 20px;">
                                 Los ensayos fueron realizados conpesasde trabajo con trazabilidad de las medicionesa
                                 los
                                 Patrones de Referencia del Laboratorio Nacional de Masa de la
@@ -497,7 +670,7 @@
                                 UMCI-DMAS-LMA
                                 Nª XXX
                             </p>
-                            <p style="font-size: 10px;">
+                            <p style="font-size: 20px;">
                                 La desviación máxima de la indicación del instrumento se encuentra dentro del límite
                                 deMáximoError Permitido (MEP) paraInstrumento dePesaje de
                                 Funcionamiento no automatico (Bàscula) de acuerdo a los requerimientos establecidos
@@ -506,13 +679,6 @@
                             </p>
                             <br/>
                             <table style="width: 100%; border-collapse: collapse; text-align: center;">
-                                <!--                                <thead>-->
-                                <!--                                    <tr>-->
-                                <!--                                        <th style="border: 1px solid black; padding: 5px;"></th>-->
-                                <!--                                        <th style="border: 1px solid black; padding: 5px;">Técnico 2</th>-->
-                                <!--                                        <th style="border: 1px solid black; padding: 5px;">Responsable</th>-->
-                                <!--                                    </tr>-->
-                                <!--                                </thead>-->
                                 <tbody>
                                     <tr>
                                         <td style="padding: 5px;">
@@ -552,42 +718,7 @@
 
 
                             <!-- Pie de página -->
-                            <div style="text-align:center; margin-top:50px;font-size: 10px;">
-                                <p>
-                                    <strong>Este certificado de verificación no podrá ser reproducido parcialmente
-                                        sin
-                                        la aprobación por escrito del INTN. Los certificados de verificación sin
-                                        firma y
-                                        sello no son válidos. La copia impresa de este documento no representa a una
-                                        copia
-                                        original. Este documento está firmado digitalmente y tiene validez legal de
-                                        acuerdo
-                                        a la Ley 4.017/10
-                                    </strong>
-                                </p>
-                                <hr style="border: 1px solid #000; margin: 10px 0;"/>
-                                <p>
-                                    <strong>MISIÓN:</strong>
-                                    Contribuir al desarrollo del país y bienestar de la sociedad
-                                    mediante la normalización, metrología, investigación, reglamentación, asistencia
-                                    técnica,
-                                    ensayos, inspección y certificación.
-                                </p>
-                                <p>
-                                    <strong>VISIÓN:</strong>
-                                    Ser una institución innovadora y competitiva, reconocida
-                                    nacional e internacionalmente.
-                                </p>
-                                <p>Avda. Artigas 3973 y Gral. Roa / C.C. | Teléf.: 288 6000 | www.intn.gov.py |
-                                    e-mail:
-                                    intn@intn.gov.py | Asunción – Paraguay
-                                </p>
-                                <p style="font-size:12px;">Página
-                                    <span t-esc="page"/>
-                                    de
-                                    <span t-esc="total_pages"/>
-                                </p>
-                            </div>
+
                         </div>
                     </t>
                 </t>
