@@ -17,7 +17,7 @@
 
     <menuitem id="menu_work_order"
               name="Control de Ingresos"
-              parent="menu_root_metci"
+              parent="menu_portal_service"
               sequence="30"
               action="action_control_ingreso"/>
 

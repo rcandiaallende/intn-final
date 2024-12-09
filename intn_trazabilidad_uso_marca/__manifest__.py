@@ -31,6 +31,7 @@
         'views/views.xml',
         # 'views/licencia_conformidad.xml',
         # 'views/licencia_conformidad_dos.xml',
+        'views/calibration_request.xml',
         'views/licencia_servicios.xml',
         'views/normas_licencia.xml',
         'views/reglamentos_licencia.xml',
