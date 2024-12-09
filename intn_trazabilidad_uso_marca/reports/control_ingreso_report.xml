@@ -33,114 +33,186 @@
                 <t t-foreach="docs" t-as="o">
                     <t t-call="web.basic_layout">
                         <div class="page">
-                            <div class="header">
-                                <h2 style="text-align: center;">CONTROL DE INGRESO DE INSTRUMENTOS</h2>
-                                <p style="text-align: center; font-size: 12px;">Instituto Nacional de Tecnología,
-                                    Normalización y Metrología
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <h2 style="margin: 0;">CONTROL DE INGRESO DE INSTRUMENTOS</h2>
+                                <p style="margin: 0; font-size: 12px; font-weight: bold;">
+                                    Instituto Nacional de Tecnología, Normalización y Metrología
+                                </p>
+                                <p style="margin: 0; font-size: 10px;">
+                                    Tel: 021 288 6000 Int.: 2401 | Email: metrologia@intn.gov.py
                                 </p>
                             </div>
-
-                            <!-- Información General -->
-                            <table style="width: 100%; font-size: 12px; margin-bottom: 20px;">
+                            <table style="width: 100%; font-size: 12px; margin-bottom: 20px; border: 1px solid black; border-collapse: collapse;">
                                 <tr>
-                                    <td>
+                                    <td style="padding: 5px; border: 1px solid black;">
                                         <strong>Razón Social:</strong>
-                                        <t t-esc="o.razon_social"/>
+                                        <t t-esc="o.razon_social.name"/>
                                     </td>
-                                    <td>
-                                        <strong>N° Expediente:</strong>
-                                        <t t-esc="o.expediente"/>
+                                    <td style="padding: 5px; border: 1px solid black;">
+                                        <strong>N° de Expediente:</strong>
+                                        <t t-esc="o.expediente.name"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
+                                    <td style="padding: 5px; border: 1px solid black;">
                                         <strong>R.U.C.:</strong>
                                         <t t-esc="o.ruc"/>
                                     </td>
-                                    <td>
+                                    <td style="padding: 5px; border: 1px solid black;">
                                         <strong>Tel/Fax:</strong>
                                         <t t-esc="o.telefono_fax or ''"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
+                                    <td style="padding: 5px; border: 1px solid black;">
                                         <strong>Contacto:</strong>
                                         <t t-esc="o.contacto or ''"/>
                                     </td>
-                                    <td>
+                                    <td style="padding: 5px; border: 1px solid black;">
                                         <strong>Email:</strong>
                                         <t t-esc="o.email or ''"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
+                                    <td style="padding: 5px; border: 1px solid black;">
                                         <strong>Fecha:</strong>
                                         <t t-esc="o.fecha"/>
                                     </td>
-                                    <td>
+                                    <td style="padding: 5px; border: 1px solid black;">
                                         <strong>Compromiso de Entrega:</strong>
-                                        <t t-esc="o.compromiso_entrega_fecha"/>
+                                        <t t-esc="o.compromiso_entrega_fecha or ''"/>
                                         -
-                                        <t t-esc="o.compromiso_entrega_hora"/>
+                                        <t t-esc="o.compromiso_entrega_hora or ''"/>
                                     </td>
                                 </tr>
                             </table>
-
-                            <!-- Detalle de Instrumentos -->
-                            <table class="table table-sm"
-                                   style="width: 100%; border: 1px solid black; border-collapse: collapse; font-size: 12px;">
+                            <h3 style="text-align: center; margin-bottom: 10px;">Detalle de Instrumentos</h3>
+                            <table style="width: 100%; border: 1px solid black; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
                                 <thead>
-                                    <tr>
-                                        <th style="border: 1px solid black;">Ítem</th>
-                                        <th style="border: 1px solid black;">Cantidad</th>
-                                        <th style="border: 1px solid black;">Instrumento</th>
-                                        <th style="border: 1px solid black;">Identificación</th>
+                                    <tr style="background-color: #f0f0f0;">
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center;">Ítem</th>
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center;">
+                                            Cantidad
+                                        </th>
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center;">
+                                            Instrumento
+                                        </th>
+                                        <th style="border: 1px solid black; padding: 5px; text-align: center;">
+                                            Identificación
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr t-foreach="o.line_ids" t-as="line">
-                                        <td style="border: 1px solid black; text-align: center;">
+                                        <td style="border: 1px solid black; text-align: center; padding: 5px;">
                                             <t t-esc="line.item"/>
                                         </td>
-                                        <td style="border: 1px solid black; text-align: center;">
+                                        <td style="border: 1px solid black; text-align: center; padding: 5px;">
                                             <t t-esc="line.cantidad"/>
                                         </td>
-                                        <td style="border: 1px solid black; text-align: center;">
+                                        <td style="border: 1px solid black; text-align: center; padding: 5px;">
                                             <t t-esc="line.instrumento"/>
                                         </td>
-                                        <td style="border: 1px solid black; text-align: center;">
+                                        <td style="border: 1px solid black; text-align: center; padding: 5px;">
                                             <t t-esc="line.identificacion"/>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-
-                            <!-- Notas -->
+                            <br/>
+                            <br/>
                             <div style="margin-top: 20px; font-size: 12px;">
                                 <strong>Notas Generales:</strong>
-                                <p>
-                                    <t t-esc="o.notas or ''"/>
+                                <p style="border: 1px solid black; padding: 10px; min-height: 50px;">
+                                    <t t-esc="o.notas or 'Sin notas adicionales.'"/>
                                 </p>
                             </div>
-
-                            <!-- Observaciones -->
                             <div style="margin-top: 20px; font-size: 12px;">
                                 <strong>Observaciones:</strong>
-                                <p>
+                                <p style="border: 1px solid black; padding: 10px; min-height: 50px;">
                                     <t t-esc="o.observaciones or 'Presentar este documento para recoger sus instrumentos.'"/>
                                 </p>
                             </div>
-
-                            <!-- Firmas -->
-                            <div style="margin-top: 40px; font-size: 12px; text-align: center;">
-                                <table style="width: 100%;">
+                            <div style="margin-top: 40px;">
+                                <table style="width: 100%; font-size: 12px; text-align: center;">
                                     <tr>
-                                        <td style="text-align: center;">__________________________</td>
-                                        <td style="text-align: center;">__________________________</td>
+                                        <td style="width: 50%;">
+                                            ____________________________
+                                            <br/>
+                                            <strong>Firma Recibí Conforme</strong>
+                                            <br/>
+                                            Aclaración:
+                                            <t t-esc="o.aclaracion_recibi or ''"/>
+                                            <br/>
+                                            C.I.C. No:
+                                            <t t-esc="o.cic_recibi or ''"/>
+                                        </td>
+                                        <td style="width: 50%;">
+                                            ____________________________
+                                            <br/>
+                                            <strong>Firma Usuario</strong>
+                                            <br/>
+                                            Aclaración:
+                                            <t t-esc="o.aclaracion_usuario or ''"/>
+                                            <br/>
+                                            C.I.C. No:
+                                            <t t-esc="o.cic_usuario or ''"/>
+                                        </td>
                                     </tr>
+                                </table>
+                            </div>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <div style="margin-top: 40px; font-size: 12px; border: 1px solid black; padding: 10px;">
+                                <h3 style="text-align: center;">CONTROL DE RETIRO DE INSTRUMENTOS</h3>
+                                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
                                     <tr>
-                                        <td style="text-align: center;">Firma Recibí Conforme</td>
-                                        <td style="text-align: center;">Firma Usuario</td>
+                                        <td style="width: 50%; border: 1px solid black; padding: 10px;">
+                                            <strong>PARCIAL:</strong>
+                                            <br/>
+                                            <strong>Fecha:</strong>
+                                            <t t-esc="o.retiro_parcial_fecha or ''"/>
+                                            <br/>
+                                            <br/>
+                                            <u>Por ONM – INTN</u>
+                                            <br/>
+                                            <strong>Aclaración:</strong>
+                                            <t t-esc="o.retiro_parcial_aclaracion_onm or ''"/>
+                                            <br/>
+                                            <strong>C.I.C. No:</strong>
+                                            <t t-esc="o.retiro_parcial_cic_onm or ''"/>
+                                            <br/>
+                                            <br/>
+                                            <u>Recibí conforme - Usuario</u>
+                                            <br/>
+                                            <strong>Aclaración:</strong>
+                                            <t t-esc="o.retiro_parcial_aclaracion_usuario or ''"/>
+                                            <br/>
+                                            <strong>C.I.C. No:</strong>
+                                            <t t-esc="o.retiro_parcial_cic_usuario or ''"/>
+                                        </td>
+                                        <td style="width: 50%; border: 1px solid black; padding: 10px;">
+                                            <strong>TOTAL:</strong>
+                                            <br/>
+                                            <strong>Fecha:</strong>
+                                            <t t-esc="o.retiro_total_fecha or ''"/>
+                                            <br/>
+                                            <br/>
+                                            <u>ONM – INTN</u>
+                                            <br/>
+                                            <strong>Aclaración:</strong>
+                                            <t t-esc="o.retiro_total_aclaracion_onm or ''"/>
+                                            <br/>
+                                            <br/>
+                                            <u>Recibí conforme - Usuario</u>
+                                            <br/>
+                                            <strong>Aclaración:</strong>
+                                            <t t-esc="o.retiro_total_aclaracion_usuario or ''"/>
+                                            <br/>
+                                            <strong>C.I.C. No:</strong>
+                                            <t t-esc="o.retiro_total_cic_usuario or ''"/>
+                                        </td>
                                     </tr>
                                 </table>
                             </div>

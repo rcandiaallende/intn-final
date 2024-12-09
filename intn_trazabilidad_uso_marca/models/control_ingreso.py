@@ -29,6 +29,16 @@ class ControlIngresoInstrumentos(models.Model):
     cic_recibi = fields.Char(string="C.I.C. No Recibí Conforme")
     cic_usuario = fields.Char(string="C.I.C. No Usuario")
     production_id = fields.Many2one('mrp.production', string='Orden de Producción', readonly=True)
+    retiro_parcial_fecha = fields.Date(string='Fecha (Parcial)')
+    retiro_parcial_aclaracion_onm = fields.Char(string='Aclaración ONM')
+    retiro_parcial_cic_onm = fields.Char(string='C.I.C. No ONM')
+    retiro_parcial_aclaracion_usuario = fields.Char(string='Aclaración Usuario')
+    retiro_parcial_cic_usuario = fields.Char(string='C.I.C. No Usuario')
+    retiro_total_fecha = fields.Date(string='Fecha (Total)')
+    retiro_total_aclaracion_onm = fields.Char(string='Aclaración ONM')
+    retiro_total_cic_onm = fields.Char(string='C.I.C. No ONM')
+    retiro_total_aclaracion_usuario = fields.Char(string='Aclaración Usuario')
+    retiro_total_cic_usuario = fields.Char(string='C.I.C. No Usuario')
 
     @api.multi
     def create_production_order(self):

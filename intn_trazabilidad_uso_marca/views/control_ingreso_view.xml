@@ -24,7 +24,8 @@
                         </group>
                         <group string="Datos de Producción" colspan="4">
                             <group>
-                                <field name="expediente" domain="[('partner_id','=',razon_social)]" options="{'no_create': True}"/>
+                                <field name="expediente" domain="[('partner_id','=',razon_social)]"
+                                       options="{'no_create': True}"/>
                                 <field name="product_id" options="{'no_create': True}"/>
                             </group>
                             <group>
@@ -65,6 +66,22 @@
                                 <field name="firma_usuario" widget="image" class="oe_avatar"/>
                                 <field name="aclaracion_usuario"/>
                                 <field name="cic_usuario"/>
+                            </group>
+                        </page>
+                        <page string="Control de Retiro de Instrumentos">
+                            <group string="Control Parcial">
+                                <field name="retiro_parcial_fecha"/>
+                                <field name="retiro_parcial_aclaracion_onm"/>
+                                <field name="retiro_parcial_cic_onm"/>
+                                <field name="retiro_parcial_aclaracion_usuario"/>
+                                <field name="retiro_parcial_cic_usuario"/>
+                            </group>
+                            <group string="Control Total">
+                                <field name="retiro_total_fecha"/>
+                                <field name="retiro_total_aclaracion_onm"/>
+                                <field name="retiro_total_cic_onm"/>
+                                <field name="retiro_total_aclaracion_usuario"/>
+                                <field name="retiro_total_cic_usuario"/>
                             </group>
                         </page>
                     </notebook>
