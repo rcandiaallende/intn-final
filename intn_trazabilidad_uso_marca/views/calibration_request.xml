@@ -7,6 +7,7 @@
             <tree string="Solicitudes de Calibración">
                 <field name="state"/>
                 <field name="work_date"/>
+                <field name="partner_id"/>
                 <field name="workorder_id"/>
             </tree>
         </field>
@@ -18,9 +19,27 @@
         <field name="model">calibration.request</field>
         <field name="arch" type="xml">
             <form string="Solicitud de Calibración">
+                <header>
+                    <button name="crear_control_ingreso" type="object" string="Crear Control de Ingreso"
+                            class="btn-success"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="revision,approved,scheduled" readonly="0"/>
+                </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box" modifiers="{}">
+                        <button type="object" name="action_open_control_ingresos" icon="fa-truck"
+                                class="oe_stat_button">
+                            <div class="o_field_widget o_stat_info" modifiers="{}">
+                                <span class="o_stat_value" widget="statinfo" modifiers="{}">
+                                    <field name="control_ingresos_count" widget="statinfo" nolabel="1" class="mr4"
+                                           modifiers="{'readonly':true}"/>
+                                </span>
+                                <span class="o_stat_text">Control de Ingresos</span>
+                            </div>
+                        </button>
+                    </div>
                     <group>
-                        <field name="state" readonly="1"/>
+                        <field name="partner_id"/>
                         <field name="work_date"/>
                         <field name="workorder_id"/>
                         <field name="document"/>
@@ -35,19 +54,30 @@
         <field name="name">calibration.request.kanban</field>
         <field name="model">calibration.request</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="state">
+            <kanban class="o_kanban_view">
+                <field name="partner_id"/>
+                <!--<field name="name"/>-->
+                <progressbar field="state"
+                             colors='{"revision": "success", "approved": "warning", "revision": "danger"}'/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_card">
-                            <div class="oe_kanban_details">
-                                <strong>
-                                    <field name="work_date"/>
-                                </strong>
-                                <div>
+                        <div t-attf-class="oe_kanban_global_click o_kanban_record">
+                            <div class="o_kanban_image">
+                                <img t-att-src="kanban_image('res.partner', 'image_128', record.partner_id.raw_value)"
+                                     class="img-thumbnail" style="max-width: 100%; height: auto;"/>
+                            </div>
+                            <div class="o_kanban_details">
+                                <div class="o_kanban_partner">
+                                    <strong>Cliente:</strong>
+                                    <field name="partner_id"/>
+                                </div>
+                                <div class="o_kanban_service">
+                                    <strong>Orden de Trabajo:</strong>
                                     <field name="workorder_id"/>
                                 </div>
-                                <div>
-                                    <field name="state" widget="statusbar"/>
+                                <div class="o_kanban_service">
+                                    <strong>Programación de trabajo:</strong>
+                                    <field name="work_date"/>
                                 </div>
                             </div>
                         </div>
@@ -65,8 +95,4 @@
         <field name="view_mode">tree,form,kanban</field>
     </record>
 
-    <!-- Menú -->
-    <menuitem id="menu_calibration_request_root" name="Calibración"/>
-    <menuitem id="menu_calibration_request" name="Solicitudes" parent="menu_root_metci"
-              action="action_calibration_request"/>
 </odoo>

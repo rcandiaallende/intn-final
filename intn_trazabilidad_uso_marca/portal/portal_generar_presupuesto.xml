@@ -341,6 +341,7 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
+                                            <th style="width: 180px">Laboratorio</th>
                                             <th style="width: 400px">
                                                 <span>Servicio</span>
                                             </th>
@@ -357,6 +358,17 @@
                                     </thead>
                                     <tbody>
                                         <tr class="item-row" data-index="0">
+                                            <td>
+                                                <div class="form-group">
+                                                    <select name="laboratorio_0" class="form-select">
+                                                        <t t-foreach="laboratorios" t-as="laboratorio">
+                                                            <option t-att-value="laboratorio['id']">
+                                                                <t t-esc="laboratorio['name']"/>
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                            </td>
                                             <td>
                                                 <div class="form-group">
                                                     <select name="servicio_0" class="form-select"

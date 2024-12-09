@@ -9,13 +9,14 @@
               parent="menu_root_metci"
               sequence="10"/>
 
-    <!--<menuitem id="menu_work_order"
-              name="Órdenes de Trabajo"
-              parent="menu_root_metci"
-              sequence="30"
-              action="action_work_order"/>-->
+    <menuitem id="menu_solicitud_calibración"
+              name="Solicitud de Calibración"
+              parent="menu_portal_service"
+              sequence="20"
+              action="action_calibration_request"/>
 
-    <menuitem id="menu_work_order"
+
+    <menuitem id="menu_control_ingresos"
               name="Control de Ingresos"
               parent="menu_portal_service"
               sequence="30"
