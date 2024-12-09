@@ -2,17 +2,15 @@
     <data>
 
         <!-- Añadir nueva entrada en el menú del portal -->
-        <template id="portal_my_generar_presupuesto_menu" name="Portal My Generar Presupuesto"
+        <template id="portal_my_generar_presupuesto_menu" name="Portal Adquirir Normas"
                   inherit_id="portal.portal_my_home">
             <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
                 <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
                    href="/my/normas" title="Adquirir Normas">
                     Adquirir Normas
-                    <t t-if="control_etiquetas_count">
-                        <span class="badge badge-secondary badge-pill">
-                            <t t-esc="onn_normas_count"/>
-                        </span>
-                    </t>
+                    <span class="badge badge-secondary badge-pill">
+                        <t t-esc="onn_normas_count"/>
+                    </span>
                 </a>
             </xpath>
         </template>
@@ -110,44 +108,74 @@
         <template id="portal_my_generar_presupuesto" name="Adquirir Normas">
             <div class="o_portal_wrapper_full">
                 <style>
+                    /* General body styles */
                     body {
                     font-family: 'Roboto', sans-serif;
-                    background-color: #f8f9fa;
+                    background-color: #f9fbfd;
                     color: #212529;
                     margin: 0;
                     padding: 0;
+                    line-height: 1.6;
                     }
+
+                    /* Wrapper for full portal */
                     .o_portal_wrapper_full {
                     display: flex;
                     justify-content: center;
                     align-items: flex-start;
                     min-height: 100vh;
                     padding: 20px;
+                    background: linear-gradient(135deg, #e9f5fc, #ffffff);
                     }
+
+                    /* Card container */
                     .card {
                     width: 100%;
                     max-width: 1200px;
                     padding: 30px;
                     background-color: #ffffff;
-                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                    border-radius: 10px;
+                    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+                    border-radius: 12px;
                     border: none;
+                    animation: fadeIn 0.6s ease-in-out;
                     }
+
+                    /* Card entrance animation */
+                    @keyframes fadeIn {
+                    from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                    }
+                    to {
+                    opacity: 1;
+                    transform: translateY(0);
+                    }
+                    }
+
+                    /* Headings */
                     h2 {
-                    color: #007bff;
+                    color: #0056b3;
                     font-weight: 700;
                     margin-bottom: 25px;
                     text-align: center;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
                     }
+
+                    /* Form group */
                     .form-group {
                     margin-bottom: 20px;
                     }
+
+                    /* Labels */
                     label {
                     font-weight: 600;
                     color: #495057;
                     display: block;
                     margin-bottom: 10px;
                     }
+
+                    /* Input and select fields */
                     select, input[type="text"], input[type="number"] {
                     width: 100%;
                     padding: 12px;
@@ -155,100 +183,115 @@
                     border: 1px solid #ced4da;
                     border-radius: 8px;
                     box-sizing: border-box;
-                    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+                    transition: all 0.3s ease-in-out;
+                    background-color: #fefefe;
                     }
+
                     select:focus, input[type="text"]:focus, input[type="number"]:focus {
-                    border-color: #007bff;
-                    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+                    border-color: #0056b3;
+                    box-shadow: 0 0 8px rgba(0, 86, 179, 0.3);
                     outline: none;
                     }
+
+                    /* Removing spinner buttons for number inputs */
                     input[type="number"]::-webkit-inner-spin-button,
                     input[type="number"]::-webkit-outer-spin-button {
                     -webkit-appearance: none;
                     margin: 0;
                     }
+
                     input[type="number"] {
                     -moz-appearance: textfield; /* Firefox */
                     }
+
+                    /* Buttons */
                     .btn {
                     font-weight: 600;
-                    padding: 12px;
+                    padding: 12px 20px;
                     border-radius: 8px;
                     cursor: pointer;
-                    transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+                    transition: all 0.3s ease-in-out;
+                    display: inline-block;
+                    text-align: center;
                     }
+
                     .btn-success {
                     background-color: #28a745;
-                    border: none;
                     color: #ffffff;
-                    display: block;
-                    margin: 0 auto;
+                    border: none;
                     }
+
                     .btn-success:hover {
                     background-color: #218838;
-                    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+                    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
                     }
+
                     .btn-secondary {
                     background-color: #6c757d;
-                    border: none;
                     color: #ffffff;
+                    border: none;
                     margin-top: 10px;
                     }
+
                     .btn-secondary:hover {
                     background-color: #5a6268;
-                    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+                    box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
                     }
+
                     .btn-danger {
                     background-color: #dc3545;
+                    color: #ffffff;
+                    padding: 10px 16px;
                     border: none;
-                    color: white;
-                    padding: 6px 12px;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    font-weight: bold;
-                    transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
                     }
+
                     .btn-danger:hover {
                     background-color: #c82333;
-                    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+                    box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
                     }
+
+                    /* Table */
                     .table {
                     width: 100%;
                     margin-bottom: 20px;
                     border-collapse: collapse;
                     }
+
                     .table th, .table td {
                     border: 1px solid #dee2e6;
                     padding: 12px;
                     text-align: left;
                     vertical-align: middle;
                     }
+
                     .table th {
-                    background-color: #f1f3f5;
+                    background-color: #e9ecef;
                     font-weight: bold;
                     text-align: center;
+                    text-transform: uppercase;
                     }
+
                     .table tbody tr:hover {
                     background-color: #f8f9fa;
                     }
-                    .table .form-group {
-                    margin-bottom: 0;
-                    }
+
+                    /* Total container */
                     .total-container {
                     display: flex;
                     justify-content: flex-end;
                     align-items: center;
                     margin-bottom: 20px;
                     }
+
                     .total-container label {
                     margin-right: 10px;
                     font-weight: bold;
                     }
+
                     #monto_total_general {
                     width: 200px;
                     }
                 </style>
-
                 <t t-call="portal.portal_layout">
                     <t t-set="breadcrumbs_searchbar" t-value="True"/>
 

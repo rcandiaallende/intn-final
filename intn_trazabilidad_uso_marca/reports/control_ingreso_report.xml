@@ -1,0 +1,153 @@
+<odoo>
+    <data>
+
+        <record id="paperformat_control_ingreso" model="report.paperformat">
+            <field name="name">Control de Ingreso de Instrumentos</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">297</field>
+            <field name="page_width">210</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">30</field>
+            <field name="margin_bottom">15</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">30</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <report
+                id="action_report_control_ingreso"
+                model="control.ingreso.instrumentos"
+                string="Control de Ingreso de Instrumentos"
+                report_type="qweb-pdf"
+                name="intn_trazabilidad_uso_marca.report_control_ingreso_template"
+                file="intn_trazabilidad_uso_marca.report_control_ingreso_template"
+                paperformat="paperformat_control_ingreso"
+                print_report_name="'control_ingreso_instrumentos' + object.name"
+        />
+
+        <template id="report_control_ingreso_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.basic_layout">
+                        <div class="page">
+                            <div class="header">
+                                <h2 style="text-align: center;">CONTROL DE INGRESO DE INSTRUMENTOS</h2>
+                                <p style="text-align: center; font-size: 12px;">Instituto Nacional de Tecnología,
+                                    Normalización y Metrología
+                                </p>
+                            </div>
+
+                            <!-- Información General -->
+                            <table style="width: 100%; font-size: 12px; margin-bottom: 20px;">
+                                <tr>
+                                    <td>
+                                        <strong>Razón Social:</strong>
+                                        <t t-esc="o.razon_social"/>
+                                    </td>
+                                    <td>
+                                        <strong>N° Expediente:</strong>
+                                        <t t-esc="o.expediente"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>R.U.C.:</strong>
+                                        <t t-esc="o.ruc"/>
+                                    </td>
+                                    <td>
+                                        <strong>Tel/Fax:</strong>
+                                        <t t-esc="o.telefono_fax or ''"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Contacto:</strong>
+                                        <t t-esc="o.contacto or ''"/>
+                                    </td>
+                                    <td>
+                                        <strong>Email:</strong>
+                                        <t t-esc="o.email or ''"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Fecha:</strong>
+                                        <t t-esc="o.fecha"/>
+                                    </td>
+                                    <td>
+                                        <strong>Compromiso de Entrega:</strong>
+                                        <t t-esc="o.compromiso_entrega_fecha"/>
+                                        -
+                                        <t t-esc="o.compromiso_entrega_hora"/>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Detalle de Instrumentos -->
+                            <table class="table table-sm"
+                                   style="width: 100%; border: 1px solid black; border-collapse: collapse; font-size: 12px;">
+                                <thead>
+                                    <tr>
+                                        <th style="border: 1px solid black;">Ítem</th>
+                                        <th style="border: 1px solid black;">Cantidad</th>
+                                        <th style="border: 1px solid black;">Instrumento</th>
+                                        <th style="border: 1px solid black;">Identificación</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="o.line_ids" t-as="line">
+                                        <td style="border: 1px solid black; text-align: center;">
+                                            <t t-esc="line.item"/>
+                                        </td>
+                                        <td style="border: 1px solid black; text-align: center;">
+                                            <t t-esc="line.cantidad"/>
+                                        </td>
+                                        <td style="border: 1px solid black; text-align: center;">
+                                            <t t-esc="line.instrumento"/>
+                                        </td>
+                                        <td style="border: 1px solid black; text-align: center;">
+                                            <t t-esc="line.identificacion"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Notas -->
+                            <div style="margin-top: 20px; font-size: 12px;">
+                                <strong>Notas Generales:</strong>
+                                <p>
+                                    <t t-esc="o.notas or ''"/>
+                                </p>
+                            </div>
+
+                            <!-- Observaciones -->
+                            <div style="margin-top: 20px; font-size: 12px;">
+                                <strong>Observaciones:</strong>
+                                <p>
+                                    <t t-esc="o.observaciones or 'Presentar este documento para recoger sus instrumentos.'"/>
+                                </p>
+                            </div>
+
+                            <!-- Firmas -->
+                            <div style="margin-top: 40px; font-size: 12px; text-align: center;">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td style="text-align: center;">__________________________</td>
+                                        <td style="text-align: center;">__________________________</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;">Firma Recibí Conforme</td>
+                                        <td style="text-align: center;">Firma Usuario</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

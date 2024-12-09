@@ -1,0 +1,105 @@
+<odoo>
+    <record id="view_control_ingreso_form" model="ir.ui.view">
+        <field name="name">control.ingreso.form</field>
+        <field name="model">control.ingreso.instrumentos</field>
+        <field name="arch" type="xml">
+            <form string="Control de Ingreso de Instrumentos">
+                <header>
+                    <button name="create_production_order" type="object" string="Crear Orden de Producción"
+                            class="btn-primary" attrs="{'invisible': [('production_id', '!=', False)]}"/>
+                    <field name="production_id" invisible="1"/>
+                </header>
+                <sheet>
+                    <group string="Información General" colspan="4">
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="razon_social" options="{'no_create': True}"/>
+                            <field name="ruc"/>
+                        </group>
+                        <group>
+                            <field name="telefono_fax"/>
+                            <field name="contacto"/>
+                            <field name="email"/>
+                            <field name="fecha"/>
+                        </group>
+                        <group string="Datos de Producción" colspan="4">
+                            <group>
+                                <field name="expediente" domain="[('partner_id','=',razon_social)]" options="{'no_create': True}"/>
+                                <field name="product_id" options="{'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="centro_produccion" options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                    </group>
+                    <group string="Compromiso de Entrega">
+                        <group>
+                            <field name="compromiso_entrega_fecha"/>
+                            <field name="compromiso_entrega_hora"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Detalle de Instrumentos">
+                            <field name="line_ids" widget="one2many_list">
+                                <tree editable="bottom">
+                                    <field name="item"/>
+                                    <field name="cantidad"/>
+                                    <field name="instrumento"/>
+                                    <field name="identificacion"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notas y Observaciones">
+                            <group>
+                                <field name="notas"/>
+                                <field name="observaciones"/>
+                            </group>
+                        </page>
+                        <page string="Firmas">
+                            <group string="Firma Recibí Conforme">
+                                <field name="firma_recibi" widget="image" class="oe_avatar"/>
+                                <field name="aclaracion_recibi"/>
+                                <field name="cic_recibi"/>
+                            </group>
+                            <group string="Firma Usuario">
+                                <field name="firma_usuario" widget="image" class="oe_avatar"/>
+                                <field name="aclaracion_usuario"/>
+                                <field name="cic_usuario"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_control_ingreso_tree" model="ir.ui.view">
+        <field name="name">control.ingreso.tree</field>
+        <field name="model">control.ingreso.instrumentos</field>
+        <field name="arch" type="xml">
+            <tree string="Control de Ingreso de Instrumentos">
+                <field name="name"/>
+                <field name="razon_social"/>
+                <field name="expediente"/>
+                <field name="fecha"/>
+                <field name="compromiso_entrega_fecha"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_control_ingreso" model="ir.actions.act_window">
+        <field name="name">Control de Ingreso</field>
+        <field name="res_model">control.ingreso.instrumentos</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p>
+                Gestión del control de ingreso de instrumentos. Utiliza esta vista para gestionar la información
+                de los instrumentos ingresados, incluyendo detalles, notas y firmas de recepción.
+            </p>
+        </field>
+    </record>
+</odoo>
