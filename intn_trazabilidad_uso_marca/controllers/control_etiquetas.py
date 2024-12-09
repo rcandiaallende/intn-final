@@ -279,7 +279,8 @@ class CustomerPortal(CustomerPortal):
             'state': 'pending',
             'service_type': 'metci',
         })
-        calibration_request = request.env['calibration.request'].sudo().create({'state': 'revision'})
+        calibration_request = request.env['calibration.request'].sudo().create(
+            {'state': 'revision', 'partner_id': partner.id})
         sale_order.calibration_request = calibration_request.id
 
         # Crear las líneas del presupuesto

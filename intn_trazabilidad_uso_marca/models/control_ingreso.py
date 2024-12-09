@@ -9,8 +9,8 @@ class ControlIngresoInstrumentos(models.Model):
     name = fields.Char(string='N° Documento',
                        default=lambda self: self.env['ir.sequence'].next_by_code('control.ingreso.instrumentos'))
     expediente = fields.Many2one('sale.order', string='N° de Expediente')
-    product_id = fields.Many2one('product.product', string='Fabricar', required=True)
-    centro_produccion = fields.Many2one('mrp.workcenter', string='Centro de Producción', required=True)
+    product_id = fields.Many2one('product.product', string='Fabricar')
+    centro_produccion = fields.Many2one('mrp.workcenter', string='Centro de Producción')
     razon_social = fields.Many2one('res.partner', string='Razón Social')
     ruc = fields.Char(related='razon_social.vat', string='R.U.C.')
     telefono_fax = fields.Char(related='razon_social.phone', string='Tel/Fax')
@@ -39,6 +39,7 @@ class ControlIngresoInstrumentos(models.Model):
     retiro_total_cic_onm = fields.Char(string='C.I.C. No ONM')
     retiro_total_aclaracion_usuario = fields.Char(string='Aclaración Usuario')
     retiro_total_cic_usuario = fields.Char(string='C.I.C. No Usuario')
+    calibration_request = fields.Many2one('calibration.request', string='Solicitud de Calibración')
 
     @api.multi
     def create_production_order(self):

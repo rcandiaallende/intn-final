@@ -49,13 +49,17 @@ class GenerarPresupuestoPortal(http.Controller):
 
     @http.route('/my/nuevo-presupuesto', type='http', auth="user", website=True)
     def portal_nuevo_presupuesto(self, **kwargs):
+        laboratorios = request.env['intn.laboratorios'].sudo().search([])
+        laboratorios_list = [{'id': lab.id, 'name': lab.name} for lab in laboratorios]
+
         servicios = request.env['product.product'].sudo().search([])
         payment_terms = request.env['account.payment.term'].sudo().search([]).filtered(lambda term: sum(
             term.line_ids.mapped('days')) == 0 or sum(term.line_ids.mapped('days')) == 30)
         servicios_list = [{'id': servicio.id, 'name': servicio.name, 'price': servicio.lst_price} for servicio in
                           servicios]
         return request.render('intn_trazabilidad_uso_marca.portal_my_generar_presupuesto',
-                              {'servicios': servicios_list, 'payment_terms': payment_terms})
+                              {'servicios': servicios_list, 'payment_terms': payment_terms,
+                               'laboratorios': laboratorios_list, })
 
     @http.route('/submit/nuevo_presupuesto_1', type='http', auth="user", website=True, methods=['POST'])
     def submit_nuevo_presupuesto(self, **post):
