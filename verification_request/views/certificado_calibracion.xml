@@ -39,7 +39,7 @@
     </record>
 
     <menuitem id="menu_certificado_calibracion_root"
-              name="Certificados de Calibración"
-              parent="base.menu_custom"
+              name="Certificados de calibracion de pesas"
+              parent="mrp.menu_mrp_configuration"
               action="action_certificado_calibracion"/>
 </odoo>

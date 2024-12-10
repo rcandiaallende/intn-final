@@ -38,7 +38,7 @@
     <!-- Menú para el modelo -->
     <menuitem id="menu_annual_route_sheet_root" name="Hoja de Ruta" sequence="10" />
     <menuitem id="menu_annual_route_sheet" name="Hojas de Ruta Anual Basculas"
-              parent="menu_annual_route_sheet_root"
+              parent="mrp.menu_mrp_configuration"
               action="action_annual_route_sheet"
               sequence="20"/>
 </odoo>
