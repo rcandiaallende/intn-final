@@ -1,0 +1,25 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="intn_intereses_mora.wizard_pago_form">
+            <field name="name">intn_intereses_mora.wizard_pago_form</field>
+            <field name="model">intn_intereses_mora.wizard_pago</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="factura_origen" readonly="True" attrs="{'invisible':[('factura_origen','=', False)]}"/>
+                            <field name="facturas_origen" readonly="True" widget="many2many_tags" attrs="{'invisible':[('facturas_origen','=', False)]}"/>
+                            <field name="fecha_pago" />
+                            <field name="dias_atraso"/>
+                            <field name="monto_interes"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button string="Confirmar" type="object" name="button_confirmar" class="oe_highlight"/>
+                        <button string="Cancelar" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

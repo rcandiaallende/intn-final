@@ -259,7 +259,7 @@
                                         Fecha de verificacion:
                                     </td>
                                     <td>
-                                        <t t-esc="doc.cliente_direccion"/>
+                                        <t t-esc="doc.date"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -267,7 +267,8 @@
                                         Tecnicos Responsables:
                                     </td>
                                     <td>
-                                        <t t-esc="doc.cliente_ruc"/>
+                                        <t t-esc="doc.tecnico1"/>
+                                        <t t-esc="doc.tecnico2"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -526,9 +527,55 @@
                                 </p>
 
                             </div>
+
                             <div style="display:flex; justify-content: space-between; width:100%">
                                 <span style="font-size: 22px; display: inline-block; margin-right: 20px;font-weight:bold;float:left;">
                                     2.3
+                                    Repetitibilidad
+                                </span>
+                                <table style="width:auto; border-collapse: collapse; text-align:center; font-size: 22px; display: inline-block">
+                                    <tr>
+                                        <th style="border: 1px solid;">Indicacion</th>
+                                        <th style="border: 1px solid;">Error Instrumento</th>
+                                        <th style="border: 1px solid;">MEP</th>
+                                        <th style="border: 1px solid;">Validacion
+                                        </th>  <!-- Error del instrumento -->
+                                        <th style="border: 1px solid;">Repetitibilidad Al</th>
+                                    </tr>
+                                    <t t-foreach="doc.repetitibilidad_id" t-as="line">
+                                        <tr>
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.indicacion"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.errorInstrumento"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.mep"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.mep"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.validacion"/>
+                                            </td>
+
+                                            <td style="border: 1px solid;">
+                                                <t t-esc="line.repetitibilidadAl"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </table>
+
+                            </div>
+
+                            <div style="display:flex; justify-content: space-between; width:100%">
+                                <span style="font-size: 22px; display: inline-block; margin-right: 20px;font-weight:bold;float:left;">
+                                    2.4
                                     Desempeño de Carga
                                 </span>
                                 <table style="width:auto; border-collapse: collapse; text-align:center; font-size: 22px; display: inline-block">

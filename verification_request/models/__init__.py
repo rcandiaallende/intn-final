@@ -12,3 +12,4 @@ from . import certificado_bascula_no_aprobado
 from . import excentricidad
 from . import desempeno_carga
 from . import certificado_calibracion
+from . import repetitibilidad

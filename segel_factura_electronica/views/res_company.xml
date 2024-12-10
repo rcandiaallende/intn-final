@@ -1,0 +1,16 @@
+<odoo>
+    <record id="view_company_form_inherit_fe" model="ir.ui.view">
+        <field name="name">res.company.form.inherit.fe</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='settings']" position="inside">
+                <group string="Facturación Electrónica">
+                    <field name="fe_production"/>
+                    <field name="fe_test"/>
+                    <field name="fe_no_send_sifen"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

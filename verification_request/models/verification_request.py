@@ -127,6 +127,7 @@ class VerificationRequest(models.Model):
             visualizacion = instrumento.get('visualizacionInstrumento', '')
             influencia_posicion_carga = json_app.get('ensayos', {}).get('influenciaPosicionCarga', [])
             desempeno_carga = json_app.get('ensayos', {}).get('desempenoCarga', [])
+            repetitibilidad = json_app.get('ensayos', {}).get('repetibilidad', [])
             max_balanza_peso_sensible = max(
                 (item.get("balanzaPesoSensible", 0) for item in desempeno_carga), default=0
             )
@@ -143,6 +144,11 @@ class VerificationRequest(models.Model):
             clientName = json_app["clientApproves"]["clientName"]
             observations = json_app.get("clientApproves", {}).get("obervations", "")
             observation = json_app.get("clientApproves", {}).get("observation", "")
+            pre_carga_final = json_app.get("estados", {}).get("preCarga", False)
+            excentricidad_final = json_app.get("estados", {}).get("influenciaPosicionCarga", False)
+            repetibilidad_final = json_app.get("estados", {}).get("repetibilidad", False)
+            desempeno_carga_final = json_app.get("estados", {}).get("desempenoCarga", False)
+
             concatenated_value = f"{observations}  - {observation}"
 
             print('cliente: ' + str(rec.partner_id) +
@@ -163,7 +169,7 @@ class VerificationRequest(models.Model):
                     'nro_serie': nro_serie,
                     'identificacion': codigo_interno,
                     'ubicacion': ubicacion,
-                    'nro_expediente': rec.expediente,
+                    'nro_expediente': rec.sale_order.name,
                     'date': fecha_creacion,
                     'marca': fabricante,
                     'carga_maxima': carga_maxima,
@@ -194,6 +200,9 @@ class VerificationRequest(models.Model):
                     'cliente_ruc': str(rec.partner_id.vat),
                     'cliente_ciudad': str(rec.city),
                     'observation': concatenated_value,
+                    'result_desempenoCarga': desempeno_carga_final,
+                    'result_excentricidad': excentricidad_final,
+                    'result_repetitibilidad': repetibilidad_final,
                 })
                 for idx, item in enumerate(desempeno_carga, start=1):
                     self.env['desempeno.carga'].create({
@@ -219,6 +228,16 @@ class VerificationRequest(models.Model):
                         'error_instrumento': item.get('errorInstrumento', 0.0),
                     })
 
+                for idx, item in enumerate(repetitibilidad, start=1):
+                    self.env['repetitibilidad'].create({
+                        'request_id': certificado_aprobado.id,
+                        'indicacion': item.get('indicacion', 0.0),
+                        'errorInstrumento': item.get('errorInstrumento', ''),
+                        'mep': item.get('mep', ''),
+                        'validacion': item.get('validacion', ''),
+                        'repetitibilidadAl': item.get('repetibilidadAl', ''),
+                    })
+
                     # Log para verificar que los datos se guardaron correctamente
                 certificado_aprobado.message_post(
                     body=f"Se crearon {len(influencia_posicion_carga)} registros de excentricidad.")
@@ -234,7 +253,7 @@ class VerificationRequest(models.Model):
                     'nro_serie': nro_serie,
                     'identificacion': codigo_interno,
                     'ubicacion': ubicacion,
-                    'nro_expediente': rec.expediente,
+                    'nro_expediente': rec.sale_order.name,
                     'date': fecha_creacion,
                     'marca': fabricante,
                     'carga_maxima': carga_maxima,
@@ -265,7 +284,11 @@ class VerificationRequest(models.Model):
                     'cliente_ruc': rec.partner_id.vat,
                     'cliente_ciudad': rec.city,
                     'observation': concatenated_value,
+                    'result_desempenoCarga': desempeno_carga_final,
+                    'result_excentricidad': excentricidad_final,
+                    'result_repetitibilidad': repetibilidad_final,
                 })
+
                 for idx, item in enumerate(influencia_posicion_carga, start=1):
                     self.env['excentricidad'].create({
                         'request_id': certificado_aprobado.id,
@@ -278,6 +301,7 @@ class VerificationRequest(models.Model):
                         'carga_aplicada': item.get('cargaAplicada', ''),
                         'error_instrumento': item.get('errorInstrumento', 0.0),
                     })
+
                 for idx, item in enumerate(desempeno_carga, start=1):
                     self.env['desempeno.carga'].create({
                         'request_id': certificado_aprobado.id,
@@ -288,6 +312,16 @@ class VerificationRequest(models.Model):
                         'cargaAplicada': item.get('cargaAplicada', ''),
                         'errorInstrumento': item.get('errorInstrumento', ''),
                         'balanzaPesoSensible': item.get('balanzaPesoSensible', ''),
+                    })
+
+                for idx, item in enumerate(repetitibilidad, start=1):
+                    self.env['repetitibilidad'].create({
+                        'request_id': certificado_aprobado.id,
+                        'indicacion': item.get('indicacion', 0.0),
+                        'errorInstrumento': item.get('errorInstrumento', ''),
+                        'mep': item.get('mep', ''),
+                        'validacion': item.get('validacion', ''),
+                        'repetitibilidadAl': item.get('repetibilidadAl', ''),
                     })
 
                     # Log para verificar que los datos se guardaron correctamente

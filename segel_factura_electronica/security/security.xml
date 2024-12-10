@@ -1,0 +1,10 @@
+<odoo>
+    <data>
+        <record id="group_puede_autorizar_facturas" model="res.groups">
+            <field name="name">Puede Autorizar Facturas / Notas de Credito</field>
+        </record>
+        <record id="group_user_it" model="res.groups">
+            <field name="name">Usuario TI</field>
+        </record>
+    </data>
+</odoo>

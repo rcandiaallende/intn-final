@@ -28,6 +28,12 @@ class CertificadoBasculaAprobado(models.Model):
         'request_id',
         string="Desempeño de Carga"
     )
+
+    repetitibilidad_id = fields.One2many(
+        'repetitibilidad',
+        'request_id',
+        string="Repetitibilidad"
+    )
     tipo_instrumento = fields.Char(string="Tipo  de instrumento")
     fabricante = fields.Char(string='Fabricante')
     modelo = fields.Char(string='Modelo')

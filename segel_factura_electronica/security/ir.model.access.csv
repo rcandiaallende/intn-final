@@ -1,0 +1,3 @@
+access_app_basculas,app.basculas.user,model_app_basculas,,1,1,1,1
+access_account_invoice,account.invoice,model_account_invoice,,1,1,1,1
+access_account_invoice_refund,account.account.invoice.refund,model_account_invoice_refund,,1,1,1,1

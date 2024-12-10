@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="intn_e_factura">
+            <field name="name">Creacion de FE</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <field name="state" position="attributes">
+                    <attribute name="widget">statusbar</attribute>
+                    <attribute name="statusbar_visible">draft,open,paid,cancelation</attribute>
+                </field>
+                <xpath expr="//header" position="inside">
+                    <button name="button_cancel_invoice"
+                            string="Anular"
+                            type="object"
+                            class="btn btn-danger"
+                            groups="permisos_facturacion.anular_facturas"
+                            attrs="{'invisible': [('state', '!=', 'posted')]}"/>
+                    <button string="Regenerar Factura Electronica" type="object" name="action_send_efactura"
+                            attrs="{'invisible': [('state', 'in','draft','cancel')]}"
+                            groups="segel_factura_electronica.group_user_it"/>
+                    <button string="Regenerar NCE" type="object" name="generarNotaCredito"
+                            attrs="{'invisible': [('state', 'in', 'draft')]}"
+                            groups="segel_factura_electronica.group_user_it"/>
+                    <!--                    <button string="Anulacion interna" type="object" name="cancelacion_interna"-->
+                    <!--                            attrs="{'invisible': [('state', 'in', 'draft')]}"/>-->
+                    <button string="Ver JSON" type="object" name="verJsonNotaCredito"
+                            groups="segel_factura_electronica.group_user_it"/>
+                    <button string="Autorizar" type="object" name="autorizar_factura" class="btn btn-danger"
+                            groups="segel_factura_electronica.group_puede_autorizar_facturas"
+                            attrs="{'invisible': [('state', '=', 'draft')]}"
+                            confirm="¿Está seguro que desea autorizar esta Factura?"/>
+                </xpath>
+                <xpath expr="//notebook" position="inside">
+                    <page name="SIFEN" string="Sifen2.0">
+                        <group>
+                            <field name="status_invoice"
+                                   attrs="{'readonly': [('state', 'in', ['open', 'in_payment', 'paid'])]}"/>
+                            <field name="cdc" string="CDC"
+                                   attrs="{'readonly': [('state', 'in', ['open', 'in_payment', 'paid'])]}"/>
+                            <!--field name="qr_fe" widget="image" width="200" height="200" attrs="{'readonly': [('state', 'in', ['open', 'in_payment', 'paid'])]}"/-->
+                            <field name="qr_fe" string="e-kuatia" widget="url"
+                                   attrs="{'readonly': [('state', 'in', ['open', 'in_payment', 'paid'])]}"/>
+                            <field name="json_enviado" string="Json Enviado" widget="json"
+                                   attrs="{'readonly': [('state', 'in', ['open', 'in_payment', 'paid'])]}"
+                                   groups="segel_factura_electronica.group_user_it"/>
+                        </group>
+                        <button string="Ver estado" type="object" name="verificarEstadoEfactura" class="verEstado"
+                                attrs="{'readonly': [('state', 'in', ['open', 'in_payment', 'paid'])]}"/>
+                        <style>
+                            .verEstado {
+                            background-color: #900C3F;
+                            border: none;
+                            color: white;
+                            padding: 15px 32px;
+                            text-align: center;
+                            text-decoration: none;
+                            display: inline-block;
+                            font-size: 14px;
+                            margin: 4px 2px;
+                            cursor: pointer;
+                            border-radius: 50px;
+                            }
+                        </style>
+                    </page>
+                </xpath>
+                <xpath expr="//header" position="inside">
+                    <!--button string="Pagar multiples facturas por intereses" type="object" name="pago_multi_intereses" class="oe_highlight" attrs="{'invisible':['|',('monto_interes','=',0),('factura_mora','!=',False)]}"/-->
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

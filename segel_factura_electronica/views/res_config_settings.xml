@@ -1,0 +1,36 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="interes_mora_res_config_settings">
+            <field name="name">Interes por Mora</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@data-key='account']" position="inside">
+                    <h2>Interes por Mora</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Interes mensual por mora</span>
+                                <div class="text-muted">
+                                    Porcentaje de interes mensual por mora en el pago de facturas
+                                </div>
+                                <div class="text-muted">
+                                    <field name="interes_mora"/>
+                                </div>
+                            </div><div class="o_setting_right_pane">
+                                <span class="o_form_label">Producto de interés por Mora</span>
+                                <div class="text-muted">
+                                    Producto usado como interes por Mora
+                                </div>
+                                <div class="text-muted">
+                                    <field name="producto_interes_mora"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

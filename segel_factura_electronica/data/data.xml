@@ -1,0 +1,26 @@
+<odoo>
+    <!--data noupdate="1">
+        <delete model="ir.actions.report" id="account.account_invoices_without_payment"/>
+        <delete model="ir.actions.report" id="account.account_invoices"/>
+
+        <record model="ir.config_parameter" id="interfaces_facturas.limite_caracteres">
+            <field name="key">interfaces_facturas.limite_caracteres</field>
+            <field name="value">27</field>
+        </record>
+        <record model="ir.config_parameter" id="interfaces_facturas.limite_lineas">
+            <field name="key">interfaces_facturas.limite_lineas</field>
+            <field name="value">20</field>
+        </record>
+
+         <record id="group_resetear_impresiones" model="res.groups">
+            <field name="name">Puede resetear Nro Impresiones de Factura</field>
+        </record>
+
+    </data-->
+</odoo>
+
+
+
+
+
+
