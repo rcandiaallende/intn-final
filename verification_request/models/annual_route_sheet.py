@@ -25,3 +25,5 @@ class AnnualRouteSheet(models.Model):
         string="Mes",
         required=True
     )
+    mobile = fields.Many2one('mobile', string="Móvil", states={'pending': [('readonly', False)]})
+

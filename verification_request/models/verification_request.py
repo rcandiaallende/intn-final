@@ -94,8 +94,7 @@ class VerificationRequest(models.Model):
                     json_app = bascula.data_receive
                     self.procces_data_app(json_app)
                     if bascula.imposibility == True:
-                        resultado = 'imposibilidad'
-                        rec.state = 'impossibility'
+                        self.create_impossibility_act()
 
 
 

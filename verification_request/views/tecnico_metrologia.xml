@@ -26,6 +26,8 @@
                         <field name="cedula"/>
                         <field name="token_firma"/>
                         <field name="qr_firma"/>
+                        <field name="qr_url_firma_intn"/>
+                        <field name="qr_firma_intn"/>
                     </group>
                     <div class="oe_chatter">
 <!--                        <field name="log_cambios" readonly="1"/>-->
