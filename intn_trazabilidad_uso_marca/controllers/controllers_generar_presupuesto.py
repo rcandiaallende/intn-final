@@ -59,7 +59,23 @@ class GenerarPresupuestoPortal(http.Controller):
                           servicios]
         return request.render('intn_trazabilidad_uso_marca.portal_my_generar_presupuesto',
                               {'servicios': servicios_list, 'payment_terms': payment_terms,
-                               'laboratorios': laboratorios_list, })
+                               'laboratorios': laboratorios_list})
+
+    @http.route('/get_servicios', type='json', auth="user")
+    def get_servicios(self):
+        data = request.jsonrequest
+        laboratorio_id = data.get('laboratorio_id')
+
+        if not laboratorio_id:
+            return {'error': 'El laboratorio_id es obligatorio.'}
+        servicios = request.env['product.template'].sudo().search([('laboratorio_id', '=', int(laboratorio_id))])
+        servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', servicios.ids)])
+        servicios_list = [{
+            'id': servicio.id,
+            'name': servicio.name,
+            'price': servicio.list_price,
+        } for servicio in servicios]
+        return servicios_list
 
     @http.route('/submit/nuevo_presupuesto_1', type='http', auth="user", website=True, methods=['POST'])
     def submit_nuevo_presupuesto(self, **post):

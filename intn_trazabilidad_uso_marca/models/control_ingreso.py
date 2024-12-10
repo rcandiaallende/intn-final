@@ -18,16 +18,16 @@ class ControlIngresoInstrumentos(models.Model):
     email = fields.Char(related='razon_social.email', string='Email')
     fecha = fields.Date(string='Fecha', default=fields.Date.today)
     compromiso_entrega_fecha = fields.Date(string='Compromiso de Entrega (Fecha)')
-    compromiso_entrega_hora = fields.Float(string='Compromiso de Entrega (Hora)', help="Hora estimada en formato HH.MM")
+    compromiso_entrega_hora = fields.Float(string='Compromiso de Entrega (Hora)', help='Hora estimada en formato HH.MM')
     notas = fields.Text(string='Notas Generales')
     observaciones = fields.Text(string='Observaciones')
     line_ids = fields.One2many('control.ingreso.instrumentos.line', 'control_id', string='Líneas de Instrumentos')
-    firma_recibi = fields.Binary(string="Firma Recibí Conforme (ONM - INTN)")
-    firma_usuario = fields.Binary(string="Firma Usuario")
-    aclaracion_recibi = fields.Char(string="Aclaración Recibí Conforme")
-    aclaracion_usuario = fields.Char(string="Aclaración Usuario")
-    cic_recibi = fields.Char(string="C.I.C. No Recibí Conforme")
-    cic_usuario = fields.Char(string="C.I.C. No Usuario")
+    firma_recibi = fields.Binary(string='Firma Recibí Conforme (ONM - INTN)')
+    firma_usuario = fields.Binary(string='Firma Usuario')
+    aclaracion_recibi = fields.Char(string='Aclaración Recibí Conforme')
+    aclaracion_usuario = fields.Char(string='Aclaración Usuario')
+    cic_recibi = fields.Char(string='C.I.C. No Recibí Conforme')
+    cic_usuario = fields.Char(string='C.I.C. No Usuario')
     production_id = fields.Many2one('mrp.production', string='Orden de Producción', readonly=True)
     retiro_parcial_fecha = fields.Date(string='Fecha (Parcial)')
     retiro_parcial_aclaracion_onm = fields.Char(string='Aclaración ONM')
@@ -43,9 +43,9 @@ class ControlIngresoInstrumentos(models.Model):
 
     @api.multi
     def create_production_order(self):
-        """
+        '''
         Método para crear una orden de producción basada en los datos del control de ingreso.
-        """
+        '''
         self.ensure_one()
 
         if not self.product_id or not self.centro_produccion:
@@ -88,6 +88,40 @@ class ControlIngresoInstrumentosLine(models.Model):
 
     item = fields.Integer(string='Ítem')
     cantidad = fields.Integer(string='Cantidad')
-    instrumento = fields.Char(string='Instrumento')
-    identificacion = fields.Char(string='Identificación')
+    instrumento = fields.Many2one('instrument.inventory.metci', string='Instrumento')
+    identificacion = fields.Char(related='instrumento.unique_identifier', string='Identificación')
     control_id = fields.Many2one('control.ingreso.instrumentos', string='Control de Ingreso')
+
+
+class InstrumentInventory(models.Model):
+    _name = 'instrument.inventory.metci'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _description = 'Inventario de Instrumentos'
+
+    name = fields.Char(string='Nombre del Instrumento')
+    marca_id = fields.Many2one('instrument.brand', string='Marca')
+    modelo_id = fields.Many2one('instrument.model', string='Modelo', domain="[('brand_id', '=', marca_id)]")
+    serie = fields.Char(string='Número de Serie')
+    rango = fields.Char(string='Rango')
+    division = fields.Float(string='División')
+    unique_identifier = fields.Char(string='Identificador Único', readonly=True, copy=False,
+                                    default=lambda self: self.env['ir.sequence'].next_by_code('instrument.inventory'))
+
+
+class InstrumentBrand(models.Model):
+    _name = 'instrument.brand'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _description = 'Marca de Instrumento'
+
+    name = fields.Char(string="Nombre de la Marca", required=True)
+    description = fields.Text(string="Descripción")
+
+
+class InstrumentModel(models.Model):
+    _name = 'instrument.model'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _description = 'Modelo de Instrumento'
+
+    name = fields.Char(string="Nombre del Modelo", required=True)
+    brand_id = fields.Many2one('instrument.brand', string="Marca", required=True)  # Relación con la marca
+    description = fields.Text(string="Descripción")

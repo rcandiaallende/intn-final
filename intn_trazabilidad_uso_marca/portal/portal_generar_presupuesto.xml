@@ -108,53 +108,39 @@
         <template id="portal_my_generar_presupuesto" name="Adquirir Normas">
             <div class="o_portal_wrapper_full">
                 <style>
-                    /* General body styles */
                     body {
                     font-family: 'Roboto', sans-serif;
-                    background-color: #f9fbfd;
+                    background: linear-gradient(135deg, #f8f9fa, #e9eff6);
                     color: #212529;
                     margin: 0;
                     padding: 0;
                     line-height: 1.6;
+                    overflow: hidden;
                     }
 
-                    /* Wrapper for full portal */
                     .o_portal_wrapper_full {
                     display: flex;
                     justify-content: center;
-                    align-items: flex-start;
-                    min-height: 100vh;
+                    align-items: center;
+                    height: 100vh;
                     padding: 20px;
-                    background: linear-gradient(135deg, #e9f5fc, #ffffff);
+                    background: linear-gradient(135deg, #d8e8f9, #ffffff);
                     }
 
-                    /* Card container */
                     .card {
                     width: 100%;
                     max-width: 1200px;
+                    max-height: 100%;
                     padding: 30px;
                     background-color: #ffffff;
-                    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
                     border-radius: 12px;
-                    border: none;
-                    animation: fadeIn 0.6s ease-in-out;
+                    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+                    overflow: hidden;
+                    transition: box-shadow 0.3s ease-in-out;
                     }
 
-                    /* Card entrance animation */
-                    @keyframes fadeIn {
-                    from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                    }
-                    to {
-                    opacity: 1;
-                    transform: translateY(0);
-                    }
-                    }
-
-                    /* Headings */
                     h2 {
-                    color: #0056b3;
+                    color: #004aad;
                     font-weight: 700;
                     margin-bottom: 25px;
                     text-align: center;
@@ -162,12 +148,10 @@
                     letter-spacing: 1px;
                     }
 
-                    /* Form group */
                     .form-group {
                     margin-bottom: 20px;
                     }
 
-                    /* Labels */
                     label {
                     font-weight: 600;
                     color: #495057;
@@ -175,25 +159,26 @@
                     margin-bottom: 10px;
                     }
 
-                    /* Input and select fields */
-                    select, input[type="text"], input[type="number"] {
+                    select,
+                    input[type="text"],
+                    input[type="number"] {
                     width: 100%;
                     padding: 12px;
                     margin-top: 5px;
                     border: 1px solid #ced4da;
                     border-radius: 8px;
-                    box-sizing: border-box;
-                    transition: all 0.3s ease-in-out;
-                    background-color: #fefefe;
+                    background-color: #fcfcfc;
+                    transition: border-color 0.3s ease, box-shadow 0.3s ease;
                     }
 
-                    select:focus, input[type="text"]:focus, input[type="number"]:focus {
-                    border-color: #0056b3;
-                    box-shadow: 0 0 8px rgba(0, 86, 179, 0.3);
+                    select:focus,
+                    input[type="text"]:focus,
+                    input[type="number"]:focus {
+                    border-color: #004aad;
+                    box-shadow: 0 0 10px rgba(0, 74, 173, 0.3);
                     outline: none;
                     }
 
-                    /* Removing spinner buttons for number inputs */
                     input[type="number"]::-webkit-inner-spin-button,
                     input[type="number"]::-webkit-outer-spin-button {
                     -webkit-appearance: none;
@@ -201,63 +186,68 @@
                     }
 
                     input[type="number"] {
-                    -moz-appearance: textfield; /* Firefox */
+                    -moz-appearance: textfield;
                     }
 
-                    /* Buttons */
                     .btn {
                     font-weight: 600;
                     padding: 12px 20px;
                     border-radius: 8px;
                     cursor: pointer;
-                    transition: all 0.3s ease-in-out;
-                    display: inline-block;
-                    text-align: center;
+                    transition: all 0.3s ease;
                     }
 
                     .btn-success {
                     background-color: #28a745;
-                    color: #ffffff;
                     border: none;
+                    color: #ffffff;
+                    display: block;
+                    margin: 0 auto;
+                    text-transform: uppercase;
                     }
 
                     .btn-success:hover {
                     background-color: #218838;
-                    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+                    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
                     }
 
                     .btn-secondary {
                     background-color: #6c757d;
-                    color: #ffffff;
                     border: none;
+                    color: #ffffff;
                     margin-top: 10px;
                     }
 
                     .btn-secondary:hover {
                     background-color: #5a6268;
-                    box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
+                    box-shadow: 0 8px 20px rgba(108, 117, 125, 0.4);
                     }
 
                     .btn-danger {
                     background-color: #dc3545;
+                    border: none;
                     color: #ffffff;
                     padding: 10px 16px;
-                    border: none;
+                    font-weight: bold;
+                    transition: all 0.3s ease;
                     }
 
                     .btn-danger:hover {
                     background-color: #c82333;
-                    box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
+                    box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
                     }
 
-                    /* Table */
                     .table {
                     width: 100%;
                     margin-bottom: 20px;
                     border-collapse: collapse;
+                    background-color: #ffffff;
+                    border-radius: 8px;
+                    overflow: hidden;
                     }
 
-                    .table th, .table td {
+                    .table th,
+                    .table td {
                     border: 1px solid #dee2e6;
                     padding: 12px;
                     text-align: left;
@@ -265,7 +255,7 @@
                     }
 
                     .table th {
-                    background-color: #e9ecef;
+                    background-color: #f1f3f5;
                     font-weight: bold;
                     text-align: center;
                     text-transform: uppercase;
@@ -273,9 +263,9 @@
 
                     .table tbody tr:hover {
                     background-color: #f8f9fa;
+                    cursor: pointer;
                     }
 
-                    /* Total container */
                     .total-container {
                     display: flex;
                     justify-content: flex-end;
@@ -290,6 +280,11 @@
 
                     #monto_total_general {
                     width: 200px;
+                    background-color: #e9eff6;
+                    border: 1px solid #ced4da;
+                    border-radius: 6px;
+                    padding: 8px;
+                    text-align: right;
                     }
                 </style>
                 <t t-call="portal.portal_layout">
@@ -341,7 +336,9 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th style="width: 180px">Laboratorio</th>
+                                            <th style="width: 180px">
+                                                <span>Laboratorio</span>
+                                            </th>
                                             <th style="width: 400px">
                                                 <span>Servicio</span>
                                             </th>
@@ -360,7 +357,9 @@
                                         <tr class="item-row" data-index="0">
                                             <td>
                                                 <div class="form-group">
-                                                    <select name="laboratorio_0" class="form-select">
+                                                    <select name="laboratorio_0" class="form-select"
+                                                            onchange="loadServicios(this)">
+                                                        <option value="">Seleccione un laboratorio</option>
                                                         <t t-foreach="laboratorios" t-as="laboratorio">
                                                             <option t-att-value="laboratorio['id']">
                                                                 <t t-esc="laboratorio['name']"/>
@@ -371,16 +370,8 @@
                                             </td>
                                             <td>
                                                 <div class="form-group">
-                                                    <select name="servicio_0" class="form-select"
-                                                            onchange="calculateLineTotal(this)">
-                                                        <t t-foreach="servicios" t-as="servicio">
-                                                            <option t-att-value="servicio['id']"
-                                                                    t-att-data-precio="servicio['price']">
-                                                                <t t-esc="servicio['name']"/>
-                                                                - Precio Gs:
-                                                                <t t-esc="servicio['price']"/>
-                                                            </option>
-                                                        </t>
+                                                    <select name="servicio_0" class="form-select" id="servicio_0">
+                                                        <option value="">Seleccione un servicio</option>
                                                     </select>
                                                 </div>
                                             </td>
@@ -410,11 +401,8 @@
                             </button>
 
                             <div class="total-container">
-                                <div class="form-group"
-                                     style="width: 200px; display: flex; flex-direction: column; align-items: flex-end;">
-                                    <label for="monto_total_general" class="form-label" style="margin-bottom: 5px;">
-                                        <span>Monto Total</span>
-                                    </label>
+                                <div class="form-group">
+                                    <label for="monto_total_general" class="form-label">Monto Total</label>
                                     <input type="number" id="monto_total_general" name="monto_total_general"
                                            class="form-control" readonly="1"/>
                                 </div>
@@ -433,25 +421,59 @@
                     const tableBody = document.querySelector('#items-container tbody');
                     const newRow = document.querySelector('.item-row').cloneNode(true);
                     newRow.setAttribute('data-index', itemIndex);
-                    const inputs = newRow.querySelectorAll('select, input');
 
-                    inputs.forEach(input => {
+                    newRow.querySelectorAll('select, input').forEach(input => {
                     const name = input.name;
-                    if (name.includes('_')) {
-                    const newName = name.replace(/_\d+$/, `_${itemIndex}`);
-                    input.name = newName;
-                    input.value = ""; // Reset input value
+                    if (name) {
+                    input.name = name.replace(/_\d+$/, `_${itemIndex}`);
+                    input.value = "";
                     }
                     });
+
                     tableBody.appendChild(newRow);
                     itemIndex++;
+                    }
+
+                    function loadServicios(laboratorioSelect) {
+                    const laboratorioId = laboratorioSelect.value;
+                    const servicioSelect = laboratorioSelect.closest('tr').querySelector('select[name^="servicio"]');
+
+                    servicioSelect.innerHTML = '<option value="">Seleccione un servicio</option>';
+
+                    if (!laboratorioId) return;
+
+                    fetch('/get_servicios', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': odoo.csrf_token, // Incluye el token CSRF si es necesario
+                    },
+                    body: JSON.stringify({ laboratorio_id: laboratorioId }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                    if (data.result &amp;&amp; Array.isArray(data.result)) {
+
+                    data.result.forEach(servicio => {
+                    const option = document.createElement('option');
+                    option.value = servicio.id;
+                    option.textContent = `${servicio.name} - Precio Gs: ${servicio.price}`;
+                    option.setAttribute('data-precio', servicio.price);
+
+                    servicioSelect.appendChild(option);
+                    });
+                    } else {
+                    console.error('La respuesta no contiene resultados válidos.');
+                    }
+                    })
+                    .catch(error => console.error('Error al cargar los servicios:', error));
                     }
 
                     function removeItem(button) {
                     const row = button.closest('tr');
                     if (document.querySelectorAll('.item-row').length > 1) {
                     row.remove();
-                    calculateTotal();
+                    calculateTotals();
                     } else {
                     alert('Debe haber al menos un ítem.');
                     }
@@ -459,21 +481,28 @@
 
                     function calculateLineTotal(element) {
                     const row = element.closest('.item-row');
-                    const servicio = row.querySelector('select').selectedOptions[0];
-                    const precio = parseFloat(servicio.getAttribute('data-precio') || 0);
-                    const cantidad = parseFloat(row.querySelector('input[name^="cantidad"]').value || 0);
-                    const lineTotal = row.querySelector('input[name^="line_total"]');
-                    lineTotal.value = precio * cantidad;
+                    const servicio = row.querySelector('select[name^="servicio"]').selectedOptions[0];
+                    const precio = parseFloat(servicio.getAttribute('data-precio')) || 0;
+                    const cantidad = parseFloat(row.querySelector('input[name^="cantidad"]').value) || 0;
+                    const lineTotal = row.querySelector('input[name^="line_total"]'); // Campo de precio total
 
-                    calculateTotal();
+                    const total = precio * cantidad;
+                    lineTotal.value = total.toFixed(2); // Actualiza el campo con el precio total
+
+                    calculateTotals();
                     }
 
-                    function calculateTotal() {
-                    let total = 0;
-                    document.querySelectorAll('input[name^="line_total"]').forEach(input => {
-                    total += parseFloat(input.value || 0);
+                    function calculateTotals() {
+                    let totalGeneral = 0;
+
+                    document.querySelectorAll('.item-row').forEach(row => {
+                    const lineTotal = parseFloat(row.querySelector('input[name^="line_total"]').value) || 0;
+                    totalGeneral += lineTotal;
                     });
-                    document.getElementById('monto_total_general').value = total;
+
+                    const montoTotalGeneral = document.getElementById('monto_total_general');
+                    montoTotalGeneral.value = totalGeneral.toFixed(2);
+
                     }
                 </script>
             </div>

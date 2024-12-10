@@ -79,6 +79,7 @@ class CustomerPortal(CustomerPortal):
 
         domain = [
             ('service_type', '=', 'metci'),
+            ('partner_id', '=', partner.id)
         ]
 
         searchbar_sortings = {
@@ -193,27 +194,36 @@ class CustomerPortal(CustomerPortal):
 
         fecha_actual = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
 
-        laboratorios = request.env['intn.laboratorios'].sudo().search([])
+        coordinacion = request.env['intn.coordinaciones'].sudo().search([('name', '=', 'COORDINACIÓN UMCI')])
+
+        laboratorios = request.env['intn.laboratorios'].sudo().search([('coordinacion_id', 'in', coordinacion.ids)])
         laboratorios_list = [{'id': lab.id, 'name': lab.name} for lab in laboratorios]
 
-        productos_list = []
         servicios_list = []
-        laboratorio_id = kw.get('laboratorio_id', False)
-
-        if laboratorio_id:
-            productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', int(laboratorio_id))])
-        servicios = request.env['product.product'].sudo().search([])
-
-        servicios_list = [{'id': servicio.id, 'name': servicio.name, 'price': servicio.lst_price,
-                           'additional_cost': 'Si' if servicio.product_tmpl_id.additional_cost else 'No'} for
-                          servicio
-                          in servicios]
 
         return request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto', {
             'fecha_actual': fecha_actual,
             'laboratorios': laboratorios_list,
             'servicios': servicios_list,
         })
+
+    @http.route('/get_servicios', type='json', auth="user")
+    def get_servicios(self):
+        data = request.jsonrequest
+        laboratorio_id = data.get('laboratorio_id')
+
+        if not laboratorio_id:
+            return {'error': 'El laboratorio_id es obligatorio.'}
+        servicios = request.env['product.template'].sudo().search([('laboratorio_id', '=', int(laboratorio_id))])
+        servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', servicios.ids)])
+        servicios_list = [{
+            'id': servicio.id,
+            'name': servicio.name,
+            'price': servicio.list_price,
+            'determinacion': servicio.determinacion if servicio.determinacion else 'N/A',
+            'additional_cost': 'Si' if servicio.verificacion_insitu else 'No'
+        } for servicio in servicios]
+        return servicios_list
 
     @http.route('/new/save/control-etiquetas', auth='user', website=True, csrf=False)
     def save_control_etiquetas(self, **kw):
@@ -278,9 +288,10 @@ class CustomerPortal(CustomerPortal):
             'state': 'pending',
             'service_type': 'metci',
         })
-        calibration_request = request.env['calibration.request'].sudo().create(
-            {'state': 'revision', 'partner_id': partner.id})
-        sale_order.calibration_request = calibration_request.id
+
+        # calibration_request = request.env['calibration.request'].sudo().create(
+        #     {'state': 'revision', 'partner_id': partner.id})
+        # sale_order.calibration_request = calibration_request.id
 
         # Crear las líneas del presupuesto
         for servicio_id, cantidad, line_total in zip(servicios, cantidades, line_totals):
