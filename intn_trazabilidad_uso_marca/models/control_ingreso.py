@@ -40,6 +40,22 @@ class ControlIngresoInstrumentos(models.Model):
     retiro_total_aclaracion_usuario = fields.Char(string='Aclaración Usuario')
     retiro_total_cic_usuario = fields.Char(string='C.I.C. No Usuario')
     calibration_request = fields.Many2one('calibration.request', string='Solicitud de Calibración')
+    state = fields.Selection(
+        string="Estado",
+        selection=[
+            ('in', 'Ingreso'),
+            ('out', 'Salida'),
+        ],
+        readonly=True,
+        default='in',
+    )
+
+    @api.multi
+    def create_out_move(self):
+        for rec in self:
+            for line in rec.line_ids:
+                line.cantidad_salida = line.cantidad
+            rec.state = 'out'
 
     @api.multi
     def create_production_order(self):
@@ -87,7 +103,8 @@ class ControlIngresoInstrumentosLine(models.Model):
     _description = 'Detalle de Instrumentos'
 
     item = fields.Integer(string='Ítem')
-    cantidad = fields.Integer(string='Cantidad')
+    cantidad = fields.Integer(string='Cantidad Ingreso')
+    cantidad_salida = fields.Integer(string='Cantidad Salida')
     instrumento = fields.Many2one('instrument.inventory.metci', string='Instrumento')
     identificacion = fields.Char(related='instrumento.unique_identifier', string='Identificación')
     control_id = fields.Many2one('control.ingreso.instrumentos', string='Control de Ingreso')

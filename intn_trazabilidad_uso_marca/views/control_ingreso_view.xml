@@ -5,9 +5,12 @@
         <field name="arch" type="xml">
             <form string="Control de Ingreso de Instrumentos">
                 <header>
-                    <button name="create_production_order" type="object" string="Crear Orden de Producción"
-                            class="btn-primary" attrs="{'invisible': [('production_id', '!=', False)]}"/>
+                    <button name="create_out_move" type="object" string="Generar Salida"
+                            class="btn-primary" attrs="{'invisible': [('state', '!=', 'in')]}"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="in,out" readonly="0"/>
                     <field name="production_id" invisible="1"/>
+
                 </header>
                 <sheet>
                     <group string="Información General" colspan="4">
@@ -44,8 +47,9 @@
                             <field name="line_ids" widget="one2many_list">
                                 <tree editable="bottom">
                                     <field name="item"/>
-                                    <field name="cantidad"/>
                                     <field name="instrumento"/>
+                                    <field name="cantidad" attrs="{'readonly': [('state', '=', 'out')]}"/>
+                                    <field name="cantidad_salida" attrs="{'readonly': [('state', '=', 'in')]}"/>
                                     <field name="identificacion"/>
                                 </tree>
                             </field>
