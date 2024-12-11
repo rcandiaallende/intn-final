@@ -23,6 +23,17 @@ class SaleOrder(models.Model):
         string='Re-impresiones asociadas'
     )
 
+    @api.multi
+    def action_open_calibration_request(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'calibration.request',
+            'view_mode': 'form',
+            'res_id': self.calibration_request_id.id,
+            'target': 'current',
+        }
+
     def generate_unique_hash(self):
         order_id = str(self.id)  # Convertir el ID a cadena
         hash_object = hashlib.sha256(order_id.encode())  # Crear un hash SHA-256
@@ -43,3 +54,5 @@ class SaleOrder(models.Model):
                 if not rec.calibration_request_id.work_date:
                     raise UserError(_('Debe agendar una fecha para la realizacion del trabajo'))
                 rec.calibration_request_id.state = 'approved'
+                production_ids = rec.env['mrp.production'].search([('origin', '=', rec.name)])
+                rec.calibration_request_id.production_ids = production_ids.ids if production_ids else None

@@ -8,7 +8,7 @@
                 <field name="state"/>
                 <field name="work_date"/>
                 <field name="partner_id"/>
-                <field name="workorder_id"/>
+                <field name="production_ids"/>
             </tree>
         </field>
     </record>
@@ -37,11 +37,21 @@
                                 <span class="o_stat_text">Control de Ingresos</span>
                             </div>
                         </button>
+                        <button type="object" name="action_open_production_ids" icon="fa-cogs"
+                                class="oe_stat_button">
+                            <div class="o_field_widget o_stat_info" modifiers="{}">
+                                <span class="o_stat_value" widget="statinfo" modifiers="{}">
+                                    <field name="production_count" widget="statinfo" nolabel="1" class="mr4"
+                                           modifiers="{'readonly':true}"/>
+                                </span>
+                                <span class="o_stat_text">Órdenes de Producción</span>
+                            </div>
+                        </button>
                     </div>
                     <group>
                         <field name="partner_id"/>
                         <field name="work_date"/>
-                        <field name="workorder_id"/>
+                        <field name="production_ids"/>
                         <field name="document"/>
                     </group>
                 </sheet>
@@ -72,8 +82,8 @@
                                     <field name="partner_id"/>
                                 </div>
                                 <div class="o_kanban_service">
-                                    <strong>Orden de Trabajo:</strong>
-                                    <field name="workorder_id"/>
+                                    <strong>Órdenes de Fabricación:</strong>
+                                    <field name="production_ids"/>
                                 </div>
                                 <div class="o_kanban_service">
                                     <strong>Programación de trabajo:</strong>

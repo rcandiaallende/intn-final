@@ -11,9 +11,13 @@
                     <button name="approve_so" id="action_confirm" string="Aprobar" class="btn-primary" type="object"
                             attrs="{'invisible': [('state', 'not in', ['pending'])]}"/>
                 </xpath>
-                <!--<xpath expr="//field[@name='payment_term_id']" position="after">
-                    <field name="calibration_request_id"/>
-                </xpath>-->
+                <xpath expr="//button[@name='action_view_invoice']" position="before">
+                    <field name="calibration_request_id" invisible="1"/>
+                    <button type="object" name="action_open_calibration_request" class="oe_stat_button" icon="fa-ticket"
+                            attrs="{'invisible': [('calibration_request_id', '=', False)]}" groups="base.group_user">
+                        <span class="o_stat_text">Solicitud de Calibración</span>
+                    </button>
+                </xpath>
             </field>
         </record>
 
