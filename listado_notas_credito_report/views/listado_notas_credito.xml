@@ -1,0 +1,332 @@
+<odoo>
+    <record model="report.paperformat" id="paperformat_recap_report">
+        <field name="name">paperformat.recap.report</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_width">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">10</field>
+        <field name="margin_right">4</field>
+        <field name="margin_bottom">15</field>
+        <field name="margin_left">4</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">70</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <report id="recap_report"
+            model="listado_notas_credito.report.wizard"
+            string="Listado de Notas de Credito"
+            report_type="qweb-pdf"
+            name="listado_notas_credito_report.recap_report_view"
+            paperformat="paperformat_recap_report"
+            menu="False"/>
+
+    <template id="recap_report_view">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <style>
+
+                    table {
+                    width: 100%;
+
+                    }
+
+                    .fs-12 {
+                    font-size: 14px;
+                    margin: 2px;
+                    }
+
+                    .text-center {
+                    text-align: center;
+                    }
+
+                    .text-right {
+                    text-align: right;
+                    }
+
+                    .bold {
+                    font-weight: bold;
+                    }
+
+                    .text-justify {
+                    text-align: justify;
+                    }
+
+                    table,
+                    th,
+                    tr{
+                    border: 1px solid black;
+                    border-collapse: collapse;
+
+                    }
+
+                    .td {
+                    border-right: 1px solid black;
+                    }
+
+                    .tr{
+                    border-collapse: collapse
+                    }
+                    .ml-5{
+                    margin-left:5x;
+                    }
+
+                    p{
+                    margin-top:0;
+                    margin-bottom:2px;
+                    margin-left:2px;
+                    }
+                    .w-90{
+                    width:100mm;
+                    }
+                    .w-15{
+                    width:20mm;
+                    }
+
+                    span:before {
+                    white-space: pre;
+                    }
+
+                    tr {
+                    page-break-inside: avoid;
+                    }
+
+
+                </style>
+                <table>
+                    <tr>
+                        <td style="width:20%;padding-left:60px;padding-top:10px;" class="text-left">
+                            <img src='/detalle_cobros_report/static/src/img/logo.png' style="max-height: 20%;"/>
+                        </td>
+                        <td class="text-center" style="margin-top:0;padding:10px;font-size:20px;">
+                            INSTITUTO NACIONAL DE TECNOLOGÍA, NORMALIZACIÓN Y METROLOGÍA
+                            <p class="bold text-center" style="padding:15px;">LISTADO DE NOTAS DE CRÉDITO EMITIDAS</p>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <table>
+                    <tr >
+                        <td style="width:50%;padding:10px;" >
+                            <span class="bold"> Fecha Inicio: </span>
+                            <t t-esc="date_start"/>
+                        </td>
+                        <td style="width:50%;padding:10px;" class="text-right">
+                            <span class="bold"> Fecha Fin: </span>
+                            <t t-esc="date_end"/>
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <td colspan="4" class="text-center bold" style="padding-top:10px;padding-bottom:10px">
+                                Nro de Factura
+                            </td>
+                            <td colspan="3" class="text-center bold">
+                                Montos Facturados
+                            </td>
+                            <td colspan="3" class="text-center bold">
+                                Liquidación del IVA
+                            </td>
+                            <td colspan="2" class="text-center bold">
+                                Fechas Facturas
+                            </td>
+                        </tr>
+                        <tr class="text-center">
+                            <td style="padding-top:5px;padding-bottom:5px;border-left:1px solid white !important">
+                                Contado
+                            </td>
+                            <td>
+                                Credito
+                            </td>
+                            <td>
+                                Interes
+                            </td>
+                            <td style="width:250px;" >
+                                Cliente
+                            </td>
+                            <td>
+                                Contado
+                            </td>
+                            <td>
+                                Credito
+                            </td>
+                            <td>
+                                Interes
+                            </td>
+                            <td>
+                                IVA Exenta
+                            </td>
+                            <td>
+                                IVA 5%
+                            </td>
+                            <td>
+                                IVA 10%
+                            </td>
+                            <td>
+                                Emision
+                            </td>
+                            <td>
+                                Vencimiento
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="totalContado" t-value="0"/>
+                        <t t-set="totalCredito" t-value="0"/>
+                        <t t-set="totalInteres" t-value="0"/>
+                        <t t-set="total" t-value="0"/>
+                        <t t-foreach="docs" t-as="d">
+                            <tr style="border:1 px solid white;padding-left:5px;font-size:14px;" class="text-center">
+                                <td style="border-left:1px solid white !important">
+                                    <t t-if="d.date_invoice ==Sol d.date_due and not d.factura_origen_mora ">
+                                        <t t-esc="d.fake_number"/>
+                                    </t>
+                                </td>
+                                <td>
+                                    <t t-if="d.date_invoice != d.date_due and not d.factura_origen_mora">
+                                        <t t-esc="d.fake_number"/>
+                                    </t>
+                                </td>
+                                <td>
+                                    <t t-if="d.factura_origen_mora">
+                                        <t t-esc="d.fake_number"/>
+                                    </t>
+                                </td>
+                                <td class="text-left">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-if="d.partner_id.parent_id">
+                                            <t t-esc="d.partner_id.parent_id.name"/>
+                                        </t>
+                                        <t t-if="not d.partner_id.parent_id">
+                                            <t t-esc="d.partner_id.name"/>
+                                        </t>
+                                    </t>
+                                    <t t-if="d.state == 'cancel'">
+                                        ANULADO -
+                                        <t t-if="d.partner_id.parent_id">
+                                            <t t-esc="d.partner_id.parent_id.name"/>
+                                        </t>
+                                        <t t-if="not d.partner_id.parent_id">
+                                            <t t-esc="d.partner_id.name"/>
+                                        </t>
+                                    </t>
+                                </td>
+                                <td>
+                                    <t t-if="d.date_invoice == d.date_due and not d.factura_origen_mora and d.state != 'cancel'">
+                                        <t t-set="montoCobrado" t-value="d.amount_total"/>
+                                        <t class="text-right" t-esc="'{0:,.0f}'.format(int(montoCobrado)).replace(',','.')"/>
+                                        <t t-set="totalContado" t-value="totalContado+montoCobrado"/>
+                                    </t>
+                                    <t t-if="d.state == 'cancel'">
+                                        <t t-set="montoCobrado" t-value="d.amount_total"/>
+                                        <t class="text-right" t-esc="'{0:,.0f}'.format(int(montoCobrado)).replace(',','.')"/>
+                                    </t>
+                                </td>
+                                <td>
+                                    <t t-if="d.date_invoice != d.date_due and not d.factura_origen_mora and d.state != 'cancel'">
+                                        <t t-set="montoCobrado" t-value="d.amount_total+d.comisionIVA"/>
+                                        <t class="text-right" t-esc="'{0:,.0f}'.format(int(montoCobrado)).replace(',','.')"/>
+                                        <t t-set="totalCredito" t-value="totalCredito+montoCobrado"/>
+                                    </t>
+                                    <t t-if="d.state == 'cancel'">
+                                        <t t-set="montoCobrado" t-value="d.amount_total+d.comisionIVA"/>
+                                        <t class="text-right" t-esc="'{0:,.0f}'.format(int(montoCobrado)).replace(',','.')"/>
+                                    </t>
+                                </td>
+                                <td >
+                                    <t t-if="d.factura_origen_mora and d.state != 'cancel'">
+                                        <t t-set="montoCobrado" t-value="d.amount_total"/>
+                                        <t t-esc="'{0:,.0f}'.format(int(montoCobrado)).replace(',','.')"/>
+                                        <t t-set="totalInteres" t-value="totalInteres+montoCobrado"/>
+                                    </t>
+                                    <t t-if="d.state == 'cancel'">
+                                        <t t-set="montoCobrado" t-value="d.amount_total+d.comisionIVA"/>
+                                        <t class="text-right" t-esc="'{0:,.0f}'.format(int(montoCobrado)).replace(',','.')"/>
+                                    </t>
+                                </td>
+                                <td>
+                                    <span></span>
+                                </td>
+                                <t t-set="totalIVACinco" t-value="0"/>
+                                <t t-set="totalIVADiez" t-value="0"/>
+                                <td>
+                                    <t t-foreach="d.tax_line_ids" t-as="t">
+                                        <t t-if="'IVA 5' in t.name">
+                                            <t t-set="ivaCinco" t-value="t.amount"/>
+                                            <span t-esc="'{0:,.0f}'.format(int(ivaCinco)).replace(',','.')"/>
+                                            <t t-set="totalIVACinco" t-value="totalIVACinco+ivaCinco"/>
+                                        </t>
+                                    </t>
+                                </td>
+                                <td>
+                                    <t t-foreach="d.tax_line_ids" t-as="t">
+                                        <t t-if="'IVA 10' in t.name">
+                                            <t t-set="ivaDiez" t-value="t.amount"/>
+                                            <span t-esc="'{0:,.0f}'.format(int(ivaDiez)).replace(',','.')"/>
+                                            <t t-set="totalIVADiez" t-value="totalIVADiez+ivaDiez"/>
+                                        </t>
+                                    </t>
+                                </td>
+                                <td>
+                                    <t t-esc="d.date_invoice.strftime('%d/%m/%Y')"/>
+                                </td>
+                                <td>
+                                    <t t-esc="d.date_due.strftime('%d/%m/%Y')"/>
+                                </td>
+                            </tr>
+                        </t>
+                        <tr>
+                            <td>
+
+                            </td>
+                        </tr>
+                        <tr style="padding-left:5px;">
+                            <td colspan="4" class="text-center" style="padding-left:10px;">
+                                Total Cobrado:
+                            </td>
+                            <td class="text-center">
+                                <t t-esc="'{0:,.0f}'.format(int(totalContado)).replace(',','.')"/>
+                            </td>
+                            <td class="text-center">
+                                <t t-esc="'{0:,.0f}'.format(int(totalCredito)).replace(',','.')"/>
+                            </td>
+                            <td class="text-center">
+                                <t t-esc="'{0:,.0f}'.format(int(totalInteres)).replace(',','.')"/>
+                            </td>
+                            <td colspan="3" class="bold text-right">
+                                TOTAL
+                            </td>
+                            <td colspan="2" class="text-center bold" style="padding:10px;">
+                                <t t-set="total" t-value="totalContado+totalCredito+totalInteres"/>
+                                <t t-esc="'{0:,.0f}'.format(int(total)).replace(',','.')"/> Gs.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="footer">
+                    <div class="row text-center" style="border-top: 1px solid black;">
+                        <div class="col col-3">
+                            <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                        </div>
+                        <div class="col col-3 offset-6 text-right">
+                            <ul class="list-inline mt-2">
+                                <li class="list-inline-item">Página:</li>
+                                <li class="list-inline-item">
+                                    <span class="page"/>
+                                </li>
+                                <li class="list-inline-item">/</li>
+                                <li class="list-inline-item">
+                                    <span class="topage"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

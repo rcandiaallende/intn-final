@@ -1,0 +1,261 @@
+<odoo>
+    <record model="report.paperformat" id="paperformat_recap_report">
+        <field name="name">paperformat.recap.report</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_width">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">10</field>
+        <field name="margin_right">4</field>
+        <field name="margin_bottom">15</field>
+        <field name="margin_left">4</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">70</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <report id="recap_report"
+            model="listado_notas_credito.report.wizard"
+            string="Listado de Notas de Credito conciliadas con Facturas"
+            report_type="qweb-pdf"
+            name="listado_notas_credito_report_sifen.recap_report_view"
+            paperformat="paperformat_recap_report"
+            menu="False"/>
+
+    <template id="recap_report_view">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <style>
+
+                    table {
+                    width: 100%;
+
+                    }
+
+                    .fs-12 {
+                    font-size: 14px;
+                    margin: 2px;
+                    }
+
+                    .text-center {
+                    text-align: center;
+                    }
+
+                    .text-right {
+                    text-align: right;
+                    }
+
+                    .bold {
+                    font-weight: bold;
+                    }
+
+                    .text-justify {
+                    text-align: justify;
+                    }
+
+                    table,
+                    th,
+                    tr{
+                    border: 1px solid black;
+                    border-collapse: collapse;
+
+                    }
+
+                    .td {
+                    border-right: 1px solid black;
+                    }
+
+                    .tr{
+                    border-collapse: collapse
+                    }
+                    .ml-5{
+                    margin-left:5x;
+                    }
+
+                    p{
+                    margin-top:0;
+                    margin-bottom:2px;
+                    margin-left:2px;
+                    }
+                    .w-90{
+                    width:100mm;
+                    }
+                    .w-15{
+                    width:20mm;
+                    }
+
+                    span:before {
+                    white-space: pre;
+                    }
+
+                    .tr {
+                    page-break-inside: avoid;
+                    }
+
+
+                </style>
+                <table>
+                    <tr>
+                        <td style="width:20%;padding-left:60px;padding-top:10px;" class="text-left">
+                            <img src='/detalle_cobros_report/static/src/img/logo.png' style="max-height: 20%;"/>
+                        </td>
+                        <td class="text-center" style="margin-top:0;padding:10px;font-size:20px;">
+                            INSTITUTO NACIONAL DE TECNOLOGÍA, NORMALIZACIÓN Y METROLOGÍA
+                            <p class="bold text-center" style="padding:15px;">LISTADO DE NOTAS DE CRÉDITO EMITIDAS CON DETALLES DE FACTURAS ORIGEN</p>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <table>
+                    <tr >
+                        <td style="width:50%;padding:10px;" >
+                            <span class="bold"> Fecha Inicio: </span>
+                            <t t-esc="date_start"/>
+                        </td>
+                        <td style="width:50%;padding:10px;" class="text-right">
+                            <span class="bold"> Fecha Fin: </span>
+                            <t t-esc="date_end"/>
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <td style="width:250px;" colspan="2" >
+                                Cliente
+                            </td>
+                            <td colspan="4" class="text-center bold" style="padding-top:10px;padding-bottom:10px">
+                                Nro de Nota de Crédito
+                            </td>
+                            <td colspan="3" class="text-center bold">
+                                Monto Nota de Crédito
+                            </td>
+                            <td colspan="3" class="text-center bold">
+                                Liquidación del IVA
+                            </td>
+                            <td colspan="2" class="text-center bold">
+                                Fecha Nota de Crédito
+                            </td>
+                            <td colspan="2" class="text-center bold">
+                                Nro. Factura Venta
+                            </td>
+                            <td colspan="2" class="text-center bold">
+                                Fecha Factura Venta
+                            </td>
+                            <td colspan="2" class="text-center bold">
+                                Monto Conciliado
+                            </td>
+                            <td colspan="2" class="text-center bold">
+                                Plazo de Pago
+                            </td>
+                             <td colspan="2" class="text-center bold">
+                                Comentario
+                            </td>
+
+                        </tr>
+<!--                        <tr class="text-center">-->
+<!--                            <td style="padding-top:5px;padding-bottom:5px;border-left:1px solid white !important" colspan="2">-->
+<!--                                Nota de Crédito-->
+<!--                            </td>-->
+
+<!--                            <td colspan="3">-->
+<!--                                Monto-->
+<!--                            </td>-->
+<!--                            <td>-->
+<!--                                IVA Exenta-->
+<!--                            </td>-->
+<!--                            <td>-->
+<!--                                IVA 5%-->
+<!--                            </td>-->
+<!--                            <td>-->
+<!--                                IVA 10%-->
+<!--                            </td>-->
+<!--                            <td colspan="2">-->
+<!--                                Emision-->
+<!--                            </td>-->
+<!--                        </tr>-->
+                    </thead>
+                    <tbody>
+                        <t t-set="montoCobrado" t-value="0"/>
+                        <t t-set="total" t-value="0"/>
+                        <t t-foreach="docs" t-as="d"/>
+                            <tr style="border:1 px solid white;padding-left:5px;font-size:14px;" class="text-center">
+                                <!--NOMBRE DEL CLIENTE-->
+                                <td style="border-left:1px solid white !important" colspan="2">
+                                        <t t-esc="d.partner_id.parent_id.name"/>
+                                </td>
+                                <!--NRO NOTA DE CREDITO-->
+                                <td style="border-left:1px solid white !important" colspan="2">
+                                        <t t-esc="d.fake_number"/>
+                                </td>
+                                <!--MONTO NOTA DE CREDITO-->
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-set="montoCobrado" t-value="d.amount_total"/>
+                                        <t class="text-right" t-esc="'{0:,.0f}'.format(int(montoCobrado)).replace(',','.')"/>
+<!--                                        <t t-set="total" t-value="total+montoCobrado"/>-->
+                                    </t>
+                                </td>
+                                <!--NRO DE FACTURA VENTA-->
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.origin"/>
+                                    </t>
+                                </td>
+                                <!--FECHA DE FACTURA VENTA-->
+                                 <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.refund_invoice_id.date_invoice"/>
+                                    </t>
+                                </td>
+                                <!--MONTO FACTURA-->
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.refund_invoice_id.amount_total"/>
+                                    </t>
+                                </td>
+                                <!--MONTO CONCILIADO-->
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.amount_total"/>
+                                    </t>
+                                </td>
+
+                                <!--PLAZO PAGO FACTURA VENTA-->
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.refund_invoice_id.payment_term_id.name"/>
+                                    </t>
+                                </td>
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.comment"/>
+                                    </t>
+                                </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="footer">
+                    <div class="row text-center" style="border-top: 1px solid black;">
+                        <div class="col col-3">
+                            <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                        </div>
+                        <div class="col col-3 offset-6 text-right">
+                            <ul class="list-inline mt-2">
+                                <li class="list-inline-item">Página:</li>
+                                <li class="list-inline-item">
+                                    <span class="page"/>
+                                </li>
+                                <li class="list-inline-item">/</li>
+                                <li class="list-inline-item">
+                                    <span class="topage"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
