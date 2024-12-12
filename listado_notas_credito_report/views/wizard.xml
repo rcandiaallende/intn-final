@@ -18,11 +18,6 @@
                         <field name="date_end"/>
                     </group>
                 </group>
-                <group>
-                    <group>
-                        <field name="show_invoices"/>
-                    </group>
-                </group>
                 <footer>
                     <button name="get_report" string="Imprimir" type="object" class="oe_highlight"/>
                     <button string="Cancelar" special="cancel"/>
