@@ -26,7 +26,7 @@ class ListadoNotasCreditoReportWizard(models.TransientModel):
             },
         }
         if self.show_invoices:
-            return self.env.ref('listado_notas_credito_report_sifen.recap_report').report_action(self, data=data)
+            return self.env.ref('listado_notas_credito_report_sifen.recap_report_sifen').report_action(self, data=data)
         else:
             return self.env.ref('listado_notas_credito_report.recap_report').report_action(self, data=data)
 
