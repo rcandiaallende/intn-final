@@ -183,61 +183,64 @@
                         <tr style="border:1 px solid white;padding-left:5px;font-size:14px;" class="text-center">
                             <!--NOMBRE DEL CLIENTE-->
                             <td style="border-left:1px solid white !important" colspan="2">
-                                <t t-if="d.partner_id">
-                                    <t t-esc="d.partner_id.parent_id.name"/>
-                                </t>
-                                <t t-else="">
-                                    No Partner
+                                <t t-if="d.state != 'cancel'">
+                                    <t t-if="d.partner_id.parent_id">
+                                        <t t-esc="d.partner_id.parent_id.name"/>
+                                    </t>
+                                    <t t-if="not d.partner_id.parent_id">
+                                        <t t-esc="d.partner_id.name"/>
+                                    </t>
                                 </t>
                             </td>
                             <!--NRO NOTA DE CREDITO-->
-                                <td style="border-left:1px solid white !important" colspan="2">
-                                        <t t-esc="d.fake_number"/>
-                                </td>
-                                <!--MONTO NOTA DE CREDITO-->
-                                <td colspan="3">
-                                    <t t-if="d.state != 'cancel'">
-                                        <t t-set="montoCobrado" t-value="d.amount_total"/>
-                                        <t class="text-right" t-esc="'{0:,.0f}'.format(int(montoCobrado)).replace(',','.')"/>
-<!--                                        <t t-set="total" t-value="total+montoCobrado"/>-->
-                                    </t>
-                                </td>
-                                <!--NRO DE FACTURA VENTA-->
-                                <td colspan="3">
-                                    <t t-if="d.state != 'cancel'">
-                                        <t t-value="d.origin"/>
-                                    </t>
-                                </td>
-                                <!--FECHA DE FACTURA VENTA-->
-                                 <td colspan="3">
-                                    <t t-if="d.state != 'cancel'">
-                                        <t t-value="d.refund_invoice_id.date_invoice"/>
-                                    </t>
-                                </td>
-                                <!--MONTO FACTURA-->
-                                <td colspan="3">
-                                    <t t-if="d.state != 'cancel'">
-                                        <t t-value="d.refund_invoice_id.amount_total"/>
-                                    </t>
-                                </td>
-                                <!--MONTO CONCILIADO-->
-                                <td colspan="3">
-                                    <t t-if="d.state != 'cancel'">
-                                        <t t-value="d.amount_total"/>
-                                    </t>
-                                </td>
+                            <td style="border-left:1px solid white !important" colspan="2">
+                                <t t-esc="d.fake_number"/>
+                            </td>
+                            <!--MONTO NOTA DE CREDITO-->
+                            <td colspan="3">
+                                <t t-if="d.state != 'cancel'">
+                                    <t t-set="montoCobrado" t-value="d.amount_total"/>
+                                    <t class="text-right"
+                                       t-esc="'{0:,.0f}'.format(int(montoCobrado)).replace(',','.')"/>
+                                    <!--                                        <t t-set="total" t-value="total+montoCobrado"/>-->
+                                </t>
+                            </td>
+                            <!--NRO DE FACTURA VENTA-->
+                            <td colspan="3">
+                                <t t-if="d.state != 'cancel'">
+                                    <t t-value="d.origin"/>
+                                </t>
+                            </td>
+                            <!--FECHA DE FACTURA VENTA-->
+                            <td colspan="3">
+                                <t t-if="d.state != 'cancel'">
+                                    <t t-value="d.refund_invoice_id.date_invoice"/>
+                                </t>
+                            </td>
+                            <!--MONTO FACTURA-->
+                            <td colspan="3">
+                                <t t-if="d.state != 'cancel'">
+                                    <t t-value="d.refund_invoice_id.amount_total"/>
+                                </t>
+                            </td>
+                            <!--MONTO CONCILIADO-->
+                            <td colspan="3">
+                                <t t-if="d.state != 'cancel'">
+                                    <t t-value="d.amount_total"/>
+                                </t>
+                            </td>
 
-                                <!--PLAZO PAGO FACTURA VENTA-->
-                                <td colspan="3">
-                                    <t t-if="d.state != 'cancel'">
-                                        <t t-value="d.refund_invoice_id.payment_term_id.name"/>
-                                    </t>
-                                </td>
-                                <td colspan="3">
-                                    <t t-if="d.state != 'cancel'">
-                                        <t t-value="d.comment"/>
-                                    </t>
-                                </td>
+                            <!--PLAZO PAGO FACTURA VENTA-->
+                            <td colspan="3">
+                                <t t-if="d.state != 'cancel'">
+                                    <t t-value="d.refund_invoice_id.payment_term_id.name"/>
+                                </t>
+                            </td>
+                            <td colspan="3">
+                                <t t-if="d.state != 'cancel'">
+                                    <t t-value="d.comment"/>
+                                </t>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
