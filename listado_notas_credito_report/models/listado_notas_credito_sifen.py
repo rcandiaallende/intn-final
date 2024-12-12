@@ -12,6 +12,7 @@ class ListadoNotasCreditoReportWizard(models.TransientModel):
     date_start = fields.Date(string="Fecha Inicio", required=True, default=fields.Date.today)
     date_end = fields.Date(string="Fecha Final", required=True, default=fields.Date.today)
     partner_id = fields.Many2one('res.partner', string="Cliente")
+    show_invoices = fields.Boolean(string='Mostrar Facturas Conciliadas', default=True)
 
     @api.multi
     def get_report(self):
@@ -29,7 +30,6 @@ class ListadoNotasCreditoReportWizard(models.TransientModel):
 
 
 class ReportListadoNotasCredito(models.AbstractModel):
-
     _name = 'listado_notas_credito_report_sifen.recap_report_sifen_view'
 
     @api.model
@@ -40,7 +40,6 @@ class ReportListadoNotasCredito(models.AbstractModel):
         date_end_obj = datetime.strptime(date_end, DATE_FORMAT)
         partner_id = data['form']['partner_id']
 
-
         start_report = date_start_obj.strftime('%d/%m/%Y')
         end_report = date_end_obj.strftime('%d/%m/%Y')
 
@@ -49,19 +48,20 @@ class ReportListadoNotasCredito(models.AbstractModel):
                 [('type', '=', 'out_refund'), ('state', 'in', ['open', 'paid', 'cancel']),
                  ('date_invoice', '>=', date_start_obj.strftime(DATETIME_FORMAT)),
                  ('date_invoice', '<=', date_end_obj.strftime(DATETIME_FORMAT)),
-                 ('tax_line_ids', '!=', False)]).filtered(lambda x: x.partner_id.id == partner_id or x.partner_id.parent_id.id == partner_id)
+                 ('tax_line_ids', '!=', False)]).filtered(
+                lambda x: x.partner_id.id == partner_id or x.partner_id.parent_id.id == partner_id)
         else:
             facturas = self.env['account.invoice'].search(
                 [('type', '=', 'out_refund'), ('state', 'in', ['open', 'paid', 'cancel']),
                  ('date_invoice', '>=', date_start_obj.strftime(DATETIME_FORMAT)),
                  ('date_invoice', '<=', date_end_obj.strftime(DATETIME_FORMAT)), ('tax_line_ids', '!=', False)])
 
-        docs = sorted(facturas, key = lambda x: x.fake_number)
+        docs = sorted(facturas, key=lambda x: x.fake_number)
         docs = sorted(docs, key=lambda x: x.date_invoice)
         return {
             'doc_ids': data['ids'],
             'doc_model': data['model'],
-            'date_start':start_report,
+            'date_start': start_report,
             'date_end': end_report,
             'docs': docs,
         }
