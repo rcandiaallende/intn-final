@@ -32,7 +32,7 @@
     </record>
 
     <act_window id="action_recap_report_sifen_wizard"
-                name="Listado de Notas de Crédito Emitidas Conciliadas con Facturas"
+                name="listado_notas_credito_report_sifen.recap_report_sifen"
                 res_model="listado_notas_credito.sifen.report.wizard"
                 view_mode="form"
                 target="new"/>
