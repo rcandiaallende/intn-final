@@ -16,7 +16,7 @@
     </record>
 
     <report id="recap_report_sifen"
-            model="listado_notas_credito.report.wizard"
+            model="listado_notas_credito.sifen.report.wizard"
             string="Listado de Notas de Credito conciliadas con Facturas"
             report_type="qweb-pdf"
             name="listado_notas_credito_report.recap_report_sifen_view"
