@@ -19,7 +19,7 @@
             model="listado_notas_credito.report.wizard"
             string="Listado de Notas de Credito conciliadas con Facturas"
             report_type="qweb-pdf"
-            name="listado_notas_credito_report_sifen.recap_report_sifen_view"
+            name="listado_notas_credito_report.recap_report_sifen_view"
             paperformat="paperformat_recap_report"
             menu="False"/>
 
