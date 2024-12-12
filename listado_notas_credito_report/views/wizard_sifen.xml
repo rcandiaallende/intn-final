@@ -37,7 +37,7 @@
                 view_mode="form"
                 target="new"/>
 
-    <menuitem action="action_recap_report_wizard_sifen"
-              id="menu_listado_notas_credito_report_sifen_wizard"
-              parent="account.menu_finance_receivables"/>
+    <menuitem action="action_recap_report_sifen_wizard"
+          id="menu_listado_notas_credito_report_sifen_wizard"
+          parent="account.menu_finance_receivables"/>
 </odoo>
