@@ -180,12 +180,17 @@
                         <t t-set="montoCobrado" t-value="0"/>
                         <t t-set="total" t-value="0"/>
                         <t t-foreach="docs" t-as="d"/>
-                            <tr style="border:1 px solid white;padding-left:5px;font-size:14px;" class="text-center">
-                                <!--NOMBRE DEL CLIENTE-->
-                                <td style="border-left:1px solid white !important" colspan="2">
-                                        <t t-esc="d.partner_id.parent_id.name"/>
-                                </td>
-                                <!--NRO NOTA DE CREDITO-->
+                        <tr style="border:1 px solid white;padding-left:5px;font-size:14px;" class="text-center">
+                            <!--NOMBRE DEL CLIENTE-->
+                            <td style="border-left:1px solid white !important" colspan="2">
+                                <t t-if="d.partner_id">
+                                    <t t-esc="d.partner_id.parent_id.name"/>
+                                </t>
+                                <t t-else="">
+                                    No Partner
+                                </t>
+                            </td>
+                            <!--NRO NOTA DE CREDITO-->
                                 <td style="border-left:1px solid white !important" colspan="2">
                                         <t t-esc="d.fake_number"/>
                                 </td>
