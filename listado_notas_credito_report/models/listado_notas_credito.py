@@ -33,7 +33,7 @@ class ListadoNotasCreditoReportWizard(models.TransientModel):
         # Generar ambas opciones de informe
         report_refs = []
         if self.show_invoices:
-            report_refs.append(self.env.ref('listado_notas_credito_report_sifen.recap_report_sifen').report_action(self, data=data))
+            report_refs.append(self.env.ref('listado_notas_credito_report.recap_report_sifen').report_action(self, data=data))
         report_refs.append(self.env.ref('listado_notas_credito_report.recap_report').report_action(self, data=data))
 
         return report_refs
@@ -41,7 +41,7 @@ class ListadoNotasCreditoReportWizard(models.TransientModel):
 
 class ReportListadoNotasCredito(models.AbstractModel):
 
-    _name = 'listado_notas_credito_report_sifen.recap_report_sifen_view'
+    _name = 'listado_notas_credito_report.recap_report_sifen_view'
 
     @api.model
     def _get_report_values(self, docids, data=None):
