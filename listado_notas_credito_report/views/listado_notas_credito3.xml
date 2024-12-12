@@ -102,19 +102,21 @@
                         </td>
                         <td class="text-center" style="margin-top:0;padding:10px;font-size:20px;">
                             INSTITUTO NACIONAL DE TECNOLOGÍA, NORMALIZACIÓN Y METROLOGÍA
-                            <p class="bold text-center" style="padding:15px;">LISTADO DE NOTAS DE CRÉDITO EMITIDAS CON DETALLES DE FACTURAS ORIGEN</p>
+                            <p class="bold text-center" style="padding:15px;">LISTADO DE NOTAS DE CRÉDITO EMITIDAS CON
+                                DETALLES DE FACTURAS ORIGEN
+                            </p>
                         </td>
                     </tr>
                 </table>
                 <br/>
                 <table>
-                    <tr >
-                        <td style="width:50%;padding:10px;" >
-                            <span class="bold"> Fecha Inicio: </span>
+                    <tr>
+                        <td style="width:50%;padding:10px;">
+                            <span class="bold">Fecha Inicio:</span>
                             <t t-esc="date_start"/>
                         </td>
                         <td style="width:50%;padding:10px;" class="text-right">
-                            <span class="bold"> Fecha Fin: </span>
+                            <span class="bold">Fecha Fin:</span>
                             <t t-esc="date_end"/>
                         </td>
                     </tr>
@@ -122,7 +124,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <td style="width:250px;" colspan="2" >
+                            <td style="width:250px;" colspan="2">
                                 Cliente
                             </td>
                             <td colspan="4" class="text-center bold" style="padding-top:10px;padding-bottom:10px">
@@ -149,99 +151,100 @@
                             <td colspan="2" class="text-center bold">
                                 Plazo de Pago
                             </td>
-                             <td colspan="2" class="text-center bold">
+                            <td colspan="2" class="text-center bold">
                                 Comentario
                             </td>
 
                         </tr>
-<!--                        <tr class="text-center">-->
-<!--                            <td style="padding-top:5px;padding-bottom:5px;border-left:1px solid white !important" colspan="2">-->
-<!--                                Nota de Crédito-->
-<!--                            </td>-->
+                        <!--                        <tr class="text-center">-->
+                        <!--                            <td style="padding-top:5px;padding-bottom:5px;border-left:1px solid white !important" colspan="2">-->
+                        <!--                                Nota de Crédito-->
+                        <!--                            </td>-->
 
-<!--                            <td colspan="3">-->
-<!--                                Monto-->
-<!--                            </td>-->
-<!--                            <td>-->
-<!--                                IVA Exenta-->
-<!--                            </td>-->
-<!--                            <td>-->
-<!--                                IVA 5%-->
-<!--                            </td>-->
-<!--                            <td>-->
-<!--                                IVA 10%-->
-<!--                            </td>-->
-<!--                            <td colspan="2">-->
-<!--                                Emision-->
-<!--                            </td>-->
-<!--                        </tr>-->
+                        <!--                            <td colspan="3">-->
+                        <!--                                Monto-->
+                        <!--                            </td>-->
+                        <!--                            <td>-->
+                        <!--                                IVA Exenta-->
+                        <!--                            </td>-->
+                        <!--                            <td>-->
+                        <!--                                IVA 5%-->
+                        <!--                            </td>-->
+                        <!--                            <td>-->
+                        <!--                                IVA 10%-->
+                        <!--                            </td>-->
+                        <!--                            <td colspan="2">-->
+                        <!--                                Emision-->
+                        <!--                            </td>-->
+                        <!--                        </tr>-->
                     </thead>
                     <tbody>
                         <t t-set="montoCobrado" t-value="0"/>
                         <t t-set="total" t-value="0"/>
-                        <t t-foreach="docs" t-as="d"/>
-                        <tr style="border:1 px solid white;padding-left:5px;font-size:14px;" class="text-center">
-                            <!--NOMBRE DEL CLIENTE-->
-                            <td style="border-left:1px solid white !important" colspan="2">
-                                <t t-if="d.state != 'cancel'">
-                                    <t t-if="d.partner_id.parent_id">
-                                        <t t-esc="d.partner_id.parent_id.name"/>
+                        <t t-foreach="docs" t-as="d">
+                            <tr style="border:1 px solid white;padding-left:5px;font-size:14px;" class="text-center">
+                                <!--NOMBRE DEL CLIENTE-->
+                                <td style="border-left:1px solid white !important" colspan="2">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-if="d.partner_id.parent_id">
+                                            <t t-esc="d.partner_id.parent_id.name"/>
+                                        </t>
+                                        <t t-if="not d.partner_id.parent_id">
+                                            <t t-esc="d.partner_id.name"/>
+                                        </t>
                                     </t>
-                                    <t t-if="not d.partner_id.parent_id">
-                                        <t t-esc="d.partner_id.name"/>
+                                </td>
+                                <!--NRO NOTA DE CREDITO-->
+                                <td style="border-left:1px solid white !important" colspan="2">
+                                    <t t-esc="d.fake_number"/>
+                                </td>
+                                <!--MONTO NOTA DE CREDITO-->
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-set="montoCobrado" t-value="d.amount_total"/>
+                                        <t class="text-right"
+                                           t-esc="'{0:,.0f}'.format(int(montoCobrado)).replace(',','.')"/>
+                                        <!--                                        <t t-set="total" t-value="total+montoCobrado"/>-->
                                     </t>
-                                </t>
-                            </td>
-                            <!--NRO NOTA DE CREDITO-->
-                            <td style="border-left:1px solid white !important" colspan="2">
-                                <t t-esc="d.fake_number"/>
-                            </td>
-                            <!--MONTO NOTA DE CREDITO-->
-                            <td colspan="3">
-                                <t t-if="d.state != 'cancel'">
-                                    <t t-set="montoCobrado" t-value="d.amount_total"/>
-                                    <t class="text-right"
-                                       t-esc="'{0:,.0f}'.format(int(montoCobrado)).replace(',','.')"/>
-                                    <!--                                        <t t-set="total" t-value="total+montoCobrado"/>-->
-                                </t>
-                            </td>
-                            <!--NRO DE FACTURA VENTA-->
-                            <td colspan="3">
-                                <t t-if="d.state != 'cancel'">
-                                    <t t-value="d.origin"/>
-                                </t>
-                            </td>
-                            <!--FECHA DE FACTURA VENTA-->
-                            <td colspan="3">
-                                <t t-if="d.state != 'cancel'">
-                                    <t t-value="d.refund_invoice_id.date_invoice"/>
-                                </t>
-                            </td>
-                            <!--MONTO FACTURA-->
-                            <td colspan="3">
-                                <t t-if="d.state != 'cancel'">
-                                    <t t-value="d.refund_invoice_id.amount_total"/>
-                                </t>
-                            </td>
-                            <!--MONTO CONCILIADO-->
-                            <td colspan="3">
-                                <t t-if="d.state != 'cancel'">
-                                    <t t-value="d.amount_total"/>
-                                </t>
-                            </td>
+                                </td>
+                                <!--NRO DE FACTURA VENTA-->
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.origin"/>
+                                    </t>
+                                </td>
+                                <!--FECHA DE FACTURA VENTA-->
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.refund_invoice_id.date_invoice"/>
+                                    </t>
+                                </td>
+                                <!--MONTO FACTURA-->
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.refund_invoice_id.amount_total"/>
+                                    </t>
+                                </td>
+                                <!--MONTO CONCILIADO-->
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.amount_total"/>
+                                    </t>
+                                </td>
 
-                            <!--PLAZO PAGO FACTURA VENTA-->
-                            <td colspan="3">
-                                <t t-if="d.state != 'cancel'">
-                                    <t t-value="d.refund_invoice_id.payment_term_id.name"/>
-                                </t>
-                            </td>
-                            <td colspan="3">
-                                <t t-if="d.state != 'cancel'">
-                                    <t t-value="d.comment"/>
-                                </t>
-                            </td>
-                        </tr>
+                                <!--PLAZO PAGO FACTURA VENTA-->
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.refund_invoice_id.payment_term_id.name"/>
+                                    </t>
+                                </td>
+                                <td colspan="3">
+                                    <t t-if="d.state != 'cancel'">
+                                        <t t-value="d.comment"/>
+                                    </t>
+                                </td>
+                            </tr>
+                        </t>
                     </tbody>
                 </table>
                 <div class="footer">
