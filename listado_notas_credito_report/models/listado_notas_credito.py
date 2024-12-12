@@ -15,9 +15,11 @@ class ListadoNotasCreditoReportWizard(models.TransientModel):
     show_invoices = fields.Boolean('Mostrar facturas de origen anuladas o modificadas (conciliadas)', default=True)
 
     @api.multi
-    def get_report(self):
+    def get_report(self, report_name):
         if self.date_start > self.date_end:
             raise ValueError("La fecha de inicio no puede ser mayor a la fecha final.")
+
+        template_ref = 'listado_notas_credito_report_sifen.recap_report' if self.show_invoices else 'listado_notas_credito_report.recap_report'
 
         data = {
             'ids': self.ids,
@@ -30,18 +32,12 @@ class ListadoNotasCreditoReportWizard(models.TransientModel):
             },
         }
 
-        # Generar ambas opciones de informe
-        report_refs = []
-        if self.show_invoices:
-            report_refs.append(self.env.ref('listado_notas_credito_report.recap_report_sifen').report_action(self, data=data))
-        report_refs.append(self.env.ref('listado_notas_credito_report.recap_report').report_action(self, data=data))
-
-        return report_refs
+        return self.env.ref(template_ref).report_action(self, data=data)
 
 
 class ReportListadoNotasCredito(models.AbstractModel):
 
-    _name = 'listado_notas_credito_report.recap_report_sifen_view'
+    _name = 'report.listado_notas_credito_report.recap_report_view'
 
     @api.model
     def _get_report_values(self, docids, data=None):
