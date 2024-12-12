@@ -41,7 +41,7 @@ class ListadoNotasCreditoReportWizard(models.TransientModel):
 
 class ReportListadoNotasCredito(models.AbstractModel):
 
-    _name = 'report.listado_notas_credito_report.recap_report_view'
+    _name = 'listado_notas_credito_report_sifen.recap_report_sifen_view'
 
     @api.model
     def _get_report_values(self, docids, data=None):
