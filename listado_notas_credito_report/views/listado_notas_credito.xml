@@ -182,7 +182,7 @@
                         <t t-foreach="docs" t-as="d">
                             <tr style="border:1 px solid white;padding-left:5px;font-size:14px;" class="text-center">
                                 <td style="border-left:1px solid white !important">
-                                    <t t-if="d.date_invoice ==Sol d.date_due and not d.factura_origen_mora ">
+                                    <t t-if="d.date_invoice ==d.date_due and not d.factura_origen_mora ">
                                         <t t-esc="d.fake_number"/>
                                     </t>
                                 </td>
