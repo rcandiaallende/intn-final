@@ -19,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','account','interfaces_timbrado'],
+    'depends': ['base', 'account', 'interfaces_timbrado'],
 
     # always loaded
     'data': [
@@ -27,6 +27,7 @@
         'views/views.xml',
         'views/templates.xml',
         'views/listado_notas_credito.xml',
+        'views/listado_notas_credito3.xml',
         'views/wizard.xml',
     ],
     # only loaded in demonstration mode
