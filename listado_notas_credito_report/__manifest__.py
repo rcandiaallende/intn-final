@@ -29,6 +29,7 @@
         'views/listado_notas_credito.xml',
         'views/listado_notas_credito3.xml',
         'views/wizard.xml',
+        'views/wizard_sifen.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

@@ -1,0 +1,43 @@
+<odoo>
+    <record model="ir.ui.view" id="recap_report_sifen_wizard">
+        <field name="name">Listado de Notas de Crédito conciliadas con Facturas</field>
+        <field name="model">listado_notas_credito.sifen.report.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Listado Notas de Crédito conciliadas con Facturas">
+                <group>
+                    <group>
+                        <field name="partner_id"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="date_start"/>
+                    </group>
+                    <group>
+                        <field name="date_end"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="show_invoices"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="get_report" string="Imprimir" type="object" class="oe_highlight"/>
+                    <button string="Cancelar" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_recap_report_sifen_wizard"
+                name="Listado de Notas de Crédito Emitidas Conciliadas con Facturas"
+                res_model="listado_notas_credito.report.sifen.wizard"
+                view_mode="form"
+                target="new"/>
+
+    <menuitem action="action_recap_report_wizard"
+              id="menu_listado_notas_credito_report_sifen_wizard"
+              parent="account.menu_finance_receivables"/>
+</odoo>
