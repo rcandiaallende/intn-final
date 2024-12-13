@@ -35,37 +35,35 @@ class ReportListadoNotasCredito(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        DATE_FORMAT = '%Y-%m-%d'
-        date_start = data['form']['date_start']
-        date_end = data['form']['date_end']
+        date_start = data['form']['date_start']  # Se espera que esté en formato ISO
+        date_end = data['form']['date_end']  # Se espera que esté en formato ISO
 
-        # Convertimos las fechas de entrada al formato ISO
-        date_start_obj = datetime.strptime(date_start, '%d/%m/%Y')  # Entrada original
-        date_end_obj = datetime.strptime(date_end, '%d/%m/%Y')  # Entrada original
-
-        date_start_iso = date_start_obj.strftime(DATE_FORMAT)  # Formato ISO
-        date_end_iso = date_end_obj.strftime(DATE_FORMAT)  # Formato ISO
+        # Validar si las fechas ya están en formato ISO
+        try:
+            datetime.strptime(date_start, '%Y-%m-%d')  # Validar formato ISO
+            datetime.strptime(date_end, '%Y-%m-%d')    # Validar formato ISO
+        except ValueError:
+            raise ValueError("El formato de las fechas no es válido. Se esperaba '%Y-%m-%d'.")
 
         partner_id = data['form']['partner_id']
 
         domain = [
-            ('fecha_solicitud', '>=', date_start_iso),
-            ('fecha_solicitud', '<=', date_end_iso)
+            ('fecha_solicitud', '>=', date_start),
+            ('fecha_solicitud', '<=', date_end),
         ]
 
         if partner_id:
             domain.append(('partner_id', '=', partner_id))
-            # Agregar filtro de certificados si se seleccionaron
+            # Filtros adicionales (certificados o facturas)
             # if data['form'].get('certificado_ids'):
             #     domain.append(('certificado_ids', 'in', data['form']['certificado_ids']))
-            # Agregar filtro de facturas si se seleccionaron
             # if data['form'].get('factura_ids'):
             #     domain.append(('factura_ids', 'in', data['form']['factura_ids']))
 
-        # Obtener los registros que cumplen con los filtros
+        # Buscar registros en base al dominio
         solicitudes = self.env['solicitud.impresiones'].search(domain)
 
-        # Generar el informe en PDF usando el template
+        # Retornar los valores para generar el informe
         return {
             'doc_ids': solicitudes.ids,
             'doc_model': self.env['solicitud.impresiones']._name,
