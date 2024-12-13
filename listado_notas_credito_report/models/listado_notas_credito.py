@@ -58,6 +58,7 @@ class ReportListadoNotasCredito(models.AbstractModel):
 
         docs = sorted(facturas, key = lambda x: x.fake_number)
         docs = sorted(docs, key=lambda x: x.date_invoice)
+        print(docs)
         return {
             'doc_ids': data['ids'],
             'doc_model': data['model'],

@@ -58,6 +58,7 @@
         'views/product_template.xml',
         'views/verificar.xml',
         'views/solicitud_impresiones.xml',
+        'views/imprenta.xml',
         'views/solicitud_impresiones_report.xml',
         'views/impresion_etiquetas.xml',
         'views/impresora_etiquetas.xml',
@@ -88,6 +89,7 @@
         'views/solicitud_impresiones_report_wizard_view.xml',
         'views/solicitud_impresiones_report_template.xml',
         'views/solicitud_impresiones_report_audit.xml',
+        'data/solicitud_impresiones_views_search.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

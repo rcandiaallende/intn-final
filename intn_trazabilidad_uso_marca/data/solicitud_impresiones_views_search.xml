@@ -1,0 +1,41 @@
+<odoo>
+    <!-- Vista de búsqueda para solicitud.impresiones -->
+    <record id="view_solicitud_impresiones_search" model="ir.ui.view">
+        <field name="name">solicitud.impresiones.search</field>
+        <field name="model">solicitud.impresiones</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Solicitudes de Impresiones">
+                <!-- Filtros básicos -->
+                <field name="name" string="Número"/>
+                <field name="partner_id" string="Empresa"/>
+                <field name="user_id" string="Usuario"/>
+                <field name="state" string="Estado"/>
+                <field name="fecha_solicitud" string="Fecha de Solicitud"/>
+                <field name="licencia_id" string="Licencia"/>
+                <field name="solicitud_impresiones_lines.product_id" string="Etiqueta"/>
+                <field name="solicitud_impresiones_lines.certificado_ids" string="Certificados"/>
+
+                <!-- Filtros predefinidos -->
+                <filter string="Nuevas" name="filtro_nuevo" domain="[('state', '=', 'draft')]"/>
+                <filter string="Asignadas" name="filtro_asignado" domain="[('state', '=', 'asignado')]"/>
+                <filter string="Verificadas" name="filtro_verificado" domain="[('state', '=', 'verificado')]"/>
+                <filter string="Canceladas" name="filtro_cancelado" domain="[('state', '=', 'cancel')]"/>
+                <filter string="Con Líneas" name="filtro_con_lineas" domain="[('solicitud_impresiones_lines', '!=', False)]"/>
+                <filter string="Activas" name="filtro_activas" domain="[('active', '=', True)]"/>
+                <filter string="Con Certificados" name="filtro_con_certificados" domain="[('solicitud_impresiones_lines.certificado_ids', '!=', False)]"/>
+                <filter string="Por Producto" name="filtro_por_producto" domain="[('solicitud_impresiones_lines.product_id', '!=', False)]"/>
+
+                <!-- Agrupaciones -->
+                <group expand="1" string="Agrupar por">
+                    <filter string="Estado" name="group_by_estado" context="{'group_by': 'state'}"/>
+                    <filter string="Empresa" name="group_by_empresa" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Usuario" name="group_by_usuario" context="{'group_by': 'user_id'}"/>
+                    <filter string="Licencia" name="group_by_licencia" context="{'group_by': 'licencia_id'}"/>
+                    <filter string="Fecha de Solicitud" name="group_by_fecha" context="{'group_by': 'fecha_solicitud'}"/>
+                    <filter string="Etiqueta" name="group_by_etiqueta" context="{'group_by': 'solicitud_impresiones_lines.product_id'}"/>
+                    <filter string="Certificados" name="group_by_certificados" context="{'group_by': 'solicitud_impresiones_lines.certificado_ids'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

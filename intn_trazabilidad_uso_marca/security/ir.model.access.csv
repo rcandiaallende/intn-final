@@ -54,6 +54,7 @@ access_departamentos,model_intn_departamentos,model_intn_departamentos,,1,1,1,1
 access_coordinaciones,model_intn_coordinaciones,model_intn_coordinaciones,,1,1,1,1
 access_calibration_request,model_calibration_request,model_calibration_request,,1,1,1,1
 access_laboratorios,model_intn_laboratorios,model_intn_laboratorios,,1,1,1,1
+access_imprenta,model_imprenta,model_imprenta,,1,1,1,1
 
 access_control_ingreso_user,access.control.ingreso.user,model_control_ingreso_instrumentos,,1,1,1,1
 access_control_ingreso_line_user,access.control.ingreso.line.user,model_control_ingreso_instrumentos_line,,1,1,1,1

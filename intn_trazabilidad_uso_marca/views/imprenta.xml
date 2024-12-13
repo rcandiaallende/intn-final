@@ -1,0 +1,41 @@
+<odoo>
+    <record id="view_imprenta_form" model="ir.ui.view">
+        <field name="name">imprenta.form</field>
+        <field name="model">imprenta</field>
+        <field name="arch" type="xml">
+            <form string="Imprenta">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="direccion"/>
+                        <field name="email"/>
+                        <field name="telefono"/>
+                        <field name="sucursal"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_imprenta_tree" model="ir.ui.view">
+        <field name="name">imprenta.tree</field>
+        <field name="model">imprenta</field>
+        <field name="arch" type="xml">
+            <tree string="Imprentas">
+                <field name="name"/>
+                <field name="direccion"/>
+                <field name="email"/>
+                <field name="telefono"/>
+                <field name="sucursal"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_imprenta" model="ir.actions.act_window">
+        <field name="name">Imprentas</field>
+        <field name="res_model">imprenta</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_imprenta" name="Imprentas" parent="intn_trazabilidad_uso_marca.menu_2" action="action_imprenta"/>
+</odoo>

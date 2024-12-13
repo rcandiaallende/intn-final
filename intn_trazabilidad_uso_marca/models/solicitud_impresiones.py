@@ -202,6 +202,8 @@ class SolicitudImpresiones(models.Model):
 
     total_saldo_factura = fields.Float(string='Total de saldos certificados')
 
+    imprenta_ids = fields.Many2many('imprenta', string='Lugar de Impresion')
+
     @api.onchange('partner_id')
     def onchangePartner(self):
         licencia_vigente = self.partner_id.mapped('licencia_servicios_ids').filtered(
