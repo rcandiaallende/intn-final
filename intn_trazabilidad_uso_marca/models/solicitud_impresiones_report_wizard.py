@@ -35,8 +35,8 @@ class ReportListadoNotasCredito(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        date_start = data['form']['fecha_desde']
-        date_end = data['form']['fecha_hasta']
+        date_start = data['form']['date_start']
+        date_end = data['form']['date_end']
         date_start_obj = datetime.strptime(date_start, DATE_FORMAT)
         date_end_obj = datetime.strptime(date_end, DATE_FORMAT)
         partner_id = data['form']['partner_id']
