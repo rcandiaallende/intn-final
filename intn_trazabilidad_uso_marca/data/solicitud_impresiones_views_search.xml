@@ -23,8 +23,15 @@
                 <field name="fecha_solicitud" string="Fecha de Solicitud"/>
                 <field name="licencia_id" string="Licencia"/>
                 <field name="imprenta_ids" string="Lugar de Impresión"/>
-                <field name="certificado_ids" string="Certificados"/>
-                <field name="factura_ids" string="Facturas"/>
+                <!-- Filtros por certificados -->
+                <filter string="Certificados Relacionados"
+                        name="filter_certificados"
+                        domain="[('line_ids.certificado_id', '!=', False)]"/>
+
+                <!-- Filtros por facturas -->
+                <filter string="Facturas Relacionadas"
+                        name="filter_facturas"
+                        domain="[('factura_ids', '!=', False)]"/>
 
                 <!-- Filtros predefinidos -->
                 <filter string="Nuevas" name="filtro_nuevo" domain="[('state', '=', 'draft')]"/>
@@ -36,9 +43,7 @@
                 <filter string="Activas" name="filtro_activas" domain="[('active', '=', True)]"/>
                 <filter string="Lugar de Impresion" name="filtro_con_imprenta"
                         domain="[('imprenta_ids', '!=', False)]"/>
-                <filter string="Certificados Relacionados" name="filter_certificados"
-                        domain="[('certificado_ids', '!=', False)]"/>
-                <filter string="Facturas Relacionadas" name="filter_facturas" domain="[('factura_ids', '!=', False)]"/>
+
 
                 <!-- Agrupaciones -->
                 <group expand="1" string="Agrupar por">
@@ -50,7 +55,9 @@
                     <filter string="Licencia" name="group_by_licencia" context="{'group_by': 'licencia_id'}"/>
                     <filter string="Fecha de Solicitud" name="group_by_fecha"
                             context="{'group_by': 'fecha_solicitud'}"/>
-                    <field name="certificado_ids" string="Certificados"/>
+                    <!-- Agrupación por certificados -->
+                    <field name="line_ids.certificado_id" string="Certificados"/>
+                    <!-- Agrupación por facturas -->
                     <field name="factura_ids" string="Facturas"/>
                 </group>
             </search>
