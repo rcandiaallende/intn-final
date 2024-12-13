@@ -17,5 +17,14 @@
             <field name="padding">5</field>
         </record>
 
+        <record id="seq_calibration_request" model="ir.sequence">
+            <field name="name">Secuencia de Solicitud de Calibración</field>
+            <field name="code">calibration.request</field>
+            <field name="prefix">CAL-</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
     </data>
 </odoo>

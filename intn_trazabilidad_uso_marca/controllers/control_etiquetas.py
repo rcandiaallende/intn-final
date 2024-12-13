@@ -214,8 +214,10 @@ class CustomerPortal(CustomerPortal):
 
         if not laboratorio_id:
             return {'error': 'El laboratorio_id es obligatorio.'}
+
         servicios = request.env['product.template'].sudo().search([('laboratorio_id', '=', int(laboratorio_id))])
         servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', servicios.ids)])
+
         servicios_list = [{
             'id': servicio.id,
             'name': servicio.name,
@@ -287,10 +289,18 @@ class CustomerPortal(CustomerPortal):
             'partner_id': partner.id,
             'state': 'pending',
             'service_type': 'metci',
+            'retiro': post.get('retiro'),
+            'retiro_tercero_nombre': post.get('nombre_tercero'),
+            'retiro_tercero_documento': post.get('documento_tercero')
         })
 
         # calibration_request = request.env['calibration.request'].sudo().create(
-        #     {'state': 'revision', 'partner_id': partner.id})
+        #     {'state': 'revision',
+        #      'partner_id': partner.id,
+        #      'retiro': post.get('retiro'),
+        #      'nombre_tercero': post.get('nombre_tercero'),
+        #      'retiro_tercero_documento': post.get('documento_tercero')})
+        #
         # sale_order.calibration_request = calibration_request.id
 
         # Crear las líneas del presupuesto

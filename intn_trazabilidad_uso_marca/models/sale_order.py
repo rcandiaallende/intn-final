@@ -13,7 +13,9 @@ class SaleOrder(models.Model):
                                     selection=[('onn_normas', 'ONN Normas'),
                                                ('metci', 'METCI'),
                                                ('reprint_onn_normas', 'Reimpresión ONN Normas')])
-    calibration_request_id = fields.Many2one('calibration.request', string='Solicitud de Calibracion')
+    calibration_request_id = fields.Many2one('calibration.request', string='Solicitud de Calibración')
+    calibration_count = fields.Integer(string='Cantidad de Solicitud de Calibración',
+                                      compute='_compute_calibration_ids_count')
     document_printing_count = fields.Integer(string='Cantidad Impresa', default=0)
     re_printing_so_ids = fields.Many2many(
         'sale.order',
@@ -22,6 +24,17 @@ class SaleOrder(models.Model):
         'reprinting_id',  # Campo de referencia a las reimpresiones
         string='Re-impresiones asociadas'
     )
+    retiro = fields.Selection([
+        ('retiro_1', 'El Solicitante'),
+        ('retiro_2', 'Un Tercero')
+    ], string="Método de Retiro", required=True, default='retiro_1')
+    retiro_tercero_nombre = fields.Char('Nombre del Tercero')
+    retiro_tercero_documento = fields.Char('Documento del Tercero')
+
+    @api.depends('calibration_request_id')
+    def _compute_calibration_ids_count(self):
+        for record in self:
+            record.calibration_count = len(record.calibration_request_id)
 
     @api.multi
     def action_open_calibration_request(self):
@@ -52,7 +65,20 @@ class SaleOrder(models.Model):
             rec.action_confirm()
             if rec.calibration_request_id:
                 if not rec.calibration_request_id.work_date:
-                    raise UserError(_('Debe agendar una fecha para la realizacion del trabajo'))
+                    raise UserError(_('Debe agendar una fecha para la realización del trabajo'))
                 rec.calibration_request_id.state = 'approved'
                 production_ids = rec.env['mrp.production'].search([('origin', '=', rec.name)])
-                rec.calibration_request_id.production_ids = production_ids.ids if production_ids else None
+                if rec.calibration_request_id.ensure_one():  # Asegúrate de que sea un único registro
+                    rec.calibration_request_id.production_ids = production_ids.ids if production_ids else None
+            else:
+                calibration_request = rec.env['calibration.request'].sudo().create({
+                    'state': 'revision',
+                    'partner_id': rec.partner_id.id,
+                    'retiro': rec.retiro,
+                    'retiro_tercero_nombre': rec.retiro_tercero_nombre,
+                    'retiro_tercero_documento': rec.retiro_tercero_documento
+                })
+                rec.calibration_request_id = calibration_request.id
+                production_ids = rec.env['mrp.production'].search([('origin', '=', rec.name)])
+                if calibration_request.ensure_one():
+                    calibration_request.production_ids = production_ids.ids if production_ids else None

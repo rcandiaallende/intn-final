@@ -5,27 +5,33 @@
         <field name="arch" type="xml">
             <form string="Control de Ingreso de Instrumentos">
                 <header>
-                    <button name="create_out_move" type="object" string="Generar Salida"
-                            class="btn-primary" attrs="{'invisible': [('state', '!=', 'in')]}"/>
-                    <field name="state" widget="statusbar"
-                           statusbar_visible="in,out" readonly="0"/>
-                    <field name="production_id" invisible="1"/>
-
+                    <!--<button name="create_out_move" type="object" string="Generar Salida"
+                            class="btn-primary" attrs="{'invisible': [('state', '!=', 'in')]}"/>-->
+                    <button name="action_confirm" string="Confirmar" type="object" class="btn-primary"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="%(intn_trazabilidad_uso_marca.action_view_update_delivered_quantities)d"
+                            string="Actualizar Cantidades" type="action" class="btn-primary"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'pickup'])]}"/>
+                    <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
+                    <field name="production_id" invisible="1"/>
                     <group string="Información General" colspan="4">
                         <group>
                             <field name="name" readonly="1"/>
-                            <field name="razon_social" options="{'no_create': True}"/>
+                            <field name="razon_social" options="{'no_create': True}"
+                                   attrs="{'readonly': [('state', 'in', ['confirmed', 'partial_pickup', 'pickup'])]}"/>
                             <field name="ruc"/>
                         </group>
                         <group>
                             <field name="telefono_fax"/>
-                            <field name="contacto"/>
+                            <field name="contacto"
+                                   attrs="{'readonly': [('state', 'in', ['confirmed', 'partial_pickup', 'pickup'])]}"/>
                             <field name="email"/>
-                            <field name="fecha"/>
+                            <field name="fecha"
+                                   attrs="{'readonly': [('state', 'in', ['confirmed', 'partial_pickup', 'pickup'])]}"/>
                         </group>
-                        <group string="Datos de Producción" colspan="4">
+                        <group string="Datos de Producción" colspan="4" invisible="1">
                             <group>
                                 <field name="expediente" domain="[('partner_id','=',razon_social)]"
                                        options="{'no_create': True}"/>
@@ -44,16 +50,40 @@
                     </group>
                     <notebook>
                         <page string="Detalle de Instrumentos">
-                            <field name="line_ids" widget="one2many_list">
+                            <field name="line_ids" widget="one2many_list"
+                                   attrs="{'readonly': [('state', 'in', ['confirmed', 'partial_pickup', 'pickup'])]}">
                                 <tree editable="bottom">
+                                    <field name="control_id" invisible="1"/>
+                                    <field name="control_state" invisible="1"/>
+                                    <field name="state" readonly="1"/>
                                     <field name="item"/>
                                     <field name="instrumento"/>
-                                    <field name="cantidad" attrs="{'readonly': [('state', '=', 'out')]}"/>
-                                    <field name="cantidad_salida" attrs="{'readonly': [('state', '=', 'in')]}"/>
+                                    <field name="cantidad" attrs="{'readonly': [('control_state', '=', 'out')]}"/>
+                                    <field name="cantidad_salida" readonly="1"/>
+                                    <field name="cantidad_faltante"/>
                                     <field name="identificacion"/>
+                                    <field name="document" attrs="{'readonly': [('state', '=', 'not_done')]}"/>
+                                    <button name="done_work" type="object"
+                                            icon="fa-check"
+                                            class="btn-primary"/>
                                 </tree>
                             </field>
                         </page>
+                        <page string="Historial Salida" readonly="1">
+                            <field name="line_history_ids" widget="one2many_list" readonly="1">
+                                <tree>
+                                    <field name="control_line" invisible="1"/>
+                                    <field name="date"/>
+                                    <field name="item" invisible="1"/>
+                                    <field name="cantidad"/>
+                                    <field name="cantidad_salida"/>
+                                    <field name="instrumento"/>
+                                    <field name="identificacion"/>
+                                    <field name="control_history_id" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+
                         <page string="Notas y Observaciones">
                             <group>
                                 <field name="notas"/>

@@ -471,13 +471,31 @@
 
                     function removeItem(button) {
                     const row = button.closest('tr');
-                    if (document.querySelectorAll('.item-row').length > 1) {
+                    const rows = document.querySelectorAll('.item-row');
+
+                    if (rows.length > 1) {
                     row.remove();
+                    updateRowIndexes();
                     calculateTotals();
                     } else {
                     alert('Debe haber al menos un ítem.');
                     }
                     }
+
+                    function updateRowIndexes() {
+                    const rows = document.querySelectorAll('.item-row');
+                    rows.forEach((row, index) => {
+                    row.setAttribute('data-index', index);
+
+                    row.querySelectorAll('select, input').forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (name) {
+                    const updatedName = name.replace(/_\d+$/, `_${index}`);
+                    input.setAttribute('name', updatedName);
+                    }
+                    });
+                    });
+
 
                     function calculateLineTotal(element) {
                     const row = element.closest('.item-row');

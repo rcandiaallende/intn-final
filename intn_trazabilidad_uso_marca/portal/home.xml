@@ -31,7 +31,7 @@
                    href="/my/control-metci" title="Solicitud de Calibración - METCI">
                     Solicitud de Calibración - METCI
                     <span class="badge badge-secondary badge-pill">
-                        <t t-esc="control_etiquetas_count"/>
+                        <t t-esc="onm_metci_count"/>
                     </span>
                 </a>
 

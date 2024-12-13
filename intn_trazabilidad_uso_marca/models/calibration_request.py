@@ -1,36 +1,78 @@
 from odoo import models, fields, api
+from odoo.exceptions import AccessError, MissingError, UserError
 
 
 class CalibrationRequest(models.Model):
     _name = 'calibration.request'
     _description = 'Solicitud de calibración'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = "work_date desc, name, id"
 
-    state = fields.Selection(
-        string="Estado",
-        selection=[
-            ('revision', 'En revisión'),
-            ('approved', 'Presupuesto aprobado'),
-            ('scheduled', 'Orden de trabajo programada')
-        ],
-        readonly=True,
-        default='revision',
-    )
-
+    name = fields.Char(string='Referencia', required=True, copy=False, default='Nuevo')
+    state = fields.Selection(selection=[('revision', 'En revisión'),
+                                        ('approved', 'Presupuesto aprobado'),
+                                        ('scheduled', 'Orden de trabajo programada')], string="Estado",
+                             readonly=True, default='revision')
     work_date = fields.Date(string="Fecha de programación de trabajo")
     production_ids = fields.Many2many('mrp.production', string='Órdenes de producción', readonly=True)
     production_count = fields.Integer(string='Cantidad de Órdenes de Producción',
-                                            compute='_compute_production_ids_count', readonly=True)
-    document = fields.Binary(string="Documento", attachment=True)
+                                      compute='_compute_production_ids_count')
     partner_id = fields.Many2one('res.partner', string='Cliente')
     control_ingresos = fields.One2many('control.ingreso.instrumentos', 'calibration_request',
                                        string='Control de Ingresos')
     control_ingresos_count = fields.Integer(string='Cantidad de Controles de Ingresos',
                                             compute='_compute_control_ingresos_count', readonly=True)
+    users_to_notify = fields.Many2many('res.users', string='Usuarios a notificar')
+    retiro = fields.Selection([
+        ('retiro_1', 'El Solicitante'),
+        ('retiro_2', 'Un Tercero')
+    ], string="Método de Retiro", required=True, default='retiro_1')
+    retiro_tercero_nombre = fields.Char('Nombre del Tercero')
+    retiro_tercero_documento = fields.Char('Documento del Tercero')
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name', 'Nuevo') == 'Nuevo':
+            vals['name'] = self.env['ir.sequence'].next_by_code('calibration.request') or 'Nuevo'
+        return super(CalibrationRequest, self).create(vals)
+
+    @api.multi
+    @api.constrains('state', 'work_date')
+    def _check_state(self):
+        if self.state == 'scheduled':
+            if not self.users_to_notify:
+                raise UserError("No hay usuarios seleccionados para notificar.")
+            if not self.work_date:
+                raise UserError(
+                    f"No tiene asignada una Fecha de programación de trabajo en la solicitud de calibración {self.id}")
+            self.notify_work_date_assigned()
+
+    def notify_work_date_assigned(self):
+        for rec in self:
+            so_id = rec.env['sale.order'].search([('calibration_request_id', '=', rec.id)], limit=1)
+            subject = "Calibración Agendada"
+            body = f"""
+                            Estimado Cliente,
+
+                            Le notificamos que su solicitud de calibración  {so_id.name} ha sido programada para la fecha:{rec.work_date}.
+
+                            Saludos cordiales.
+                            """
+            for user in rec.users_to_notify:
+                if not user.partner_id.email:
+                    raise UserError(f"El usuario {user.name} no tiene un correo electrónico configurado.")
+                mail_values = {
+                    'subject': subject,
+                    'body_html': body,
+                    'email_to': user.partner_id.email,
+                }
+                mail = rec.env['mail.mail'].sudo().create(mail_values)
+                mail.send()
 
     @api.depends('production_ids')
     def _compute_production_ids_count(self):
         for record in self:
-            record.production_ids_count = len(record.production_ids)
+            record.production_count = len(record.production_ids)
 
     @api.depends('control_ingresos')
     def _compute_control_ingresos_count(self):
@@ -81,11 +123,21 @@ class CalibrationRequest(models.Model):
     @api.multi
     def action_open_production_ids(self):
         self.ensure_one()
+
+        current_user_id = self.env.user.id
+
+        filtered_productions = self.production_ids.filtered(
+            lambda production: any(
+                responsible.id == current_user_id
+                for responsible in production.product_id.laboratorio_id.responsables_ids
+            )
+        )
+
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Órdenes de producción',
+            'name': 'Órdenes de Producción',
             'res_model': 'mrp.production',
             'view_mode': 'tree,form',
-            'domain': [('id', 'in', self.production_ids.ids)],
+            'domain': [('id', 'in', filtered_productions.ids)],
             'context': {'default_calibration_request': self.id},
         }

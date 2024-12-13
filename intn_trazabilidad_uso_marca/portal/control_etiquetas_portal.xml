@@ -619,11 +619,11 @@
                 data.result.forEach(servicio => {
                 const option = document.createElement('option');
                 option.value = servicio.id;
-                option.textContent = `${servicio.name} - ${servicio.determinacion}`;
+                option.textContent = `${servicio.name} - ${servicio.determinacion || 'Sin Determinación'}`;
                 option.setAttribute('data-precio', servicio.price);
 
                 if (servicio.additional_cost) {
-                option.setAttribute('data-additional-cost', servicio.additional_cost);
+                option.setAttribute('data-additional-cost', servicio.verificacion_insitu);
                 }
 
                 servicioSelect.appendChild(option);
@@ -654,12 +654,30 @@
 
                 function removeItem(button) {
                 const row = button.closest('tr');
-                if (document.querySelectorAll('.item-row').length > 1) {
+                const rows = document.querySelectorAll('.item-row');
+
+                if (rows.length > 1) {
                 row.remove();
+                updateRowIndexes();
                 calculateTotals();
                 } else {
                 alert('Debe haber al menos un ítem.');
                 }
+                }
+
+                function updateRowIndexes() {
+                const rows = document.querySelectorAll('.item-row');
+                rows.forEach((row, index) => {
+                row.setAttribute('data-index', index);
+
+                row.querySelectorAll('select, input').forEach(input => {
+                const name = input.getAttribute('name');
+                if (name) {
+                const updatedName = name.replace(/_\d+$/, `_${index}`);
+                input.setAttribute('name', updatedName);
+                }
+                });
+                });
                 }
 
                 function calculateLineTotal(element) {

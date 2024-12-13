@@ -28,6 +28,7 @@
         'security/ir.model.access.csv',
         'data/data.xml',
         'data/ir_sequence_data.xml',
+        'wizard/update_delivered_quantities.xml',
         'views/views.xml',
         # 'views/licencia_conformidad.xml',
         # 'views/licencia_conformidad_dos.xml',

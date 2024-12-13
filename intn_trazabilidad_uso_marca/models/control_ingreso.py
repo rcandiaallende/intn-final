@@ -22,6 +22,7 @@ class ControlIngresoInstrumentos(models.Model):
     notas = fields.Text(string='Notas Generales')
     observaciones = fields.Text(string='Observaciones')
     line_ids = fields.One2many('control.ingreso.instrumentos.line', 'control_id', string='Líneas de Instrumentos')
+    line_history_ids = fields.One2many('control.ingreso.instrumentos.line.history', 'control_history_id', string='Historial Salida')
     firma_recibi = fields.Binary(string='Firma Recibí Conforme (ONM - INTN)')
     firma_usuario = fields.Binary(string='Firma Usuario')
     aclaracion_recibi = fields.Char(string='Aclaración Recibí Conforme')
@@ -40,15 +41,14 @@ class ControlIngresoInstrumentos(models.Model):
     retiro_total_aclaracion_usuario = fields.Char(string='Aclaración Usuario')
     retiro_total_cic_usuario = fields.Char(string='C.I.C. No Usuario')
     calibration_request = fields.Many2one('calibration.request', string='Solicitud de Calibración')
-    state = fields.Selection(
-        string="Estado",
-        selection=[
-            ('in', 'Ingreso'),
-            ('out', 'Salida'),
-        ],
-        readonly=True,
-        default='in',
-    )
+    state = fields.Selection(selection=[('draft', 'Borrador'), ('confirmed', 'Confirmado'),
+                                        ('partial_pickup', 'Retiro Parcial'), ('pickup', 'Retiro')],
+                             string="Estado", readonly=True, default='draft')
+
+    @api.multi
+    def action_confirm(self):
+        for rec in self:
+            rec.state = 'confirmed'
 
     @api.multi
     def create_out_move(self):
@@ -105,9 +105,38 @@ class ControlIngresoInstrumentosLine(models.Model):
     item = fields.Integer(string='Ítem')
     cantidad = fields.Integer(string='Cantidad Ingreso')
     cantidad_salida = fields.Integer(string='Cantidad Salida')
+    cantidad_faltante = fields.Integer(string='Cantidad Faltante', compute='_compute_cantidad_faltante', store=True)
     instrumento = fields.Many2one('instrument.inventory.metci', string='Instrumento')
     identificacion = fields.Char(related='instrumento.unique_identifier', string='Identificación')
     control_id = fields.Many2one('control.ingreso.instrumentos', string='Control de Ingreso')
+    control_state = fields.Selection(related='control_id.state', string='Estado Control de Ingreso')
+    document = fields.Binary(string="Documento", attachment=True)
+    state = fields.Selection(selection=[('done', 'Trabajo realizado'), ('not_done', 'Trabajo no realizado')],
+                             string="Estado", readonly=True, default='not_done')
+
+    @api.depends('cantidad', 'cantidad_salida')
+    def _compute_cantidad_faltante(self):
+        for record in self:
+            record.cantidad_faltante = record.cantidad - record.cantidad_salida
+
+    @api.multi
+    def done_work(self):
+        for rec in self:
+            rec.state = 'done'
+
+
+class ControlIngresoInstrumentosLineHistory(models.Model):
+    _name = 'control.ingreso.instrumentos.line.history'
+    _description = 'Historial de Salida'
+
+    control_line = fields.Many2one('control.ingreso.instrumentos.line', string='Control Línea')
+    item = fields.Integer(string='Ítem', related='control_line.item', readonly=True)
+    cantidad = fields.Integer(string='Cantidad Ingreso', related='control_line.cantidad', readonly=True)
+    cantidad_salida = fields.Integer(string='Cantidad Salida')
+    instrumento = fields.Many2one('instrument.inventory.metci', string='Instrumento',related='control_line.instrumento', readonly=True)
+    identificacion = fields.Char(related='instrumento.unique_identifier', string='Identificación')
+    control_history_id = fields.Many2one('control.ingreso.instrumentos', string='Control de Ingreso', related='control_line.control_id', readonly=True)
+    date = fields.Datetime(string="Fecha de Actualización", default=fields.Datetime.now, readonly=True)
 
 
 class InstrumentInventory(models.Model):

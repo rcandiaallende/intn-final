@@ -61,3 +61,5 @@ access_control_ingreso_line_user,access.control.ingreso.line.user,model_control_
 access_instrument_inventory_metci_user,instrument.inventory.metci.user,model_instrument_inventory_metci,,1,1,1,1
 access_instrument_brand_user,instrument.brand.user,model_instrument_brand,,1,1,1,1
 access_instrument_model_user,instrument.model.user,model_instrument_model,,1,1,1,1
+
+access_control_ingreso_instrumentos_line_history_user,control.ingreso.instrumentos.line.history.user,model_control_ingreso_instrumentos_line_history,,1,1,1,1
