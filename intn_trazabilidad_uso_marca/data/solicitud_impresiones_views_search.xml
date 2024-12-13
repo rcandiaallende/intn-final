@@ -24,11 +24,11 @@
                 <field name="licencia_id" string="Licencia"/>
                 <field name="imprenta_ids" string="Lugar de Impresión"/>
                 <filter string="Certificados Relacionados"
-                        name="filter_certificados"
-                        domain="[('solicitud_impresiones_lines.certificado_ids', '!=', False)]"/>
+                    name="filter_certificados"
+                        domain="[('certificado_ids', '!=', False)]"/>
                 <filter string="Facturas Relacionadas"
                         name="filter_facturas"
-                        domain="[('solicitud_impresiones_lines.factura_ids', '!=', False)]"/>
+                        domain="[('factura_ids', '!=', False)]"/>
 
                 <!-- Filtros predefinidos -->
                 <filter string="Nuevas" name="filtro_nuevo" domain="[('state', '=', 'draft')]"/>
@@ -52,8 +52,8 @@
                     <filter string="Licencia" name="group_by_licencia" context="{'group_by': 'licencia_id'}"/>
                     <filter string="Fecha de Solicitud" name="group_by_fecha"
                             context="{'group_by': 'fecha_solicitud'}"/>
-                    <field name="solicitud_impresiones_lines.certificado_ids" string="Certificados"/>
-                    <field name="solicitud_impresiones_lines.factura_ids" string="Facturas"/>
+                    <field name="certificado_ids" string="Certificados"/>
+                    <field name="factura_ids" string="Facturas"/>
                 </group>
             </search>
         </field>

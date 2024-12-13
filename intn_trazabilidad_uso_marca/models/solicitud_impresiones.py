@@ -203,6 +203,32 @@ class SolicitudImpresiones(models.Model):
 
     imprenta_ids = fields.Many2many('imprenta', string='Lugar de Impresion')
 
+
+    certificado_ids = fields.Many2many(
+        'certificado.conformidad',
+        string="Certificados Relacionados",
+        compute="_compute_certificados",
+        store=True
+    )
+    factura_ids = fields.Many2many(
+        'factura_comprobante',
+        string="Facturas Relacionadas",
+        compute="_compute_facturas",
+        store=True
+    )
+
+    @api.depends('solicitud_impresiones_lines.certificado_ids')
+    def _compute_certificados(self):
+        for record in self:
+            certificados = record.solicitud_impresiones_lines.mapped('certificado_ids')
+            record.certificado_ids = certificados
+
+    @api.depends('solicitud_impresiones_lines.factura_ids')
+    def _compute_facturas(self):
+        for record in self:
+            facturas = record.solicitud_impresiones_lines.mapped('factura_ids')
+            record.factura_ids = facturas
+
     @api.onchange('partner_id')
     def onchangePartner(self):
         licencia_vigente = self.partner_id.mapped('licencia_servicios_ids').filtered(
