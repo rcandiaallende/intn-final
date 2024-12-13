@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 
 
 class SolicitudImpresionesReportWizard(models.TransientModel):
@@ -30,5 +31,6 @@ class SolicitudImpresionesReportWizard(models.TransientModel):
         solicitudes = self.env['solicitud.impresiones'].search(domain)
 
         # Generar el informe en PDF usando el template
-        data = {'solicitudes': solicitudes.ids}  # Pasamos solo los IDs
+        data = {'solicitudes': solicitudes.ids}  # Pasamos solo los IDs}
+        raise UserError(data)
         return self.env.ref('intn_trazabilidad_uso_marca.solicitud_impresiones_report_action').report_action(None, data=data)
