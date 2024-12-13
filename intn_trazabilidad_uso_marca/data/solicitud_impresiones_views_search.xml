@@ -4,6 +4,7 @@
         <field name="name">Solicitudes de Impresión</field>
         <field name="res_model">solicitud.impresiones</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_solicitud_impresiones_search"/>
         <field name="view_id" ref="view_solicitud_impresiones_search"/>
         <field name="context">{}</field>
     </record>
