@@ -22,13 +22,13 @@
                 model="solicitud.impresiones"
                 string="Solicitud de Impresiones"
                 report_type="qweb-pdf"
-                name="intn_trazabilidad_uso_marca.solicitud_impresiones_report_template"
-                file="intn_trazabilidad_uso_marca.solicitud_impresiones_report_template"
+                name="intn_trazabilidad_uso_marca.reporte_impresion"
+                file="intn_trazabilidad_uso_marca.reporte_impresion"
                 print_report_name="'Solicitud Impresiones - %s' % (object.name)"
         />
 
 
-        <template id="solicitud_impresiones_report_template">
+        <template id="reporte_impresion">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="doc">
                     <t t-call="web.basic_layout">
