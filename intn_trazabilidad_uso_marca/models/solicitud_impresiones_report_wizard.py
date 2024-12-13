@@ -31,7 +31,7 @@ class SolicitudImpresionesReportWizard(models.TransientModel):
 
 
 class ReportListadoNotasCredito(models.AbstractModel):
-    _name = 'reports.intn_trazabilidad_uso_marca.solicitud_impresiones_report_template'
+    _name = 'intn_trazabilidad_uso_marca.solicitud_impresiones_report_template'
 
     @api.model
     def _get_report_values(self, docids, data=None):
