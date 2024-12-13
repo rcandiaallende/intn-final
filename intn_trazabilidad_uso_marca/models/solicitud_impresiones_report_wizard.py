@@ -11,6 +11,7 @@ class SolicitudImpresionesReportWizard(models.TransientModel):
     partner_id = fields.Many2one('res.partner', string="Cliente")
     certificado_ids = fields.Many2many('certificado.conformidad', string="Certificados")
     factura_ids = fields.Many2many('factura_comprobante', string="Facturas")
+
     def generar_reporte(self):
         # Filtrar las solicitudes de impresiones con el rango de fechas y cliente seleccionado
         domain = [('fecha_solicitud', '>=', self.fecha_desde),
@@ -32,5 +33,6 @@ class SolicitudImpresionesReportWizard(models.TransientModel):
 
         # Generar el informe en PDF usando el template
         data = {'solicitudes': solicitudes.ids}  # Pasamos solo los IDs}
-        raise UserError(solicitudes.ids)
-        return self.env.ref('intn_trazabilidad_uso_marca.solicitud_impresiones_report_action').report_action(None, data=data)
+        # raise UserError(solicitudes.ids)
+        return self.env.ref('intn_trazabilidad_uso_marca.solicitud_impresiones_report_action').report_action(None,
+                                                                                                             data=solicitudes.ids)
