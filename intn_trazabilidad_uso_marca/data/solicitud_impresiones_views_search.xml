@@ -38,4 +38,10 @@
             </search>
         </field>
     </record>
+
+     <menuitem id="menu_solicitud_impresiones"
+              name="Solicitudes de Impresión"
+              parent="intn_trazabilidad_uso_marca.menu_2"
+              action="action_solicitud_impresiones_search"
+              sequence="10"/>
 </odoo>
