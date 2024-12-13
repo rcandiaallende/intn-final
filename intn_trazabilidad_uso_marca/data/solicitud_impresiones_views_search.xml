@@ -22,7 +22,7 @@
                 <field name="state" string="Estado"/>
                 <field name="fecha_solicitud" string="Fecha de Solicitud"/>
                 <field name="licencia_id" string="Licencia"/>
-                <field name="imprenta_ids" string="Lugar de Impresion"/>
+<!--                <field name="imprenta_ids" string="Lugar de Impresion"/>-->
 <!--                <field name="solicitud_impresiones_lines.product_id" string="Etiqueta"/>-->
 <!--                <field name="solicitud_impresiones_lines.certificado_ids" string="Certificados"/>-->
 
