@@ -88,7 +88,10 @@
                                                 <span t-esc="line.certificado_ids.name"/>
                                             </td>
                                             <td>
-                                                <span t-esc="line.factura_ids.name"/>
+                                                <t t-foreach="line.factura_ids" t-as="invoice">
+                                                    <span t-esc="invoice.name"/>
+                                                    <br/>
+                                                </t>
                                             </td>
                                         </tr>
                                     </t>
