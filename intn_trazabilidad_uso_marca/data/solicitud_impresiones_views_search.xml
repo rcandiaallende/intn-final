@@ -26,7 +26,7 @@
                 <!-- Filtros por certificados -->
                 <filter string="Certificados Relacionados"
                         name="filter_certificados"
-                        domain="[('solicitud_impresiones_lines.certificado_id', '!=', False)]"/>
+                        domain="[('solicitud_impresiones_lines.certificado_ids', '!=', False)]"/>
 
                 <!-- Filtros por facturas -->
                 <filter string="Facturas Relacionadas"
@@ -56,7 +56,7 @@
                     <filter string="Fecha de Solicitud" name="group_by_fecha"
                             context="{'group_by': 'fecha_solicitud'}"/>
                     <!-- Agrupación por certificados -->
-                    <field name="solicitud_impresiones_lines.certificado_id" string="Certificados"/>
+                    <field name="solicitud_impresiones_lines.certificado_ids" string="Certificados"/>
                     <!-- Agrupación por facturas -->
                     <field name="solicitud_impresiones_lines.factura_ids" string="Facturas"/>
                 </group>
