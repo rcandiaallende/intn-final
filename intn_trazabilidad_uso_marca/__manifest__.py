@@ -88,7 +88,6 @@
         'views/solicitud_impresiones_audit_report.xml',
         'views/solicitud_impresiones_report_wizard_view.xml',
         'views/solicitud_impresiones_report_template.xml',
-        'views/solicitud_impresiones_report_audit.xml',
         'data/solicitud_impresiones_views_search.xml',
     ],
     # only loaded in demonstration mode
