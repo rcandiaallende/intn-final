@@ -25,7 +25,7 @@
             report_type="qweb-pdf"
             name="intn_trazabilidad_uso_marca.solicitud_impresiones_report_template"
             file="intn_trazabilidad_uso_marca.solicitud_impresiones_report_template"
-            print_report_name="'Solicitud Impresiones - %s' % (object.name)"/
+            print_report_name="'Solicitud Impresiones - %s' % (object.name)"
         />
 
     </data>
