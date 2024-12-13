@@ -22,6 +22,7 @@
                 <field name="state" string="Estado"/>
                 <field name="fecha_solicitud" string="Fecha de Solicitud"/>
                 <field name="licencia_id" string="Licencia"/>
+                <field name="imprenta_ids" string="Lugar de Impresion"/>
 <!--                <field name="solicitud_impresiones_lines.product_id" string="Etiqueta"/>-->
 <!--                <field name="solicitud_impresiones_lines.certificado_ids" string="Certificados"/>-->
 
@@ -38,6 +39,7 @@
                 <!-- Agrupaciones -->
                 <group expand="1" string="Agrupar por">
                     <filter string="Estado" name="group_by_estado" context="{'group_by': 'state'}"/>
+                    <filter string="Lugar de Impresion" name="group_by_imprenta_ids" context="{'group_by': 'imprenta_ids'}"/>
                     <filter string="Empresa" name="group_by_empresa" context="{'group_by': 'partner_id'}"/>
                     <filter string="Usuario" name="group_by_usuario" context="{'group_by': 'user_id'}"/>
                     <filter string="Licencia" name="group_by_licencia" context="{'group_by': 'licencia_id'}"/>
