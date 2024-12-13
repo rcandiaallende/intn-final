@@ -35,4 +35,4 @@ class SolicitudImpresionesReportWizard(models.TransientModel):
         data = {'solicitudes': solicitudes.ids}  # Pasamos solo los IDs}
         # raise UserError(solicitudes.ids)
         return self.env.ref('intn_trazabilidad_uso_marca.solicitud_impresiones_report_action').report_action(None,
-                                                                                                             data=solicitudes.ids)
+                                                                                                             data=data)
