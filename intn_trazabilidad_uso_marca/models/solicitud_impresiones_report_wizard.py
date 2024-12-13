@@ -35,64 +35,41 @@ class ReportListadoNotasCredito(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
+        DATE_FORMAT = '%Y-%m-%d'
         date_start = data['form']['date_start']
         date_end = data['form']['date_end']
-        date_start_obj = datetime.strptime(date_start, DATE_FORMAT)
-        date_end_obj = datetime.strptime(date_end, DATE_FORMAT)
+
+        # Convertimos las fechas de entrada al formato ISO
+        date_start_obj = datetime.strptime(date_start, '%d/%m/%Y')  # Entrada original
+        date_end_obj = datetime.strptime(date_end, '%d/%m/%Y')  # Entrada original
+
+        date_start_iso = date_start_obj.strftime(DATE_FORMAT)  # Formato ISO
+        date_end_iso = date_end_obj.strftime(DATE_FORMAT)  # Formato ISO
+
         partner_id = data['form']['partner_id']
 
-        start_report = date_start_obj.strftime('%d/%m/%Y')
-        end_report = date_end_obj.strftime('%d/%m/%Y')
-
-        domain = [('fecha_solicitud', '>=', start_report),
-                  ('fecha_solicitud', '<=', end_report)]
+        domain = [
+            ('fecha_solicitud', '>=', date_start_iso),
+            ('fecha_solicitud', '<=', date_end_iso)
+        ]
 
         if partner_id:
-            domain.append(('partner_id', '=', self.partner_id.id))
+            domain.append(('partner_id', '=', partner_id))
             # Agregar filtro de certificados si se seleccionaron
-
-        # if self.certificado_ids:
-        #     domain.append(('certificado_ids', 'in', self.certificado_ids.ids))
-        #
-        # # Agregar filtro de facturas si se seleccionaron
-        # if self.factura_ids:
-        #     domain.append(('factura_ids', 'in', self.factura_ids.ids))
+            # if data['form'].get('certificado_ids'):
+            #     domain.append(('certificado_ids', 'in', data['form']['certificado_ids']))
+            # Agregar filtro de facturas si se seleccionaron
+            # if data['form'].get('factura_ids'):
+            #     domain.append(('factura_ids', 'in', data['form']['factura_ids']))
 
         # Obtener los registros que cumplen con los filtros
         solicitudes = self.env['solicitud.impresiones'].search(domain)
 
         # Generar el informe en PDF usando el template
-        data = {'solicitudes': solicitudes.ids}  # Pasamos solo los IDs}
-
         return {
-            'doc_ids': data['ids'],
-            'doc_model': data['model'],
-            'date_start': start_report,
-            'date_end': end_report,
+            'doc_ids': solicitudes.ids,
+            'doc_model': self.env['solicitud.impresiones']._name,
+            'date_start': date_start,
+            'date_end': date_end,
             'docs': solicitudes,
         }
-
-    # def generar_reporte(self):
-    #     # Filtrar las solicitudes de impresiones con el rango de fechas y cliente seleccionado
-    #     domain = [('fecha_solicitud', '>=', self.fecha_desde),
-    #               ('fecha_solicitud', '<=', self.fecha_hasta)]
-    #
-    #     if self.partner_id:
-    #         domain.append(('partner_id', '=', self.partner_id.id))
-    #         # Agregar filtro de certificados si se seleccionaron
-    #
-    #     if self.certificado_ids:
-    #         domain.append(('certificado_ids', 'in', self.certificado_ids.ids))
-    #
-    #     # Agregar filtro de facturas si se seleccionaron
-    #     if self.factura_ids:
-    #         domain.append(('factura_ids', 'in', self.factura_ids.ids))
-    #
-    #     # Obtener los registros que cumplen con los filtros
-    #     solicitudes = self.env['solicitud.impresiones'].search(domain)
-    #
-    #     # Generar el informe en PDF usando el template
-    #     data = {'solicitudes': solicitudes.ids}  # Pasamos solo los IDs}
-    #     # raise UserError(solicitudes.ids)
-    #     return self.env.ref('intn_trazabilidad_uso_marca.solicitud_impresiones_report_action').report_action(None,
-    #                                                                                                          data=data)
