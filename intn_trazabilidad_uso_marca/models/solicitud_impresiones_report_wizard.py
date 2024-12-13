@@ -20,8 +20,8 @@ class SolicitudImpresionesReportWizard(models.TransientModel):
             'ids': self.ids,
             'model': self._name,
             'form': {
-                'date_start': self.date_start,
-                'date_end': self.date_end,
+                'date_start': self.fecha_desde,
+                'date_end': self.fecha_hasta,
                 'partner_id': self.partner_id.id,
             },
         }

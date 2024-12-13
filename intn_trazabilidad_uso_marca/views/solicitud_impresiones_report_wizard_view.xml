@@ -13,7 +13,7 @@
                     <field name="factura_ids"/>
                 </group>
                 <footer>
-                    <button string="Generar Reporte" type="object" name="generar_reporte" class="btn-primary"/>
+                    <button string="Generar Reporte" type="object" name="get_report" class="btn-primary"/>
                     <button string="Cancelar" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
