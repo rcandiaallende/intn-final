@@ -57,7 +57,7 @@
                                     <field name="control_state" invisible="1"/>
                                     <field name="state" readonly="1"/>
                                     <field name="item"/>
-                                    <field name="instrumento"/>
+                                    <field name="instrumento" options="{'no_create': True}"/>
                                     <field name="cantidad" attrs="{'readonly': [('control_state', '=', 'out')]}"/>
                                     <field name="cantidad_salida" readonly="1"/>
                                     <field name="cantidad_faltante"/>
@@ -83,6 +83,7 @@
                                     <field name="item" invisible="1"/>
                                     <field name="cantidad"/>
                                     <field name="cantidad_salida"/>
+                                    <field name="cantidad_faltante"/>
                                     <field name="instrumento"/>
                                     <field name="identificacion"/>
                                     <field name="control_history_id" invisible="1"/>

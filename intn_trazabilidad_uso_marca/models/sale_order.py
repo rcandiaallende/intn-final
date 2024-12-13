@@ -76,7 +76,8 @@ class SaleOrder(models.Model):
                     'partner_id': rec.partner_id.id,
                     'retiro': rec.retiro,
                     'retiro_tercero_nombre': rec.retiro_tercero_nombre,
-                    'retiro_tercero_documento': rec.retiro_tercero_documento
+                    'retiro_tercero_documento': rec.retiro_tercero_documento,
+                    'order_id': rec.id
                 })
                 rec.calibration_request_id = calibration_request.id
                 production_ids = rec.env['mrp.production'].search([('origin', '=', rec.name)])

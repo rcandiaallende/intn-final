@@ -22,14 +22,14 @@
             <form string="Solicitud de Calibración">
                 <header>
                     <button name="crear_control_ingreso" type="object" string="Crear Control de Ingreso"
-                            class="btn-success"/>
+                            class="btn-success" attrs="{'invisible': [('state', '=', 'revision')]}"/>
                     <field name="state" widget="statusbar" statusbar_visible="revision,approved,scheduled"
                            readonly="0"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button type="object" name="action_open_control_ingresos" icon="fa-truck"
-                                class="oe_stat_button">
+                                class="oe_stat_button" attrs="{'invisible': [('control_ingresos_count', '=', 0)]}">
                             <div class="o_stat_info">
                                 <field name="control_ingresos_count" widget="statinfo" nolabel="1" class="mr4"
                                        readonly="1"/>
@@ -49,6 +49,7 @@
                     <group>
                         <group>
                             <field name="partner_id" options="{'no_create': True}"/>
+                            <field name="order_id" options="{'no_create': True}" readonly="1"/>
                             <field name="retiro" readonly="1"/>
                             <field name="retiro_tercero_nombre" readonly="1"
                                    attrs="{'invisible': [('retiro', '=', 'retiro_1')]}"/>

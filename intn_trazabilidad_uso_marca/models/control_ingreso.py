@@ -11,18 +11,19 @@ class ControlIngresoInstrumentos(models.Model):
     expediente = fields.Many2one('sale.order', string='N° de Expediente')
     product_id = fields.Many2one('product.product', string='Fabricar')
     centro_produccion = fields.Many2one('mrp.workcenter', string='Centro de Producción')
-    razon_social = fields.Many2one('res.partner', string='Razón Social')
+    razon_social = fields.Many2one('res.partner', string='Razón Social', tracking=True)
     ruc = fields.Char(related='razon_social.vat', string='R.U.C.')
     telefono_fax = fields.Char(related='razon_social.phone', string='Tel/Fax')
     contacto = fields.Char(string='Contacto')
     email = fields.Char(related='razon_social.email', string='Email')
-    fecha = fields.Date(string='Fecha', default=fields.Date.today)
-    compromiso_entrega_fecha = fields.Date(string='Compromiso de Entrega (Fecha)')
+    fecha = fields.Date(string='Fecha', default=fields.Date.today, tracking=True)
+    compromiso_entrega_fecha = fields.Date(string='Compromiso de Entrega (Fecha)', tracking=True)
     compromiso_entrega_hora = fields.Float(string='Compromiso de Entrega (Hora)', help='Hora estimada en formato HH.MM')
-    notas = fields.Text(string='Notas Generales')
-    observaciones = fields.Text(string='Observaciones')
+    notas = fields.Text(string='Notas Generales', default=False, tracking=True)
+    observaciones = fields.Text(string='Observaciones', default=False, tracking=True)
     line_ids = fields.One2many('control.ingreso.instrumentos.line', 'control_id', string='Líneas de Instrumentos')
-    line_history_ids = fields.One2many('control.ingreso.instrumentos.line.history', 'control_history_id', string='Historial Salida')
+    line_history_ids = fields.One2many('control.ingreso.instrumentos.line.history', 'control_history_id',
+                                       string='Historial Salida', tracking=True)
     firma_recibi = fields.Binary(string='Firma Recibí Conforme (ONM - INTN)')
     firma_usuario = fields.Binary(string='Firma Usuario')
     aclaracion_recibi = fields.Char(string='Aclaración Recibí Conforme')
@@ -43,7 +44,7 @@ class ControlIngresoInstrumentos(models.Model):
     calibration_request = fields.Many2one('calibration.request', string='Solicitud de Calibración')
     state = fields.Selection(selection=[('draft', 'Borrador'), ('confirmed', 'Confirmado'),
                                         ('partial_pickup', 'Retiro Parcial'), ('pickup', 'Retiro')],
-                             string="Estado", readonly=True, default='draft')
+                             string="Estado", readonly=True, default='draft', tracking=True)
 
     @api.multi
     def action_confirm(self):
@@ -104,8 +105,9 @@ class ControlIngresoInstrumentosLine(models.Model):
 
     item = fields.Integer(string='Ítem')
     cantidad = fields.Integer(string='Cantidad Ingreso')
-    cantidad_salida = fields.Integer(string='Cantidad Salida')
-    cantidad_faltante = fields.Integer(string='Cantidad Faltante', compute='_compute_cantidad_faltante', store=True)
+    cantidad_salida = fields.Integer(string='Cantidad Salida', tracking=True)
+    cantidad_faltante = fields.Integer(string='Cantidad Faltante', compute='_compute_cantidad_faltante', store=True,
+                                       tracking=True)
     instrumento = fields.Many2one('instrument.inventory.metci', string='Instrumento')
     identificacion = fields.Char(related='instrumento.unique_identifier', string='Identificación')
     control_id = fields.Many2one('control.ingreso.instrumentos', string='Control de Ingreso')
@@ -132,10 +134,13 @@ class ControlIngresoInstrumentosLineHistory(models.Model):
     control_line = fields.Many2one('control.ingreso.instrumentos.line', string='Control Línea')
     item = fields.Integer(string='Ítem', related='control_line.item', readonly=True)
     cantidad = fields.Integer(string='Cantidad Ingreso', related='control_line.cantidad', readonly=True)
+    cantidad_faltante = fields.Integer(string='Cantidad Faltante')
     cantidad_salida = fields.Integer(string='Cantidad Salida')
-    instrumento = fields.Many2one('instrument.inventory.metci', string='Instrumento',related='control_line.instrumento', readonly=True)
+    instrumento = fields.Many2one('instrument.inventory.metci', string='Instrumento',
+                                  related='control_line.instrumento', readonly=True)
     identificacion = fields.Char(related='instrumento.unique_identifier', string='Identificación')
-    control_history_id = fields.Many2one('control.ingreso.instrumentos', string='Control de Ingreso', related='control_line.control_id', readonly=True)
+    control_history_id = fields.Many2one('control.ingreso.instrumentos', string='Control de Ingreso',
+                                         related='control_line.control_id', readonly=True)
     date = fields.Datetime(string="Fecha de Actualización", default=fields.Datetime.now, readonly=True)
 
 
