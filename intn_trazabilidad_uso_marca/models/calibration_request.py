@@ -36,28 +36,31 @@ class CalibrationRequest(models.Model):
             vals['name'] = self.env['ir.sequence'].next_by_code('calibration.request') or 'Nuevo'
         return super(CalibrationRequest, self).create(vals)
 
+    @api.onchange('work_date')
+    def _onchange_work_date(self):
+        if self.work_date:
+            self.state = 'scheduled'
+
     @api.multi
     @api.constrains('state', 'work_date')
     def _check_state(self):
+        so_id = self.env['sale.order'].search([('calibration_request_id', '=', self.id)], limit=1)
+        if self.work_date and not so_id.is_paid():
+            raise UserError(f"No puede programar una fecha si la Factura de {so_id.name} está pendiente de pago.")
         if self.state == 'scheduled':
             if not self.users_to_notify:
                 raise UserError("No hay usuarios seleccionados para notificar.")
             if not self.work_date:
                 raise UserError(
                     f"No tiene asignada una Fecha de programación de trabajo en la solicitud de calibración {self.id}")
-            self.notify_work_date_assigned()
+            self.notify_work_date_assigned(so_id)
 
-    def notify_work_date_assigned(self):
+    def notify_work_date_assigned(self, so_id):
         for rec in self:
-            so_id = rec.env['sale.order'].search([('calibration_request_id', '=', rec.id)], limit=1)
+
             subject = "Calibración Agendada"
-            body = f"""
-                            Estimado Cliente,
 
-                            Le notificamos que su solicitud de calibración  {so_id.name} ha sido programada para la fecha:{rec.work_date}.
-
-                            Saludos cordiales.
-                            """
+            body = f"""<p>Le notificamos que su solicitud de calibración  {so_id.name} ha sido programada para la fecha:{rec.work_date}. </p>"""
             for user in rec.users_to_notify:
                 if not user.partner_id.email:
                     raise UserError(f"El usuario {user.name} no tiene un correo electrónico configurado.")

@@ -78,6 +78,7 @@
         'views/menu_items.xml',
         'views/custom_menu_views.xml',
         'reports/control_ingreso_report.xml',
+        'reports/control_ingreso_etiqueta.xml',
         'reports/report_norma_onn.xml',
         'reports/report_preview_norma_onn.xml',
         'portal/home.xml',

@@ -63,7 +63,13 @@
                                     <field name="cantidad_faltante"/>
                                     <field name="identificacion"/>
                                     <field name="document" attrs="{'readonly': [('state', '=', 'not_done')]}"/>
+                                    <button name="%(action_report_etiqueta_instrumento)d"
+                                            type="action"
+                                            string="Etiqueta"
+                                            icon="fa-print"
+                                            class="btn-primary"/>
                                     <button name="done_work" type="object"
+                                            string="Marcar como Hecho"
                                             icon="fa-check"
                                             class="btn-primary"/>
                                 </tree>

@@ -62,6 +62,8 @@
                         <th>Tipo Servicio</th>
                         <th>Estado Factura</th>
                         <th>Estado Solicitud</th>
+                        <th>Instrumentos</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <t t-foreach="orders" t-as="order">
@@ -86,6 +88,28 @@
                         </td>
                         <td>
                             <t t-esc="order.calibration_request_id.get_state_string(order.calibration_request_id.state)"/>
+                        </td>
+                        <td>
+                            <t t-if="order.calibration_request_id.control_ingresos_count > 0  and len(order.calibration_request_id.control_ingresos.mapped('line_ids')) > 0">
+                                <div style="padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px;">
+                                    <ul style="list-style-type: none; padding: 0; margin: 0;">
+                                        <t t-foreach="order.calibration_request_id.control_ingresos.mapped('line_ids')"
+                                           t-as="line">
+                                            <li style="margin-bottom: 5px; font-size: 14px;">
+                                                <i class="fa fa-cogs" style="color: #007bff; margin-right: 5px;"></i>
+                                                <t t-esc="line.instrumento.name"/>
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </t>
+                        </td>
+                        <td>
+                            <a role="button" class="btn btn-warning"
+                               t-att-href="'/my/vericar-documentos/' + str(order['id'])">
+                                <i class="fa fa-file-text-o"></i>
+                                Verificar instrumentos
+                            </a>
                         </td>
                     </tr>
                 </t>

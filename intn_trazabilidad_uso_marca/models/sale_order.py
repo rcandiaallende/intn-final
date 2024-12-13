@@ -64,8 +64,8 @@ class SaleOrder(models.Model):
         for rec in self:
             rec.action_confirm()
             if rec.calibration_request_id:
-                if not rec.calibration_request_id.work_date:
-                    raise UserError(_('Debe agendar una fecha para la realización del trabajo'))
+                # if not rec.calibration_request_id.work_date:
+                #     raise UserError(_('Debe agendar una fecha para la realización del trabajo')) Todo: Se debe hacer la validacion al momento de pasar a agendado la Solicitud de calibracion
                 rec.calibration_request_id.state = 'approved'
                 production_ids = rec.env['mrp.production'].search([('origin', '=', rec.name)])
                 if rec.calibration_request_id.ensure_one():  # Asegúrate de que sea un único registro
