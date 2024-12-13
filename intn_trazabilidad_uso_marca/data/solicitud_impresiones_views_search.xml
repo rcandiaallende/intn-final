@@ -1,4 +1,13 @@
 <odoo>
+
+    <record id="action_solicitud_impresiones_search" model="ir.actions.act_window">
+        <field name="name">Solicitudes de Impresión</field>
+        <field name="res_model">solicitud.impresiones</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_solicitud_impresiones_search"/>
+        <field name="context">{}</field>
+    </record>
+
     <!-- Vista de búsqueda para solicitud.impresiones -->
     <record id="view_solicitud_impresiones_search" model="ir.ui.view">
         <field name="name">solicitud.impresiones.search</field>
