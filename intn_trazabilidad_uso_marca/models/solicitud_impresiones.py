@@ -201,7 +201,7 @@ class SolicitudImpresiones(models.Model):
 
     total_saldo_factura = fields.Float(string='Total de saldos certificados')
 
-    imprenta_ids = fields.Many2many('imprenta', string='Lugar de Impresion')
+    imprenta_ids = fields.Many2one('imprenta', string='Lugar de Impresion')
 
 
     certificado_ids = fields.Many2many(

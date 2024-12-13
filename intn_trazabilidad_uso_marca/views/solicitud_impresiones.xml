@@ -62,7 +62,7 @@
                             <field name="user_id" attrs="{'readonly':[('state','not in',['draft'])]}"/>
                         </group>
                         <group>
-                            <field name="imprenta_ids" widget="many2many_tags"/>
+                            <field name="imprenta_ids"/>
                         </group>
                     </group>
                     <notebook>
