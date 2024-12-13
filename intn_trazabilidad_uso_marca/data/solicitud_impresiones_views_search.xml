@@ -12,7 +12,7 @@
                 <field name="state" string="Estado"/>
                 <field name="fecha_solicitud" string="Fecha de Solicitud"/>
                 <field name="licencia_id" string="Licencia"/>
-                <field name="solicitud_impresiones_lines.product_id" string="Etiqueta"/>
+<!--                <field name="solicitud_impresiones_lines.product_id" string="Etiqueta"/>-->
                 <field name="solicitud_impresiones_lines.certificado_ids" string="Certificados"/>
 
                 <!-- Filtros predefinidos -->
@@ -23,7 +23,7 @@
                 <filter string="Con Líneas" name="filtro_con_lineas" domain="[('solicitud_impresiones_lines', '!=', False)]"/>
                 <filter string="Activas" name="filtro_activas" domain="[('active', '=', True)]"/>
                 <filter string="Con Certificados" name="filtro_con_certificados" domain="[('solicitud_impresiones_lines.certificado_ids', '!=', False)]"/>
-                <filter string="Por Producto" name="filtro_por_producto" domain="[('solicitud_impresiones_lines.product_id', '!=', False)]"/>
+<!--                <filter string="Por Producto" name="filtro_por_producto" domain="[('solicitud_impresiones_lines.product_id', '!=', False)]"/>-->
 
                 <!-- Agrupaciones -->
                 <group expand="1" string="Agrupar por">
@@ -32,7 +32,7 @@
                     <filter string="Usuario" name="group_by_usuario" context="{'group_by': 'user_id'}"/>
                     <filter string="Licencia" name="group_by_licencia" context="{'group_by': 'licencia_id'}"/>
                     <filter string="Fecha de Solicitud" name="group_by_fecha" context="{'group_by': 'fecha_solicitud'}"/>
-                    <filter string="Etiqueta" name="group_by_etiqueta" context="{'group_by': 'solicitud_impresiones_lines.product_id'}"/>
+<!--                    <filter string="Etiqueta" name="group_by_etiqueta" context="{'group_by': 'solicitud_impresiones_lines.product_id'}"/>-->
                     <filter string="Certificados" name="group_by_certificados" context="{'group_by': 'solicitud_impresiones_lines.certificado_ids'}"/>
                 </group>
             </search>

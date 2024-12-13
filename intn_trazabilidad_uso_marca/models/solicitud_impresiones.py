@@ -107,7 +107,6 @@ class SolicitudImpresionesCertificadoSaldo(models.Model):
     _name = 'solicitud.impresiones.certificado.saldo'
 
     certificado_id = fields.Many2one('certificado.conformidad', string="Certificado", required=True)
-    certificado_id = fields.Many2one('certificado.conformidad', string="Certificado", required=True)
     line_id = fields.Many2one('solicitud.impresiones.lines', string="Línea de Impresión", required=True)
     saldo = fields.Float(string="Saldo")
 
