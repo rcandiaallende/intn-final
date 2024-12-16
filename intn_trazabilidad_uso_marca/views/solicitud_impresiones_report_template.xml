@@ -56,6 +56,10 @@
                                 <strong>Licencia por Uso de Marca:</strong>
                                 <span t-esc="doc.licencia_id.name or ''"/>
                             </p>
+                            <p>
+                                <strong>Lugar de impresion:</strong>
+                                <span t-esc="doc.imprenta_ids.name or ''"/>
+                            </p>
 
                             <h3>Etiquetas Solicitadas:</h3>
                             <table class="table table-condensed">
