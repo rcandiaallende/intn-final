@@ -33,6 +33,10 @@
                 <t t-foreach="docs" t-as="doc">
                     <t t-call="web.basic_layout">
                         <div class="page">
+                            <div style="width:100%;">
+                                <img style="height:90%;"
+                                     src="http://localhost:8070/verification_request/static/src/img/intn_cabecera.png"/>
+                            </div>
                             <h2>Solicitud de Impresiones:
                                 <span t-esc="doc.name"/>
                             </h2>
@@ -95,6 +99,16 @@
                                                 <t t-foreach="line.factura_ids" t-as="invoice">
                                                     <span t-esc="invoice.name"/>
                                                     <br/>
+                                                    <!-- Iterar sobre los productos de la factura -->
+                                                    <ul>
+                                                        <t t-foreach="invoice.line_ids" t-as="product">
+                                                            <li>
+                                                                <span t-esc="product.product_id.name"/>:
+                                                                <span>Saldo:</span>
+                                                                <span t-esc="product.aprox_qty_usada"/>
+                                                            </li>
+                                                        </t>
+                                                    </ul>
                                                 </t>
                                             </td>
                                         </tr>
