@@ -16,6 +16,45 @@ import base64
 
 class CustomerPortal(CustomerPortal):
 
+    @http.route('/my/descargar-documento/<int:line_id>', type='http', auth="user", website=True)
+    def descargar_documento(self, line_id, **kw):
+        # Buscar el registro correspondiente
+        line = request.env['control.ingreso.instrumentos.line'].sudo().browse(line_id)
+
+        # Validar que exista el registro y tenga un archivo
+        if not line or not line.exists() or not line.document:
+            return request.not_found()
+
+        # Obtener el contenido binario del documento
+        document_content = line.document
+        document_name = line.instrumento.name or "archivo.bin"  # Nombre del archivo, usa un nombre predeterminado si no hay
+
+        # Determinar el tipo MIME basado en la extensión del nombre del archivo
+        file_extension = document_name.split('.')[-1].lower()
+        mime_types = {
+            'pdf': 'application/pdf',
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'doc': 'application/msword',
+            'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'xls': 'application/vnd.ms-excel',
+            'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'txt': 'text/plain',
+            'zip': 'application/zip',
+            # Agrega otros tipos MIME según sea necesario
+        }
+        content_type = mime_types.get(file_extension, 'application/octet-stream')  # 'octet-stream' es genérico
+
+        # Retornar el archivo como respuesta
+        return request.make_response(
+            document_content,
+            headers=[
+                ('Content-Type', content_type),
+                ('Content-Disposition', f'attachment; filename="{document_name}"'),
+            ]
+        )
+
     @http.route(['/my/control-etiquetas', '/my/cont0rol-etiquetas/page/<int:page>'], type='http', auth="user",
                 website=True)
     def portal_my_control_etiquetas(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):

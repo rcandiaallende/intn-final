@@ -55,6 +55,7 @@
                                    attrs="{'invisible': [('retiro', '=', 'retiro_1')]}"/>
                             <field name="retiro_tercero_documento" readonly="1"
                                    attrs="{'invisible': [('retiro', '=', 'retiro_1')]}"/>
+                            <field name="verificacion_insitu"/>
                         </group>
                         <group>
                             <field name="work_date"/>

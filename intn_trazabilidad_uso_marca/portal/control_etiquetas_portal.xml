@@ -90,14 +90,28 @@
                             <t t-esc="order.calibration_request_id.get_state_string(order.calibration_request_id.state)"/>
                         </td>
                         <td>
-                            <t t-if="order.calibration_request_id.control_ingresos_count > 0  and len(order.calibration_request_id.control_ingresos.mapped('line_ids')) > 0">
+                            <t t-if="order.calibration_request_id.control_ingresos_count > 0 and len(order.calibration_request_id.control_ingresos.mapped('line_ids')) > 0">
                                 <div style="padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px;">
                                     <ul style="list-style-type: none; padding: 0; margin: 0;">
                                         <t t-foreach="order.calibration_request_id.control_ingresos.mapped('line_ids')"
                                            t-as="line">
                                             <li style="margin-bottom: 5px; font-size: 14px;">
-                                                <i class="fa fa-cogs" style="color: #007bff; margin-right: 5px;"></i>
-                                                <t t-esc="line.instrumento.name"/>
+                                                <t t-if="line.document">
+                                                    <a t-att-href="'/my/descargar-documento/' + str(line.id)"
+                                                       target="_blank"
+                                                       style="text-decoration: none; color: inherit;">
+                                                        <i class="fa fa-cogs"
+                                                           style="color: #007bff; margin-right: 5px;"></i>
+                                                        <t t-esc="line.instrumento.name"/>
+                                                    </a>
+                                                </t>
+                                                <t t-else="">
+                                                    <i class="fa fa-exclamation-circle"
+                                                       style="color: #dc3545; margin-right: 5px;"></i>
+                                                    <t t-esc="line.instrumento.name"/>
+                                                    <span style="color: #dc3545; font-style: italic;">No hay documento
+                                                    </span>
+                                                </t>
                                             </li>
                                         </t>
                                     </ul>

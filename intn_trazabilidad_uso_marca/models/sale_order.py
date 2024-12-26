@@ -15,7 +15,7 @@ class SaleOrder(models.Model):
                                                ('reprint_onn_normas', 'Reimpresión ONN Normas')])
     calibration_request_id = fields.Many2one('calibration.request', string='Solicitud de Calibración')
     calibration_count = fields.Integer(string='Cantidad de Solicitud de Calibración',
-                                      compute='_compute_calibration_ids_count')
+                                       compute='_compute_calibration_ids_count')
     document_printing_count = fields.Integer(string='Cantidad Impresa', default=0)
     re_printing_so_ids = fields.Many2many(
         'sale.order',
@@ -83,3 +83,41 @@ class SaleOrder(models.Model):
                 production_ids = rec.env['mrp.production'].search([('origin', '=', rec.name)])
                 if calibration_request.ensure_one():
                     calibration_request.production_ids = production_ids.ids if production_ids else None
+                if not rec or not rec.name:
+                    raise UserError("El expediente no tiene un nombre válido.")
+
+                email_to = rec.partner_id.email if rec.partner_id else None
+                if not email_to:
+                    raise UserError("El cliente no tiene un correo electrónico configurado.")
+
+                subject = "Expediente Aprobado"
+                body = f"""<p>Estimado cliente,
+
+                    Su solicitud de presupuesto Nro. {rec.name} ha sido aprobada. Le recordamos que la vigencia es de 15 días corridos.
+                    Para programar el servicio solicitado, el presupuesto debe ser abonado dentro del plazo de vigencia del presupuesto y remitido el 
+                    comprobante de pago realizado al correo: facturacion@intn.gov.py.
+                    </p>
+                    </p>
+                    Una vez confirmado el pago del presupuesto, dentro de los tres días siguientes recibirá una notificación de las fechas
+                    programadas para la recepción de su/s instrumento/s. Le solicitamos tener en cuenta que, si sus instrumentos abarcan a 
+                    más de un laboratorio, recibirá una notificación de agendamiento por cada laboratorio correspondiente.
+                    En caso de no recibir la notificación de las fechas de recepción de su/s instrumento/s, favor contactar al Dpto.
+                    de Tesorería, al teléfono: 021 2886000 int 1317 o 1318, o al correo electrónico: facturacion@intn.gov.py.
+                    </p>
+                    </p>
+                    Le saludamos cordialmente,
+                    </p>
+                    </p>
+                    Instituto Nacional de Tecnología, Normalización y Metrología</p>"""
+
+            mail_values = {
+                'subject': subject,
+                'body_html': body,
+                'message_type': 'email',
+                'email_to': email_to,
+                'author_id': self.env.user.partner_id.id,
+            }
+
+            # Crear y enviar el correo
+            mail = rec.env['mail.mail'].sudo().create(mail_values)
+            mail.send(auto_commit=True)

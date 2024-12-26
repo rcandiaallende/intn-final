@@ -46,6 +46,9 @@
                         <field name="observaciones_certificado" nolabel="1"/>
                     </page>
                 </xpath>
+                <xpath expr="//group[@name='description']" position="inside">
+                    <field name="norma_document"/>
+                </xpath>
                 <!--<xpath expr="//div[@name='options']" position="inside">
                     <div>
                         <field name="additional_cost"/>

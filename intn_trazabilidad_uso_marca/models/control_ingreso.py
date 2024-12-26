@@ -1,4 +1,5 @@
 from odoo import models, fields, api, _
+from odoo.exceptions import AccessError, MissingError, UserError
 
 
 class ControlIngresoInstrumentos(models.Model):
@@ -46,10 +47,101 @@ class ControlIngresoInstrumentos(models.Model):
                                         ('partial_pickup', 'Retiro Parcial'), ('pickup', 'Retiro')],
                              string="Estado", readonly=True, default='draft', tracking=True)
 
+    @api.model
+    def create(self, vals):
+        record = super(ControlIngresoInstrumentos, self).create(vals)
+        record._notify_budget_approved()
+        return record
+
+    def write(self, vals):
+        res = super(ControlIngresoInstrumentos, self).write(vals)
+        for record in self:
+            if 'state' in vals:
+                record._handle_state_change(vals['state'])
+        return res
+
+    def _handle_state_change(self, new_state):
+        if new_state == 'confirmed':
+            self._notify_calibration_scheduled()
+        elif new_state == 'pickup':
+            self._notify_calibration_completed()
+
+    def _notify_customer(self, subject, body):
+        if not self.calibration_request.verificacion_insitu:
+            email_to = self.email
+            if not email_to:
+                raise UserError("El cliente no tiene un correo electrónico configurado.")
+
+            mail_values = {
+                'subject': subject,
+                'body_html': body,
+                'email_to': email_to,
+                'author_id': self.env.user.partner_id.id,
+            }
+            mail = self.env['mail.mail'].sudo().create(mail_values)
+            mail.send()
+
+    def _notify_budget_approved(self):
+        """
+        Notificar al cliente sobre la aprobación del presupuesto.
+        """
+        subject = "Presupuesto Finalizado"
+        body = f"""
+            <p>Estimado cliente,</p>
+            <p>Su solicitud de presupuesto Nro. {self.name} ha sido aprobada. Le recordamos que la vigencia es de 15 días corridos.</p>
+            <p>Para programar el servicio solicitado, el presupuesto debe ser abonado dentro del plazo de vigencia del presupuesto y remitido el comprobante de pago realizado al correo: facturacion@intn.gov.py.</p>
+            <p>Le saludamos cordialmente,<br>Instituto Nacional de Tecnología, Normalización y Metrología</p>
+            """
+        self._notify_customer(subject, body)
+
+    def _notify_calibration_scheduled(self):
+        """
+        Notificar al cliente sobre la programación de calibración.
+        """
+        subject = "Fecha de Programación de Calibración"
+        body = f"""
+            <p>Estimado cliente,</p>
+            <p>Informamos que la solicitud de servicio Nro. {self.name} ha sido programada.</p>
+            <p>Para los servicios de calibración que se realizan en los laboratorios del INTN, debe acercar sus instrumentos a las instalaciones del Organismo Nacional de Metrología.</p>
+            <p>Le saludamos cordialmente,<br>Instituto Nacional de Tecnología, Normalización y Metrología</p>
+            """
+        self._notify_customer(subject, body)
+
+    def _notify_calibration_completed(self):
+        """
+        Notificar al cliente sobre la finalización de la calibración.
+        """
+        subject = "Calibración Finalizada"
+        body = f"""
+            <p>Estimado cliente,</p>
+            <p>Informamos que el servicio correspondiente a la solicitud Nro. {self.name} ha sido finalizado.</p>
+            <p>Le solicitamos retirar sus instrumentos dentro de los próximos 5 días hábiles.</p>
+            <p>Le saludamos cordialmente,<br>Instituto Nacional de Tecnología, Normalización y Metrología</p>
+            """
+        self._notify_customer(subject, body)
+
     @api.multi
     def action_confirm(self):
         for rec in self:
             rec.state = 'confirmed'
+            rec.notify_work_date_assigned(rec.expediente)
+
+    def notify_work_date_assigned(self, so_id):
+        for rec in self:
+
+            subject = "Ingreso de Instrumento"
+
+            body = f"""<p>Le notificamos que su instrumento ha ingresado su expediente es:  {so_id.name}</p>"""
+            for user in rec.calibration_request.users_to_notify:
+                if not user.partner_id.email:
+                    raise UserError(f"El usuario {user.name} no tiene un correo electrónico configurado.")
+                mail_values = {
+                    'subject': subject,
+                    'body_html': body,
+                    'email_to': user.partner_id.email,
+                }
+                mail = rec.env['mail.mail'].sudo().create(mail_values)
+                mail.send()
 
     @api.multi
     def create_out_move(self):
@@ -113,7 +205,7 @@ class ControlIngresoInstrumentosLine(models.Model):
     control_id = fields.Many2one('control.ingreso.instrumentos', string='Control de Ingreso')
     control_state = fields.Selection(related='control_id.state', string='Estado Control de Ingreso')
     document = fields.Binary(string="Documento", attachment=True)
-    state = fields.Selection(selection=[('done', 'Trabajo realizado'), ('not_done', 'Trabajo no realizado')],
+    state = fields.Selection(selection=[('done', 'Calibrado'), ('not_done', 'Trabajo no realizado')],
                              string="Estado", readonly=True, default='not_done')
 
     @api.depends('cantidad', 'cantidad_salida')
@@ -125,6 +217,53 @@ class ControlIngresoInstrumentosLine(models.Model):
     def done_work(self):
         for rec in self:
             rec.state = 'done'
+
+            email_to = rec.control_id.razon_social.email if rec.control_id.razon_social else None
+            if not email_to:
+                raise UserError("El cliente no tiene un correo electrónico configurado.")
+
+            subject = "Instrumento Calibrado"
+            body = f"""<p>Le notificamos que su instrumento ha sido calibrado, su expediente es:  {rec.control_id.expediente.name}</p>"""
+
+            mail_values = {
+                'subject': subject,
+                'body_html': body,
+                'message_type': 'email',
+                'email_to': email_to,
+                'author_id': self.env.user.partner_id.id,
+            }
+
+            mail = rec.env['mail.mail'].sudo().create(mail_values)
+            mail.send(auto_commit=True)
+
+    @api.onchange('document')
+    def _onchange_document(self):
+        for rec in self:
+            if self.document:
+                email_to = rec.control_id.razon_social.email if rec.control_id.razon_social else None
+                subject = "Documento de Calibración Disponible!"
+                body = f"""<p>Informamos que se encuentra disponible el certificado de calibración correspondiente a su solicitud Nro. XXXXX. El mismo puede ser descargado del Portal del Cliente (colocar url aquí).
+
+Solicitamos su amable colaboración a fin de responder la encuesta de satisfacción accediendo al siguiente link: Colocar url aquí.
+
+Le saludamos cordialmente,
+
+Instituto Nacional de Tecnología, Normalización y Metrología:  {self.control_id.expediente.name}</p>"""
+                mail_values = {
+                    'subject': subject,
+                    'body_html': body,
+                    'message_type': 'email',
+                    'email_to': email_to,
+                    'author_id': self.env.user.partner_id.id,
+                }
+
+                mail = rec.env['mail.mail'].sudo().create(mail_values)
+                mail.send(auto_commit=True)
+
+    @api.depends('cantidad', 'cantidad_salida')
+    def _compute_cantidad_faltante(self):
+        for record in self:
+            record.cantidad_faltante = record.cantidad - record.cantidad_salida
 
 
 class ControlIngresoInstrumentosLineHistory(models.Model):
@@ -153,8 +292,9 @@ class InstrumentInventory(models.Model):
     marca_id = fields.Many2one('instrument.brand', string='Marca')
     modelo_id = fields.Many2one('instrument.model', string='Modelo', domain="[('brand_id', '=', marca_id)]")
     serie = fields.Char(string='Número de Serie')
-    rango = fields.Char(string='Rango')
-    division = fields.Float(string='División')
+    rango = fields.Char(string='Rango ó Capacidad máxima')
+    division = fields.Float(string='División ó Resolución')
+    client_identifier = fields.Char(string='Identificador Cliente', copy=False)
     unique_identifier = fields.Char(string='Identificador Único', readonly=True, copy=False,
                                     default=lambda self: self.env['ir.sequence'].next_by_code('instrument.inventory'))
 

@@ -78,6 +78,7 @@
         'views/control_ingreso_view.xml',
         'views/menu_items.xml',
         'views/custom_menu_views.xml',
+        'views/website_sale.xml',
         'reports/control_ingreso_report.xml',
         'reports/report_norma_onn.xml',
         'reports/report_preview_norma_onn.xml',

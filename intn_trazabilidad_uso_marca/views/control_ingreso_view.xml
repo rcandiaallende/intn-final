@@ -234,6 +234,7 @@
                 <field name="serie"/>
                 <field name="rango"/>
                 <field name="division"/>
+                <field name="client_identifier"/>
                 <field name="unique_identifier"/>
             </tree>
         </field>
@@ -252,6 +253,7 @@
                         <field name="serie"/>
                         <field name="rango"/>
                         <field name="division"/>
+                        <field name="client_identifier"/>
                         <field name="unique_identifier"/>
                     </group>
                 </sheet>
