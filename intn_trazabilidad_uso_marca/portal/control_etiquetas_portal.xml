@@ -62,6 +62,8 @@
                         <th>Tipo Servicio</th>
                         <th>Estado Factura</th>
                         <th>Estado Solicitud</th>
+                        <th>Instrumentos</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <t t-foreach="orders" t-as="order">
@@ -86,6 +88,42 @@
                         </td>
                         <td>
                             <t t-esc="order.calibration_request_id.get_state_string(order.calibration_request_id.state)"/>
+                        </td>
+                        <td>
+                            <t t-if="order.calibration_request_id.control_ingresos_count > 0 and len(order.calibration_request_id.control_ingresos.mapped('line_ids')) > 0">
+                                <div style="padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px;">
+                                    <ul style="list-style-type: none; padding: 0; margin: 0;">
+                                        <t t-foreach="order.calibration_request_id.control_ingresos.mapped('line_ids')"
+                                           t-as="line">
+                                            <li style="margin-bottom: 5px; font-size: 14px;">
+                                                <t t-if="line.document">
+                                                    <a t-att-href="'/my/descargar-documento/' + str(line.id)"
+                                                       target="_blank"
+                                                       style="text-decoration: none; color: inherit;">
+                                                        <i class="fa fa-cogs"
+                                                           style="color: #007bff; margin-right: 5px;"></i>
+                                                        <t t-esc="line.instrumento.name"/>
+                                                    </a>
+                                                </t>
+                                                <t t-else="">
+                                                    <i class="fa fa-exclamation-circle"
+                                                       style="color: #dc3545; margin-right: 5px;"></i>
+                                                    <t t-esc="line.instrumento.name"/>
+                                                    <span style="color: #dc3545; font-style: italic;">No hay documento
+                                                    </span>
+                                                </t>
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </t>
+                        </td>
+                        <td>
+                            <a role="button" class="btn btn-warning"
+                               t-att-href="'/my/vericar-documentos/' + str(order['id'])">
+                                <i class="fa fa-file-text-o"></i>
+                                Verificar instrumentos
+                            </a>
                         </td>
                     </tr>
                 </t>
@@ -254,7 +292,6 @@
     <template id="formulario_crear_presupuesto" name="Formulario Crear Presupuesto">
         <div class="o_portal_wrapper_full">
             <style>
-                /* General Styles */
                 body {
                 font-family: 'Roboto', sans-serif;
                 background: linear-gradient(135deg, #f8f9fa, #e9eff6);
@@ -262,49 +299,30 @@
                 margin: 0;
                 padding: 0;
                 line-height: 1.6;
-                transition: all 0.3s ease-in-out;
+                overflow: hidden;
                 }
 
-                /* Portal Wrapper */
                 .o_portal_wrapper_full {
                 display: flex;
                 justify-content: center;
-                align-items: flex-start;
-                min-height: 100vh;
+                align-items: center;
+                height: 100vh;
                 padding: 20px;
                 background: linear-gradient(135deg, #d8e8f9, #ffffff);
                 }
 
-                /* Card */
                 .card {
                 width: 100%;
                 max-width: 1200px;
+                max-height: 100%;
                 padding: 30px;
                 background-color: #ffffff;
                 border-radius: 12px;
                 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-                animation: slideIn 0.6s ease-in-out;
-                transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+                overflow: hidden;
+                transition: box-shadow 0.3s ease-in-out;
                 }
 
-                .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
-                }
-
-                /* Animation for Card */
-                @keyframes slideIn {
-                from {
-                opacity: 0;
-                transform: translateY(20px);
-                }
-                to {
-                opacity: 1;
-                transform: translateY(0);
-                }
-                }
-
-                /* Headings */
                 h2 {
                 color: #004aad;
                 font-weight: 700;
@@ -314,12 +332,10 @@
                 letter-spacing: 1px;
                 }
 
-                /* Form Group */
                 .form-group {
                 margin-bottom: 20px;
                 }
 
-                /* Labels */
                 label {
                 font-weight: 600;
                 color: #495057;
@@ -327,25 +343,26 @@
                 margin-bottom: 10px;
                 }
 
-                /* Inputs and Selects */
-                select, input[type="text"], input[type="number"] {
+                select,
+                input[type="text"],
+                input[type="number"] {
                 width: 100%;
                 padding: 12px;
                 margin-top: 5px;
                 border: 1px solid #ced4da;
                 border-radius: 8px;
                 background-color: #fcfcfc;
-                box-sizing: border-box;
                 transition: border-color 0.3s ease, box-shadow 0.3s ease;
                 }
 
-                select:focus, input[type="text"]:focus, input[type="number"]:focus {
+                select:focus,
+                input[type="text"]:focus,
+                input[type="number"]:focus {
                 border-color: #004aad;
                 box-shadow: 0 0 10px rgba(0, 74, 173, 0.3);
                 outline: none;
                 }
 
-                /* Remove Spinner Buttons for Number Inputs */
                 input[type="number"]::-webkit-inner-spin-button,
                 input[type="number"]::-webkit-outer-spin-button {
                 -webkit-appearance: none;
@@ -353,10 +370,9 @@
                 }
 
                 input[type="number"] {
-                -moz-appearance: textfield; /* Firefox */
+                -moz-appearance: textfield;
                 }
 
-                /* Buttons */
                 .btn {
                 font-weight: 600;
                 padding: 12px 20px;
@@ -405,7 +421,6 @@
                 box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
                 }
 
-                /* Table */
                 .table {
                 width: 100%;
                 margin-bottom: 20px;
@@ -415,7 +430,8 @@
                 overflow: hidden;
                 }
 
-                .table th, .table td {
+                .table th,
+                .table td {
                 border: 1px solid #dee2e6;
                 padding: 12px;
                 text-align: left;
@@ -434,7 +450,6 @@
                 cursor: pointer;
                 }
 
-                /* Total Container */
                 .total-container {
                 display: flex;
                 justify-content: flex-end;
@@ -469,12 +484,55 @@
                         <div class="alert alert-info" style="font-size: 14px;">
                             Algunos servicios están sujetos a un costo adicional.
                         </div>
-                        <div class="form-group">
-                            <label for="sucursal">Sucursal</label>
-                            <select name="sucursal" id="sucursal" class="form-control">
-                                <option value="sucursal_1">INTN Central Artigas</option>
-                            </select>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <span>Sucursal</span>
+                                        </th>
+                                        <th>
+                                            <span>Opción de retiro</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select name="sucursal" id="sucursal" class="form-select">
+                                                <option value="sucursal_1">INTN Central Artigas</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select name="retiro" id="retiro" class="form-select"
+                                                    onchange="toggleTerceroFields(this)">
+                                                <option value="retiro_1">El Solicitante</option>
+                                                <option value="retiro_2">Un Tercero</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr class="tercero-row" style="display: none;">
+                                        <td>
+                                            <div class="form-group">
+                                                <label for="nombre_tercero">Nombre del Tercero</label>
+                                                <input type="text" name="nombre_tercero" id="nombre_tercero"
+                                                       class="form-control"
+                                                       placeholder="Ingrese el nombre del tercero"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <label for="documento_tercero">Número de Documento</label>
+                                                <input type="text" name="documento_tercero" id="documento_tercero"
+                                                       class="form-control"
+                                                       placeholder="Ingrese el número de documento"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
+
                         <br/>
                         <div id="items-container" class="table-responsive">
                             <table class="table table-bordered">
@@ -482,17 +540,19 @@
                                     <tr>
                                         <th style="width: 180px">Laboratorio</th>
                                         <th style="width: 300px">Servicio</th>
-                                        <th style="width: 70px">Cantidad</th>
-                                        <th style="width: 100px">Precio Total</th>
-                                        <th style="width: 100px">Costo Adicional</th>
-                                        <th style="width: 60px"></th>
+                                        <th style="width: 80px">Cantidad</th>
+                                        <th style="width: 90px">Precio Total</th>
+                                        <th style="width: 90px">Costo Adicional</th>
+                                        <th style="width: 50px"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr class="item-row" data-index="0">
                                         <td>
                                             <div class="form-group">
-                                                <select name="laboratorio_0" class="form-select">
+                                                <select name="laboratorio_0" class="form-select"
+                                                        onchange="loadServicios(this)">
+                                                    <option value="">Seleccione un laboratorio</option>
                                                     <t t-foreach="laboratorios" t-as="laboratorio">
                                                         <option t-att-value="laboratorio['id']">
                                                             <t t-esc="laboratorio['name']"/>
@@ -503,17 +563,8 @@
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <select name="servicio_0" class="form-select"
-                                                        onchange="calculateLineTotal(this)">
-                                                    <t t-foreach="servicios" t-as="servicio">
-                                                        <option t-att-value="servicio['id']"
-                                                                t-att-data-precio="servicio['price']"
-                                                                t-att-data-additional-cost="servicio['additional_cost']">
-                                                            <t t-esc="servicio['name']"/>
-                                                            - Precio Gs:
-                                                            <t t-esc="servicio['price']"/>
-                                                        </option>
-                                                    </t>
+                                                <select name="servicio_0" class="form-select" id="servicio_0">
+                                                    <option value="">Seleccione un servicio</option>
                                                 </select>
                                             </div>
                                         </td>
@@ -532,8 +583,7 @@
                                         <td style="text-align: center">
                                             <div class="form-group">
                                                 <input type="text" name="additional_cost_0" class="form-control"
-                                                       readonly="1"
-                                                       t-att-value="servicio and servicio['additional_cost'] or 'N/A'"/>
+                                                       readonly="1"/>
                                             </div>
                                         </td>
                                         <td style="text-align: center">
@@ -584,33 +634,116 @@
                 itemIndex++;
                 }
 
+                function loadServicios(laboratorioSelect) {
+                const laboratorioId = laboratorioSelect.value;
+                const servicioSelect = laboratorioSelect.closest('tr').querySelector('select[name^="servicio"]');
+
+                servicioSelect.innerHTML = '<option value="">Seleccione un servicio</option>';
+
+                if (!laboratorioId) return;
+
+                fetch('/get_servicios', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': odoo.csrf_token,
+                },
+                body: JSON.stringify({ laboratorio_id: laboratorioId }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                if (data.result &amp;&amp; Array.isArray(data.result)) {
+
+                data.result.forEach(servicio => {
+                const option = document.createElement('option');
+                option.value = servicio.id;
+                option.textContent = `${servicio.name} - ${servicio.determinacion || 'Sin Determinación'}`;
+                option.setAttribute('data-precio', servicio.price);
+
+                if (servicio.additional_cost) {
+                option.setAttribute('data-additional-cost', servicio.verificacion_insitu);
+                }
+
+                servicioSelect.appendChild(option);
+                });
+                } else {
+                console.error('La respuesta no contiene resultados válidos.');
+                }
+                })
+                .catch(error => console.error('Error al cargar los servicios:', error));
+                }
+
+                function toggleTerceroFields(select) {
+                const terceroRows = document.querySelectorAll('.tercero-row');
+                if (select.value === 'retiro_2') {
+                terceroRows.forEach(row => {
+                row.style.display = '';
+                });
+                } else {
+                terceroRows.forEach(row => {
+                row.style.display = 'none';
+                });
+
+                // Limpia los campos de texto cuando se ocultan
+                document.getElementById('nombre_tercero').value = '';
+                document.getElementById('documento_tercero').value = '';
+                }
+                }
+
                 function removeItem(button) {
                 const row = button.closest('tr');
-                if (document.querySelectorAll('.item-row').length > 1) {
+                const rows = document.querySelectorAll('.item-row');
+
+                if (rows.length > 1) {
                 row.remove();
-                calculateTotal();
+                updateRowIndexes();
+                calculateTotals();
                 } else {
                 alert('Debe haber al menos un ítem.');
                 }
                 }
 
+                function updateRowIndexes() {
+                const rows = document.querySelectorAll('.item-row');
+                rows.forEach((row, index) => {
+                row.setAttribute('data-index', index);
+
+                row.querySelectorAll('select, input').forEach(input => {
+                const name = input.getAttribute('name');
+                if (name) {
+                const updatedName = name.replace(/_\d+$/, `_${index}`);
+                input.setAttribute('name', updatedName);
+                }
+                });
+                });
+                }
+
                 function calculateLineTotal(element) {
                 const row = element.closest('.item-row');
-                const servicio = row.querySelector('select').selectedOptions[0];
-                const precio = parseFloat(servicio.getAttribute('data-precio') || 0);
-                const cantidad = parseFloat(row.querySelector('input[name^="cantidad"]').value || 0);
+                const servicio = row.querySelector('select[name^="servicio"]').selectedOptions[0];
+                const precio = parseFloat(servicio.getAttribute('data-precio')) || 0;
+                const cantidad = parseFloat(row.querySelector('input[name^="cantidad"]').value) || 0;
                 const lineTotal = row.querySelector('input[name^="line_total"]');
-                lineTotal.value = (precio * cantidad).toFixed(2);
+                const total = precio * cantidad;
+                lineTotal.value = total.toFixed(2);
+
+                const additionalCostField = row.querySelector('input[name^="additional_cost"]');
+                const additionalCost = servicio.getAttribute('data-additional-cost') || 'N/A';
+                additionalCostField.value = additionalCost;
+
                 calculateTotals();
                 }
 
                 function calculateTotals() {
                 let totalGeneral = 0;
+
                 document.querySelectorAll('.item-row').forEach(row => {
-                const total = parseFloat(row.querySelector('input[name^="line_total"]').value || 0);
-                totalGeneral += total;
+                const lineTotal = parseFloat(row.querySelector('input[name^="line_total"]').value) || 0;
+                totalGeneral += lineTotal;
                 });
-                document.getElementById('monto_total_general').value = totalGeneral.toFixed(2);
+
+                const montoTotalGeneral = document.getElementById('monto_total_general');
+                montoTotalGeneral.value = totalGeneral.toFixed(2);
                 }
             </script>
         </div>

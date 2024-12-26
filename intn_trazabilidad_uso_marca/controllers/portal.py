@@ -55,6 +55,10 @@ class CustomerPortal(CustomerPortal):
         control_etiquetas_count = control_etiquetas.search_count([
             ('message_partner_ids', 'child_of', [partner.commercial_partner_id.id])
         ])
+        onm_metci = request.env['sale.order']
+        onm_metci_count = onm_metci.search_count([
+            ('service_type', '=', 'metci')
+        ])
         onn_normas = request.env['sale.order']
         onn_normas_count = onn_normas.search_count([
             ('service_type', '=', 'onn_normas')
@@ -69,6 +73,7 @@ class CustomerPortal(CustomerPortal):
             'solicitud_impresion_count': solicitud_impresion_count,
             'control_etiquetas_count': control_etiquetas_count,
             'onn_normas_count': onn_normas_count,
+            'onm_metci_count': onm_metci_count,
         })
 
         return values

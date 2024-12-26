@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, exceptions,_
+from odoo import models, fields, api, exceptions, _
 from re import findall as regex_findall, split as regex_split
 
 from psycopg2 import OperationalError, Error
@@ -20,6 +20,9 @@ class ProductTemplate(models.Model):
 
     cod_licencia = fields.Char(string="Código para Licencia")
 
-    determinacion_ids= fields.One2many('intn_trazabilidad_uso_marca.determinacion_productos','product_id',string="Determinaciones")
-    observaciones_certificado= fields.Html(string="Observaciones")
+    determinacion_ids = fields.One2many('intn_trazabilidad_uso_marca.determinacion_productos', 'product_id',
+                                        string="Determinaciones")
+    observaciones_certificado = fields.Html(string="Observaciones")
     additional_cost = fields.Boolean(string="Aplica a costos adicionales", default=False)
+
+    norma_document = fields.Binary(string="Archivo de Norma")

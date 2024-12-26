@@ -119,6 +119,7 @@ class Laboratorios(models.Model):
     responsable_id = fields.Many2one('res.users', string="Responsable")
     complete_name = fields.Char(
         string='Nombre', compute="completeNameLaboratorio")
+    responsables_ids = fields.Many2many('res.users', string="Responsables")
 
     def completeNameLaboratorio(self):
         for this in self:

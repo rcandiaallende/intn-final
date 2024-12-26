@@ -16,6 +16,45 @@ import base64
 
 class CustomerPortal(CustomerPortal):
 
+    @http.route('/my/descargar-documento/<int:line_id>', type='http', auth="user", website=True)
+    def descargar_documento(self, line_id, **kw):
+        # Buscar el registro correspondiente
+        line = request.env['control.ingreso.instrumentos.line'].sudo().browse(line_id)
+
+        # Validar que exista el registro y tenga un archivo
+        if not line or not line.exists() or not line.document:
+            return request.not_found()
+
+        # Obtener el contenido binario del documento
+        document_content = line.document
+        document_name = line.instrumento.name or "archivo.bin"  # Nombre del archivo, usa un nombre predeterminado si no hay
+
+        # Determinar el tipo MIME basado en la extensión del nombre del archivo
+        file_extension = document_name.split('.')[-1].lower()
+        mime_types = {
+            'pdf': 'application/pdf',
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'doc': 'application/msword',
+            'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'xls': 'application/vnd.ms-excel',
+            'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'txt': 'text/plain',
+            'zip': 'application/zip',
+            # Agrega otros tipos MIME según sea necesario
+        }
+        content_type = mime_types.get(file_extension, 'application/octet-stream')  # 'octet-stream' es genérico
+
+        # Retornar el archivo como respuesta
+        return request.make_response(
+            document_content,
+            headers=[
+                ('Content-Type', content_type),
+                ('Content-Disposition', f'attachment; filename="{document_name}"'),
+            ]
+        )
+
     @http.route(['/my/control-etiquetas', '/my/cont0rol-etiquetas/page/<int:page>'], type='http', auth="user",
                 website=True)
     def portal_my_control_etiquetas(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
@@ -79,6 +118,7 @@ class CustomerPortal(CustomerPortal):
 
         domain = [
             ('service_type', '=', 'metci'),
+            ('partner_id', '=', partner.id)
         ]
 
         searchbar_sortings = {
@@ -193,27 +233,38 @@ class CustomerPortal(CustomerPortal):
 
         fecha_actual = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
 
-        laboratorios = request.env['intn.laboratorios'].sudo().search([])
+        coordinacion = request.env['intn.coordinaciones'].sudo().search([('name', '=', 'COORDINACIÓN UMCI')])
+
+        laboratorios = request.env['intn.laboratorios'].sudo().search([('coordinacion_id', 'in', coordinacion.ids)])
         laboratorios_list = [{'id': lab.id, 'name': lab.name} for lab in laboratorios]
 
-        productos_list = []
         servicios_list = []
-        laboratorio_id = kw.get('laboratorio_id', False)
-
-        if laboratorio_id:
-            productos = request.env['product.template'].sudo().search([('laboratorio_id', '=', int(laboratorio_id))])
-        servicios = request.env['product.product'].sudo().search([])
-
-        servicios_list = [{'id': servicio.id, 'name': servicio.name, 'price': servicio.lst_price,
-                           'additional_cost': 'Si' if servicio.product_tmpl_id.additional_cost else 'No'} for
-                          servicio
-                          in servicios]
 
         return request.render('intn_trazabilidad_uso_marca.formulario_crear_presupuesto', {
             'fecha_actual': fecha_actual,
             'laboratorios': laboratorios_list,
             'servicios': servicios_list,
         })
+
+    @http.route('/get_servicios', type='json', auth="user")
+    def get_servicios(self):
+        data = request.jsonrequest
+        laboratorio_id = data.get('laboratorio_id')
+
+        if not laboratorio_id:
+            return {'error': 'El laboratorio_id es obligatorio.'}
+
+        servicios = request.env['product.template'].sudo().search([('laboratorio_id', '=', int(laboratorio_id))])
+        servicios = request.env['product.product'].sudo().search([('product_tmpl_id', 'in', servicios.ids)])
+
+        servicios_list = [{
+            'id': servicio.id,
+            'name': servicio.name,
+            'price': servicio.list_price,
+            'determinacion': servicio.determinacion if servicio.determinacion else 'N/A',
+            'additional_cost': 'Si' if servicio.verificacion_insitu else 'No'
+        } for servicio in servicios]
+        return servicios_list
 
     @http.route('/new/save/control-etiquetas', auth='user', website=True, csrf=False)
     def save_control_etiquetas(self, **kw):
@@ -277,10 +328,19 @@ class CustomerPortal(CustomerPortal):
             'partner_id': partner.id,
             'state': 'pending',
             'service_type': 'metci',
+            'retiro': post.get('retiro'),
+            'retiro_tercero_nombre': post.get('nombre_tercero'),
+            'retiro_tercero_documento': post.get('documento_tercero')
         })
-        calibration_request = request.env['calibration.request'].sudo().create(
-            {'state': 'revision', 'partner_id': partner.id})
-        sale_order.calibration_request = calibration_request.id
+
+        # calibration_request = request.env['calibration.request'].sudo().create(
+        #     {'state': 'revision',
+        #      'partner_id': partner.id,
+        #      'retiro': post.get('retiro'),
+        #      'nombre_tercero': post.get('nombre_tercero'),
+        #      'retiro_tercero_documento': post.get('documento_tercero')})
+        #
+        # sale_order.calibration_request = calibration_request.id
 
         # Crear las líneas del presupuesto
         for servicio_id, cantidad, line_total in zip(servicios, cantidades, line_totals):

@@ -1,0 +1,40 @@
+<odoo>
+    <record id="view_update_delivered_quantities" model="ir.ui.view">
+        <field name="name">update.delivered.quantities.form</field>
+        <field name="model">update.delivered.quantities</field>
+        <field name="arch" type="xml">
+            <form string="Actualizar cantidades entregadas">
+                <div class="text-center">
+                    <h4 style="font-weight: bold">Actualizar las cantidades entregadas de los instrumentos.</h4>
+                </div>
+                <notebook>
+                    <page string="Detalle de Instrumentos">
+                        <field name="line_ids" widget="one2many_list">
+                            <tree editable="bottom" create="false">
+                                <field name="item" readonly="1"/>
+                                <field name="instrumento" readonly="1"/>
+                                <field name="cantidad" readonly="1"/>
+                                <field name="cantidad_salida"/>
+                                <field name="cantidad_faltante" readonly="1"/>
+                                <field name="identificacion" readonly="1"/>
+                                <field name="document"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+                <footer>
+                    <button string="Actualizar" type="object" name="update_delivered_quantities" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_view_update_delivered_quantities" model="ir.actions.act_window">
+        <field name="name">Actualizar cantidades entregadas</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">update.delivered.quantities</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

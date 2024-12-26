@@ -1,0 +1,88 @@
+<odoo>
+    <data>
+        <!-- Formato de papel personalizado para etiquetas -->
+        <record id="paperformat_etiqueta_instrumento" model="report.paperformat">
+            <field name="name">Etiqueta Instrumento</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">51</field> <!-- 5.1 cm -->
+            <field name="page_width">108</field> <!-- 10.8 cm -->
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">0</field>
+            <field name="margin_bottom">0</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False"/>
+            <field name="dpi">203</field>
+        </record>
+
+        <!-- Acción de reporte -->
+        <report
+                id="action_report_etiqueta_instrumento"
+                model="control.ingreso.instrumentos.line"
+                string="Etiqueta de Instrumento"
+                report_type="qweb-pdf"
+                name="intn_trazabilidad_uso_marca.report_etiqueta_instrumento_template"
+                file="intn_trazabilidad_uso_marca.report_etiqueta_instrumento_template"
+                paperformat="paperformat_etiqueta_instrumento"
+                print_report_name="'etiqueta_instrumento_' + object.control_id.name"
+        />
+
+        <!-- Template de reporte para etiquetas -->
+        <template id="report_etiqueta_instrumento_template">
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page"
+                         style="width: 100%; height: 100%; font-size: 12px; text-align: left; border: 1px solid black; margin: 0; padding: 8px;">
+                        <!-- Encabezado con logo y título -->
+                        <div style="display: flex; align-items: center; border-bottom: 1px solid black; padding-bottom: 3px; margin-bottom: 5px;">
+                            <img src='/intn_trazabilidad_uso_marca/static/src/img/logo_intn_largo.png'
+                                 style="height: 40px; margin-right: 10px;"/>
+                            <div style="font-size: 14px; font-weight: bold; text-align: center; width: 100%;">
+                                ORGANISMO NACIONAL DE METROLOGÍA
+                            </div>
+                        </div>
+
+                        <!-- Tabla principal -->
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="width: 20%; font-weight: bold;">Cliente:</td>
+                                <td style="border-bottom: 1px solid black;">
+                                    <t t-esc="o.control_id.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 20%; font-weight: bold;">Ingreso:</td>
+                                <td style="border-bottom: 1px solid black; width: 40%;">
+                                    <t t-esc="o.control_id.fecha"/>
+                                </td>
+                                <td style="width: 20%; font-weight: bold; text-align: right;">Compromiso:</td>
+                                <td style="border-bottom: 1px solid black; width: 40%;">
+                                    <t t-esc="o.control_id.compromiso_entrega_fecha"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Control Ingreso Nº:</td>
+                                <td style="border-bottom: 1px solid black;">
+                                    <t t-esc="o.control_id.name"/>
+                                </td>
+                                <td style="font-weight: bold; text-align: right;">No Expediente:</td>
+                                <td style="border-bottom: 1px solid black;">
+                                    <t t-esc="o.control_id.expediente.name"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Calibrado -->
+                        <div style="margin-top: 10px; display: flex; align-items: center;">
+                            <span style="font-weight: bold; margin-right: 10px;">Calibrado:</span>
+                            <span style="border: 1px solid black; width: 15px; height: 15px; display: inline-block; text-align: center;">
+                                <t t-if="o.state == 'done'">✔</t>
+                            </span>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
