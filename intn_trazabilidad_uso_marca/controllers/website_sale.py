@@ -13,7 +13,7 @@ class WebsiteSaleInherit(WebsiteSale):
     @http.route(['/shop/payment/transaction/',
                  '/shop/payment/transaction/<int:so_id>',
                  '/shop/payment/transaction/<int:so_id>/<string:access_token>'],
-                type='http', auth="public", website=True, methods=['POST'])
+                type='json', auth="public", website=True, methods=['POST'])
     def payment_transaction(self, acquirer_id, save_token=False, so_id=None, access_token=None, token=None,
                             **kwargs):
         order = None
@@ -76,9 +76,8 @@ class WebsiteSaleInherit(WebsiteSale):
             mail = request.env['mail.mail'].sudo().create(mail_values)
             mail.send()
 
-        # Llamar al método original de la clase base
         return super(WebsiteSaleInherit, self).payment_transaction(
-            acquirer_id=acquirer_id, save_token=save_token, so_id=so_id, access_token=access_token,
+            acquirer_id=order.partner_id.id, save_token=save_token, so_id=so_id, access_token=access_token,
             token=token, **kwargs
         )
 

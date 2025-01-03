@@ -17,7 +17,7 @@ class AccountInvoice(models.Model):
     @api.constrains('residual', 'payment_ids')
     def _check_residual(self):
         for invoice in self:
-            if invoice.residual <= 0 and invoice.origin:
+            if invoice.residual <= 0 and invoice.origin and invoice.state == 'open':
                 sale_order_id = self.env['sale.order'].sudo().search([('name', '=', invoice.origin)], limit=1)
                 if sale_order_id and sale_order_id.service_type == 'onn_normas':
                     normas_documents = sale_order_id.order_line.mapped('product_id').mapped('product_tmpl_id').mapped(
@@ -107,4 +107,3 @@ class AccountInvoice(models.Model):
         output = io.BytesIO()
         writer.write(output)
         return output.getvalue()
-
