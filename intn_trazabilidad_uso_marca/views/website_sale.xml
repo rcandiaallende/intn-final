@@ -9,7 +9,7 @@
                     Por favor, suba su documento de pago como comprobante para finalizar la transacción.
                     Asegúrese de que el archivo esté en formato <strong>PDF, JPG o PNG</strong>.
                 </p>
-                <form action="/shop/payment/upload_attachment" method="post" enctype="multipart/form-data" class="mt-3">
+                <form action="/shop/payment/transaction" method="post" enctype="multipart/form-data" class="mt-3">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <div class="form-group">
                         <label class="d-block font-weight-bold text-secondary">
@@ -19,7 +19,7 @@
                                accept=".pdf,.jpg,.jpeg,.png"/>
                     </div>
                     <button type="submit" class="btn btn-primary mt-3">
-                        <i class="fa fa-upload mr-2"></i>Subir y Proceder al Pago
+                        Subir Comprobante
                     </button>
                 </form>
             </div>
