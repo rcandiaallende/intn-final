@@ -5,6 +5,7 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 import io
+from datetime import datetime
 from odoo import models, fields, api, _, exceptions
 
 _logger = logging.getLogger(__name__)
@@ -29,9 +30,11 @@ class AccountInvoice(models.Model):
                         if norma:  # Asegurarse de que el archivo PDF exista
                             # Decodificar los datos binarios del PDF
                             pdf_data = base64.b64decode(norma)
+                            today_date = datetime.strptime(str(fields.Date.today()), "%Y-%m-%d").strftime("%d/%m/%Y")
                             modified_pdf = self._add_footer_to_pdf(
                                 pdf_data=pdf_data,
-                                footer_text=f"Norma adquirida por {sale_order_id.partner_id.name}"
+                                footer_text=f"Norma adquirida por {sale_order_id.partner_id.name}, RUC: {sale_order_id.partner_id.vat}, en fecha: {today_date}"
+                                            f"\nProhibida su reproducción parcial o total del documento."
                             )
                             # Codificar de nuevo para almacenarlo como adjunto en Odoo
                             encoded_pdf = base64.b64encode(modified_pdf)
