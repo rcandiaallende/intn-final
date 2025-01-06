@@ -30,6 +30,7 @@ class SaleOrder(models.Model):
     ], string="Método de Retiro", required=True, default='retiro_1')
     retiro_tercero_nombre = fields.Char('Nombre del Tercero')
     retiro_tercero_documento = fields.Char('Documento del Tercero')
+    ecommerce_payment_receipt = fields.Binary(string="Comprobante Pago E-commerce")
 
     @api.depends('calibration_request_id')
     def _compute_calibration_ids_count(self):

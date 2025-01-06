@@ -4,11 +4,47 @@ from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 import logging
+from odoo.exceptions import AccessError, MissingError, UserError
 
 _logger = logging.getLogger(__name__)
 
 
 class WebsiteSaleInherit(WebsiteSale):
+
+    @http.route('/shop/payment/upload_attachment', type='http', auth='public', website=True, csrf=False)
+    def upload_payment_attachment(self, **kwargs):
+        # Obtener la orden activa
+        order = request.website.sale_get_order()
+        if not order or order.state != 'draft':
+            return request.redirect('/shop')  # Redirigir si no hay orden activa
+
+        # Validar que se subió un archivo
+        uploaded_file = kwargs.get('order_attachment')
+        if not uploaded_file:
+            return request.redirect('/shop/payment?error=no_file')
+
+        # Convertir archivo a base64
+        file_content = uploaded_file.read()
+        file_name = uploaded_file.filename
+        encoded_file = base64.b64encode(file_content)
+        # Vincular el adjunto al SO
+        order.ecommerce_payment_receipt = encoded_file
+
+        # Crear el adjunto
+        attachment = request.env['ir.attachment'].sudo().create({
+            'name': file_name,
+            'type': 'binary',
+            'datas': encoded_file,
+            'res_model': 'sale.order',
+            'res_id': order.id,
+            'mimetype': uploaded_file.content_type,
+        })
+
+        # Mensaje de éxito (opcional)
+        request.session['upload_success'] = True
+
+        # Redirigir a la página de pago para continuar con el proceso normal
+        return request.redirect('/shop/payment')
 
     @http.route(['/shop/payment/transaction/',
                  '/shop/payment/transaction/<int:so_id>',
@@ -26,28 +62,6 @@ class WebsiteSaleInherit(WebsiteSale):
             order = request.website.sale_get_order()
 
         if order:
-            # Manejar el archivo adjunto
-            uploaded_file = request.httprequest.files.get('order_attachment')
-            if uploaded_file:
-                try:
-                    # Leer el contenido del archivo
-                    attachment_data = uploaded_file.read()
-                    file_name = uploaded_file.filename
-
-                    # Crear un adjunto vinculado a la orden
-                    attachment = request.env['ir.attachment'].sudo().create({
-                        'name': file_name,
-                        'type': 'binary',
-                        'datas': base64.b64encode(attachment_data),
-                        'res_model': 'sale.order',
-                        'res_id': order.id,
-                        'mimetype': uploaded_file.content_type,
-                    })
-                    _logger.info(f"Archivo adjunto {file_name} guardado con éxito para la orden {order.name}")
-                except Exception as e:
-                    _logger.error(f"Error al procesar el archivo adjunto: {e}")
-
-            # Continuar con la lógica existente
             order.service_type = 'onn_normas'
             order.action_confirm()
             for line in order.order_line:
@@ -57,6 +71,14 @@ class WebsiteSaleInherit(WebsiteSale):
             # Crear la factura
             invoice = self._create_invoice_v12(order)
             if invoice:
+                attachment = request.env['ir.attachment'].sudo().create({
+                    'name': 'Comprobante_transferencia',
+                    'type': 'binary',
+                    'datas': order.ecommerce_payment_receipt,
+                    'res_model': 'account.invoice',
+                    'res_id': invoice.id,
+                })
+                invoice.ecommerce_payment_receipt = order.ecommerce_payment_receipt
                 _logger.info(f"Factura creada y publicada para la orden {order.name}: {invoice.number}")
 
             # Crear y enviar el correo
@@ -77,7 +99,7 @@ class WebsiteSaleInherit(WebsiteSale):
             mail.send()
 
         return super(WebsiteSaleInherit, self).payment_transaction(
-            acquirer_id=order.partner_id.id, save_token=save_token, so_id=so_id, access_token=access_token,
+            acquirer_id=acquirer_id, save_token=save_token, so_id=so_id, access_token=access_token,
             token=token, **kwargs
         )
 

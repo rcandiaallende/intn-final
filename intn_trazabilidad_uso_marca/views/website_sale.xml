@@ -1,6 +1,28 @@
 <odoo>
     <template id="payment_inherit_attachment" inherit_id="website_sale.payment">
+        <xpath expr="//form[@action='/shop/payment/validate']" position="attributes">
+            <attribute name="id">payment-form</attribute>
+        </xpath>
+        <xpath expr="//a[@class='btn btn-primary a-submit']" position="attributes">
+            <attribute name="id">pay-now-button</attribute>
+            <attribute name="disabled">true</attribute>
+        </xpath>
         <xpath expr="//div[@id='payment_method']" position="inside">
+            <t t-if="request.session.pop('upload_success', False)">
+                <div class="alert alert-success mt-3">
+                    <i class="fa fa-check-circle mr-2"></i>
+                    Comprobante subido con éxito.
+                </div>
+            </t>
+            <t t-if="'error' in request.params">
+                <div class="alert alert-danger mt-3">
+                    <i class="fa fa-exclamation-triangle mr-2"></i>
+                    <t t-if="request.params['error'] == 'no_file'">Por favor, suba un archivo antes de continuar.</t>
+                    <t t-if="request.params['error'] == 'no_attachment'">Es necesario subir un comprobante antes de
+                        finalizar el pago.
+                    </t>
+                </div>
+            </t>
             <div class="mt-4 border rounded p-4 bg-light shadow-sm">
                 <h4 class="text-primary font-weight-bold mb-3">
                     <i class="fa fa-file-upload mr-2"></i>Comprobantes de Pago
@@ -9,20 +31,46 @@
                     Por favor, suba su documento de pago como comprobante para finalizar la transacción.
                     Asegúrese de que el archivo esté en formato <strong>PDF, JPG o PNG</strong>.
                 </p>
-                <form action="/shop/payment/transaction" method="post" enctype="multipart/form-data" class="mt-3">
+                <form id="payment-attachment-form" action="/shop/payment/upload_attachment" method="post" enctype="multipart/form-data" class="mt-3">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <div class="form-group">
                         <label class="d-block font-weight-bold text-secondary">
                             <i class="fa fa-paperclip mr-2"></i>Seleccione su documento:
                         </label>
-                        <input type="file" name="order_attachment" class="form-control-file mt-2"
+                        <input type="file" id="order-attachment" name="order_attachment" class="form-control-file mt-2"
                                accept=".pdf,.jpg,.jpeg,.png"/>
                     </div>
-                    <button type="submit" class="btn btn-primary mt-3">
+                    <button type="submit" id="submit-button" class="btn btn-primary mt-3" disabled="true">
                         Subir Comprobante
                     </button>
                 </form>
             </div>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const fileInput = document.getElementById('order-attachment');
+                const submitButton = document.getElementById('submit-button');
+                const payNowButton = document.getElementById('pay-now-button');
+
+                // Asegurarse de que el botón esté inicialmente deshabilitado
+                if (payNowButton) {
+                    payNowButton.setAttribute('disabled', 'true');
+                }
+
+                fileInput.addEventListener('change', function() {
+                    if (fileInput.files.length > 0) {
+                        submitButton.removeAttribute('disabled');
+                        if (payNowButton) {
+                            payNowButton.removeAttribute('disabled');
+                        }
+                    } else {
+                        submitButton.setAttribute('disabled', 'true');
+                        if (payNowButton) {
+                            payNowButton.setAttribute('disabled', 'true');
+                        }
+                    }
+                });
+            });
+        </script>
         </xpath>
     </template>
 </odoo>
