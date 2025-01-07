@@ -27,18 +27,20 @@ class AccountInvoiceRefund(models.TransientModel):
     date_invoice = fields.Date(string='Credit Note Date', default=fields.Date.context_today, required=True)
     date = fields.Date(string='Accounting Date')
     description = fields.Char(string='Reason', required=True, default=_get_reason)
-    refund_only = fields.Boolean(string='Technical field to hide filter_refund in case invoice is partially paid', compute='_get_refund_only')
+    refund_only = fields.Boolean(string='Technical field to hide filter_refund in case invoice is partially paid',
+                                 compute='_get_refund_only')
     filter_refund = fields.Selection([('refund', 'Crear NC y conciliacion Manual(añadir)'),
                                       ('cancel', 'Anulacion: crear nota de credito de anulacion y conciliar'), (
-                                      'modify',
-                                      'Diferencia de Servicios: crear nota de credito, conciliar y crear una nueva factura')],
-        default='refund', string='Credit Method', required=True, help='Choose how you want to credit this invoice. You cannot Modify and Cancel if the invoice is already reconciled')
+                                          'modify',
+                                          'Diferencia de Servicios: crear nota de credito, conciliar y crear una nueva factura')],
+                                     default='refund', string='Credit Method', required=True,
+                                     help='Choose how you want to credit this invoice. You cannot Modify and Cancel if the invoice is already reconciled')
     journal_id = fields.Many2one('account.journal', string='Diario de venta')
 
     @api.depends('date_invoice')
     @api.one
     def _get_refund_only(self):
-        invoice_id = self.env['account.invoice'].browse(self._context.get('active_id',False))
+        invoice_id = self.env['account.invoice'].browse(self._context.get('active_id', False))
         if len(invoice_id.payment_move_line_ids) != 0 and invoice_id.state != 'paid':
             self.refund_only = True
         else:
@@ -60,6 +62,7 @@ class AccountInvoiceRefund(models.TransientModel):
     def compute_refund(self, mode='refund'):
         inv_obj = self.env['account.invoice']
         inv_tax_obj = self.env['account.invoice.tax']
+
         inv_line_obj = self.env['account.invoice.line']
         context = dict(self._context or {})
         xml_id = False
@@ -87,9 +90,11 @@ class AccountInvoiceRefund(models.TransientModel):
                             to_reconcile_lines += tmpline
                     to_reconcile_lines.filtered(lambda l: l.reconciled == False).reconcile()
                     if inv.amount_total == refund.amount_total:
+                        sale_order = self.env['sale.order'].sudo().search([('name', '=', inv.origin)], limit=1)
                         inv.update({
                             'state': 'cancelation',
                         })
+                        sale_order.write({'invoice_status': 'to_invoice'})
                     if mode == 'modify':
                         invoice = inv.read(inv_obj._get_refund_modify_read_fields())
                         invoice = invoice[0]
@@ -116,7 +121,9 @@ class AccountInvoiceRefund(models.TransientModel):
                             else:
                                 invoice[field] = invoice[field] or False
                         inv_refund = inv_obj.create(invoice)
-                        body = _('Correction of <a href=# data-oe-model=account.invoice data-oe-id=%d>%s</a><br>Reason: %s') % (inv.id, inv.number, description)
+                        body = _(
+                            'Correction of <a href=# data-oe-model=account.invoice data-oe-id=%d>%s</a><br>Reason: %s') % (
+                               inv.id, inv.number, description)
                         inv_refund.message_post(body=body)
                         if inv_refund.payment_term_id.id:
                             inv_refund._onchange_payment_term_date_invoice()
@@ -135,7 +142,7 @@ class AccountInvoiceRefund(models.TransientModel):
                     view_ref = self.env.ref('account.invoice_form')
                 form_view = [(view_ref.id, 'form')]
                 if 'views' in result:
-                    result['views'] = form_view + [(state,view) for state,view in result['views'] if view != 'form']
+                    result['views'] = form_view + [(state, view) for state, view in result['views'] if view != 'form']
                 else:
                     result['views'] = form_view
                 result['res_id'] = inv_refund.id

@@ -3,6 +3,9 @@ import datetime
 
 from odoo import fields, models, api, _
 import base64
+import hashlib
+import qrcode
+from io import BytesIO
 
 
 class CertificadoBasculaAprobado(models.Model):
@@ -76,6 +79,30 @@ class CertificadoBasculaAprobado(models.Model):
     result_desempenoCarga = fields.Boolean(string='Resultado de Desempenho de carga')
     result_excentricidad = fields.Boolean(string='Resultado de Excentricidad')
     result_repetitibilidad = fields.Boolean(string='Resultado de Repetitibilidad')
+    qr_code = fields.Binary(string="QR Code", compute="generate_qr_code")
+    def genera_token(self, id):
+        palabra = id+"amakakeruriunohirameki"
+        return hashlib.sha256(bytes(palabra, 'utf-8')).hexdigest()
+
+    def generate_qr_code(self):
+        for i in self:
+            base_url = self.env['ir.config_parameter'].sudo(
+            ).get_param('web.base.url')
+            route = "/certificado_bascula_check?certificado_bascula_id=" + \
+                str(i.id)+"&token="+i.genera_token(str(i.id))
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data("%s%s" % (base_url, route))
+            qr.make(fit=True)
+            img = qr.make_image()
+            temp = BytesIO()
+            img.save(temp, format="PNG")
+            qr_image = base64.b64encode(temp.getvalue())
+            i.qr_code = qr_image
 
     def _get_year_system(self):
         current_year = datetime.datetime.now().year

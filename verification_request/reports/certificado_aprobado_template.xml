@@ -763,6 +763,15 @@
 
                             </table>
 
+                            <br/>
+                            <div style="display:table-cell;vertical-align:top;">
+
+                                <img t-att-src="image_data_uri(s.qr_code)"
+                                     style="max-width:100px;max-height:100px;margin-left:15px"/>
+                                <!--br/>-->
+                                <!--                                                        <span style="margin-left:15px;font-size:14px">Consulte la validez de ésta constancia online</span>-->
+                            </div>
+
 
                             <!-- Pie de página -->
 
