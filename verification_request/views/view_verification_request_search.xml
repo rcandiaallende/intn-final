@@ -12,9 +12,10 @@
                     
                     <!-- Filtros predefinidos -->
                     <filter string="Esta Semana" name="filtro_esta_semana"
-                            domain="[('request_date', '>=', (context_today() - timedelta(days=context_today().weekday()))), 
-                                    ('request_date', '<=', (context_today() + timedelta(days=6 - context_today().weekday())))]"/>
-                    
+                            domain="[('request_date', '>=', (context_today() - timedelta(days=context_today().weekday()))),
+                ('request_date', '&lt;=', (context_today() + timedelta(days=6 - context_today().weekday())))]"/>
+
+
                     <!-- Agrupaciones -->
                     <group expand="1" string="Agrupar por">
                         <filter string="Estado" name="group_by_state" context="{'group_by': 'state'}"/>
