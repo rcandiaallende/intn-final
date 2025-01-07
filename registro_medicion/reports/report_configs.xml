@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_report_bascula_comision" model="report.paperformat">
+            <field name="name">Reporte de Comisionamiento</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_width">210</field> <!-- eje X -->
+            <field name="page_height">297</field> <!-- eje Y -->
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_spacing">5</field>
+            <field name="dpi">95</field>
+            <field name="header_line" eval="False"/>
+        </record>
+        <report
+                id="reporte_comisionamiento_action"
+                model="reporte.comisionamiento.wizard"
+                string="Reporte de Comisionamiento"
+                report_type="qweb-pdf"
+                file="registro_medicion.reporte_comisionamiento_template"
+                name="registro_medicion.reporte_comisionamiento_template"
+                paperformat="paperformat_report_bascula_comision"
+        />
+
+    </data>
+</odoo>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_report_bascula" model="report.paperformat">
+            <field name="name">Certificado de Bascula</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_width">210</field> <!-- eje X -->
+            <field name="page_height">297</field> <!-- eje Y -->
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">34</field>
+            <field name="margin_bottom">8</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_spacing">34</field>
+            <field name="dpi">95</field>
+            <field name="header_line" eval="False"/>
+        </record>
+
+        <report
+                id="action_report_bascula_action"
+                string="Bascula"
+                model="registro.medicion.basculas"
+                report_type="qweb-pdf"
+                file="registro_medicion.bascula_template_report"
+                name="registro_medicion.bascula_template_report"
+                attachment_use="False"
+                paperformat="paperformat_report_bascula"
+        />
+
+    </data>
+</odoo>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="reporte_comisionamiento_template">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <h2 style="text-align:center; font-size:24px; color:#2E86C1;">Anexo: Informe de Comisionamiento de
+                        Trabajo
+                    </h2>
+                    <table class="table table-bordered" style="width: 100%; margin-top: 20px;">
+                        <tr>
+                            <td>
+                                <strong>Fecha:</strong>
+                                <span t-field='o.fecha_inicio'/>
+
+                                -
+                                <span t-field='o.fecha_fin'/>
+
+                            </td>
+                            <td>
+                                <strong>Área:</strong>
+                                <span t-field='o.area'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Misión:</strong>
+                                <span t-field='o.mision'/>
+                            </td>
+                            <td>
+                                <strong>Estado del Móvil:</strong>
+                                <span t-field='o.estado_movil'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <strong>Descripción de Inconvenientes:</strong>
+                                <span t-field='o.descripcion_inconvenientes'/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <h3 style="margin-top:30px; color:#2E86C1;">Detalles de los Servicios Realizados:</h3>
+                    <table class="table table-condensed table-striped" style="margin-top: 10px; width: 100%;">
+                        <thead style="background-color: #2E86C1; color: white;">
+                            <tr>
+                                <th>N°</th>
+                                <th>Fecha</th>
+                                <th>Razón Social</th>
+                                <th>RUC</th>
+                                <th>Dirección</th>
+                                <th>Departamento</th>
+                                <th>Ciudad</th>
+                                <th>Cant. Verif. Aprob.</th>
+                                <th>Cant. Verif. Reprob.</th>
+                                <th>Cant. Inhabilitado</th>
+                                <th>Cant. Aprob. - Reprob.</th>
+                                <th>Expediente N° INTN</th>
+                                <th>Certificado de Verificación</th>
+                                <th>Acta de Imposibilidad</th>
+                                <th>Motivo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!--                            <t t-foreach="records" t-as="record">
+                                                            <tr>
+                                                                <td>
+                                                                    <t t-esc="record.numero"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.fecha"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.razon_social"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.ruc"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.direccion"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.departamento"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.ciudad"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.cantidad_verif_aprobado"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.cantidad_verif_reprobado"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.cantidad_inhabilitado"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.cantidad_aprob_reprob"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.expediente_intn"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.certificado_verificacion"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.acta_imposibilidad"/>
+                                                                </td>
+                                                                <td>
+                                                                    <t t-esc="record.motivo"/>
+                                                                </td>
+                                                            </tr>
+                                                        </t>
+                            -->                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="bascula_template_report">
+        <xpath expr="//div[@class='header']" position="replace">
+            <div class="header">
+                <img src="/verification_request/static/src/img/intn_cabecera.png"/>
+            </div>
+        </xpath>
+
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <link rel="stylesheet" href="/verification_request/static/src/css/impossibility.css"/>
+                <t t-foreach="docs" t-as="record">
+                    <div class="page"
+                         style="font-size: 12px; margin: 20px; padding: 15px; box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);">
+                        <div class="contenedor">
+                            <h3 style="text-align: center; color: #003366; margin-bottom: 20px;">
+                                Certificado de Medición
+                            </h3>
+                            <h4 style="text-align: center; color: #003366; margin-bottom: 15px;">
+                                <t t-esc="record.name"/>
+                            </h4>
+
+                            <div style="margin-top: 15px;">
+                                <h4 style="background-color: #e6e6e6; color: #003366; padding: 8px;">Datos Generales
+                                </h4>
+                                <table class="table table-bordered"
+                                       style="width: 100%; margin-bottom: 15px; border: 1px solid #003366; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);">
+                                    <tr>
+                                        <td>
+                                            <strong>Fecha de emisión:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.fecha_emision"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Técnico:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.tecnico.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Técnico Conductor:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.tecnico_conductor.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Fecha de verificación:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.fecha_verificacion"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Calcomanía No.:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.calcomania_no"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Objeto:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.objeto"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Marca:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.marca"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Modelo:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.modelo"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>No. de Serie:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.no_serie"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div>
+                                <h4 style="background-color: #e6e6e6; color: #003366; padding: 8px;">Información del
+                                    Cliente
+                                </h4>
+                                <table class="table table-bordered"
+                                       style="width: 100%; margin-bottom: 15px; border: 1px solid #003366; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);">
+                                    <tr>
+                                        <td>
+                                            <strong>Razón Social:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.razon_social.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>RUC N°:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.ruc"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Dirección:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.direccion"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Ciudad:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.ciudad"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Departamento:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.departamento"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div>
+                                <h4 style="background-color: #e6e6e6; color: #003366; padding: 8px;">Características
+                                    Técnicas
+                                    del Instrumento de Medición
+                                </h4>
+                                <table class="table table-bordered"
+                                       style="width: 100%; margin-bottom: 15px; border: 1px solid #003366; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);">
+                                    <tr>
+                                        <td>
+                                            <strong>Capacidad (kg):</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.capacidad"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Clase:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.clase"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Identificación/Código:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.identificacion_codigo"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Ubicación:</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.ubicacion"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div>
+                                <h4 style="background-color: #e6e6e6; color: #003366; padding: 8px;">Condiciones
+                                    Ambientales
+                                </h4>
+                                <table class="table table-bordered"
+                                       style="width: 100%; margin-bottom: 15px; border: 1px solid #003366; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);">
+                                    <tr>
+                                        <td>
+                                            <strong>Temperatura Inicial (ºC):</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.temperatura_inicial"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Temperatura Final (ºC):</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.temperatura_final"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Humedad Relativa Inicial (%):</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.humedad_inicial"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Humedad Relativa Final (%):</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="record.humedad_final"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div>
+                                <h4 style="background-color: #e6e6e6; color: #003366; padding: 8px;">Detalles de los
+                                    Ensayos
+                                </h4>
+                                <table class="table table-bordered"
+                                       style="width: 100%; margin-bottom: 15px; border: 1px solid #003366; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);">
+                                    <thead>
+                                        <tr>
+                                            <th>Velocidad (km/h)</th>
+                                            <th>Velocidad Dinámica (km/h)</th>
+                                            <th>E1 (Eje1)</th>
+                                            <th>E2 (Eje2)</th>
+                                            <th>E3 (Eje3)</th>
+                                            <th>E4 (Eje4)</th>
+                                            <th>E5 (Eje5)</th>
+                                            <th>Suma ejes</th>
+                                            <th>Peso Bruto Total (kg)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="record.medicion_ids" t-as="linea">
+                                            <tr>
+                                                <td>
+                                                    <t t-esc="linea.velocidad_kmh"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="linea.velocidad_dinamica_kmh"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="linea.eje_1"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="linea.eje_2"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="linea.eje_3"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="linea.eje_4"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="linea.eje_5"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="linea.computed_field"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="linea.peso_bruto_total"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2" style="text-align: right;">
+                                                <strong>Promedio (kg):</strong>
+                                            </td>
+                                            <td>
+                                                <t t-esc="'{:.2f}'.format(record.promedio_eje_1)"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="'{:.2f}'.format(record.promedio_eje_2)"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="'{:.2f}'.format(record.promedio_eje_3)"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="'{:.2f}'.format(record.promedio_eje_4)"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="'{:.2f}'.format(record.promedio_eje_5)"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="'{:.2f}'.format(record.promedio_eje_2_3)"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="'{:.2f}'.format(record.promedio_total_bruto)"/>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <div style="margin-top: 15px; text-align: center;">
+                                <p style="font-size: 10px;">Este certificado es válido únicamente si está firmado por el
+                                    técnico
+                                    correspondiente.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

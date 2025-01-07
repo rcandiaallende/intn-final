@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_registro_medicion_basculas_user,registro.medicion.basculas.user,model_registro_medicion_basculas,,1,1,1,1
+access_registro_medicion_basculas_linea_user,registro.medicion.basculas.linea.user,model_registro_medicion_basculas_linea,,1,1,1,1
+access_reporte_comisionamiento_wizard,reporte.comisionamiento.wizard,model_reporte_comisionamiento_wizard,base.group_user,1,1,1,0
+access_reporte_comisionamiento_wizard,reporte.comisionamiento.wizard,model_reporte_comisionamiento_wizard,,1,1,1,1

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_registro_medicion_basculas_tree" model="ir.ui.view">
+        <field name="name">registro.medicion.basculas.tree</field>
+        <field name="model">registro.medicion.basculas</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="fecha_emision"/>
+                <field name="tecnico"/>
+                <field name="tecnico_conductor"/>
+                <field name="fecha_verificacion"/>
+                <field name="calcomania_no"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_registro_medicion_basculas_form" model="ir.ui.view">
+        <field name="name">registro.medicion.basculas.form</field>
+        <field name="model">registro.medicion.basculas</field>
+        <field name="arch" type="xml">
+            <form string="Registro de Mediciones">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="fecha_emision"/>
+                            <field name="tecnico"/>
+                            <field name="tecnico_conductor"/>
+                            <field name="fecha_verificacion"/>
+                            <field name="calcomania_no"/>
+                        </group>
+                        <group string="Datos del Cliente">
+                            <field name="razon_social"/>
+                            <field name="ruc"/>
+                            <field name="direccion"/>
+                            <field name="ciudad"/>
+                            <field name="departamento"/>
+                        </group>
+                        <group string="Datos del Instrumento de Verificación">
+                            <field name="objeto"/>
+                            <field name="marca"/>
+                            <field name="modelo"/>
+                            <field name="no_serie"/>
+                        </group>
+                        <group string="Características Técnicas del Instrumento">
+                            <field name="capacidad"/>
+                            <field name="clase"/>
+                            <field name="identificacion_codigo"/>
+                            <field name="ubicacion"/>
+                        </group>
+                        <group string="Condiciones Ambientales">
+                            <field name="temperatura_inicial"/>
+                            <field name="temperatura_final"/>
+                            <field name="humedad_inicial"/>
+                            <field name="humedad_final"/>
+                        </group>
+                        <group string="Patrones">
+                            <field name="patron"/>
+                            <field name="certificado_numero"/>
+                            <field name="cant_ejes"/>
+                            <field name="cant_ejes_otros"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Ensayos">
+                            <field name="medicion_ids" widget="section_and_note_one2many">
+                                <tree editable="bottom">
+                                    <field name="ensayo_id" invisible="1"/>
+                                    <field name="velocidad_kmh"/>
+                                    <field name="velocidad_dinamica_kmh"/>
+                                    <field name="eje_1"/>
+                                    <field name="eje_2"
+                                           attrs="{'column_invisible': [('parent.cant_ejes', '&lt;', 2)]}"/>
+                                    <field name="eje_3"
+                                           attrs="{'column_invisible': [('parent.cant_ejes', '&lt;', 3)]}"/>
+                                    <field name="eje_4"
+                                           attrs="{'column_invisible': [('parent.cant_ejes', '&lt;', 4)]}"/>
+                                    <field name="eje_5"
+                                           attrs="{'column_invisible': [('parent.cant_ejes', '&lt;', 5)]}"/>
+                                    <field name="computed_field"/>
+                                    <field name="peso_bruto_total"/>
+                                </tree>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="promedio_eje_1"/>
+                                <field name="promedio_eje_2"/>
+                                <field name="promedio_eje_3"/>
+                                <field name="promedio_eje_4"/>
+                                <field name="promedio_eje_5"/>
+                                <field name="promedio_eje_2_3"/>
+                                <field name="promedio_total_bruto"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="action_registro_medicion_basculas" model="ir.actions.act_window">
+        <field name="name">Registro de Mediciones</field>
+        <field name="res_model">registro.medicion.basculas</field>
+        <!--<field name="view_type">form</field>-->
+        <field name="view_mode">tree,form</field>
+        <!--<field name="view_id" ref="view_registro_medicion_basculas_tree"/>-->
+    </record>
+
+    <menuitem
+            id="menu_registro_medicion"
+            name="Registro de Mediciones"
+            action="action_registro_medicion_basculas"
+            parent="contacts.res_partner_menu_config"
+    />
+
+</odoo>
