@@ -2,7 +2,7 @@
 import uuid
 
 from odoo import fields, models, api, _
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import calendar
 from odoo.exceptions import UserError, _logger
 import json
@@ -75,6 +75,13 @@ class VerificationRequest(models.Model):
 
 
     expediente = fields.Char(string='Expediente')
+
+    @api.model
+    def _get_week_start_end(self):
+        today = date.today()
+        start_of_week = today - timedelta(days=today.weekday())
+        end_of_week = start_of_week + timedelta(days=6)
+        return start_of_week, end_of_week
 
     def search_tecnico_ci(self, id_tecnico):
         tecnico = self.env['tecnico.metrologia'].search([('usuario', '=', id_tecnico)], limit=1)
