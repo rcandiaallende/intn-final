@@ -14,6 +14,7 @@
         'security/ir.model.access.csv',
         'data/ir_sequence_data.xml',
         'views/verification_request_views.xml',
+        'views/view_verification_request_search.xml',
         'views/annual_route_sheet.xml',
         'views/instrument_views.xml',
         'views/mobile_views.xml',
