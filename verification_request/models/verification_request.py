@@ -81,7 +81,7 @@ class VerificationRequest(models.Model):
         today = date.today()
         start_of_week = today - timedelta(days=today.weekday())
         end_of_week = start_of_week + timedelta(days=6)
-        return start_of_week, end_of_week
+        return start_of_week.isoformat(), end_of_week.isoformat()
 
     def search_tecnico_ci(self, id_tecnico):
         tecnico = self.env['tecnico.metrologia'].search([('usuario', '=', id_tecnico)], limit=1)
