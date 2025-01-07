@@ -1,12 +1,5 @@
 <odoo>
     <template id="payment_inherit_attachment" inherit_id="website_sale.payment">
-        <xpath expr="//form[@action='/shop/payment/validate']" position="attributes">
-            <attribute name="id">payment-form</attribute>
-        </xpath>
-        <xpath expr="//a[@class='btn btn-primary a-submit']" position="attributes">
-            <attribute name="id">pay-now-button</attribute>
-            <attribute name="disabled">true</attribute>
-        </xpath>
         <xpath expr="//div[@id='payment_method']" position="inside">
             <t t-if="request.session.pop('upload_success', False)">
                 <div class="alert alert-success mt-3">
@@ -46,31 +39,19 @@
                 </form>
             </div>
             <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const fileInput = document.getElementById('order-attachment');
-                const submitButton = document.getElementById('submit-button');
-                const payNowButton = document.getElementById('pay-now-button');
+                document.addEventListener('DOMContentLoaded', function() {
+                    const fileInput = document.getElementById('order-attachment');
+                    const submitButton = document.getElementById('submit-button');
 
-                // Asegurarse de que el botón esté inicialmente deshabilitado
-                if (payNowButton) {
-                    payNowButton.setAttribute('disabled', 'true');
-                }
-
-                fileInput.addEventListener('change', function() {
-                    if (fileInput.files.length > 0) {
-                        submitButton.removeAttribute('disabled');
-                        if (payNowButton) {
-                            payNowButton.removeAttribute('disabled');
+                    fileInput.addEventListener('change', function() {
+                        if (fileInput.files.length > 0) {
+                            submitButton.removeAttribute('disabled');
+                        } else {
+                            submitButton.setAttribute('disabled', 'true');
                         }
-                    } else {
-                        submitButton.setAttribute('disabled', 'true');
-                        if (payNowButton) {
-                            payNowButton.setAttribute('disabled', 'true');
-                        }
-                    }
+                    });
                 });
-            });
-        </script>
+            </script>
         </xpath>
     </template>
 </odoo>

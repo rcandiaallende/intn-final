@@ -1,5 +1,6 @@
 <odoo>
     <data>
+
         <record id="action_quotations_with_onboarding_state_pending" model="ir.actions.act_window">
             <field name="name">Solicitud de Normas</field>
             <field name="type">ir.actions.act_window</field>
@@ -26,16 +27,7 @@
                 id="menu_solicitud_normas"
                 name="Solicitud de Normas"
                 sequence="10"
-                web_icon="intn_trazabilidad_uso_marca,static/description/onn_icon.png"
                 action="action_quotations_with_onboarding_state_pending"/>
 
-        <menuitem
-                id="menu_solicitud_normas_facturacion"
-                name="Solicitud de Normas"
-                sequence="10"
-                parent="account.menu_finance_receivables"
-                action="action_quotations_with_onboarding_state_pending"/>
-
-
-    </data>
+    </data>
 </odoo>
