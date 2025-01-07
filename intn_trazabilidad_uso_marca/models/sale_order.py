@@ -31,6 +31,9 @@ class SaleOrder(models.Model):
     retiro_tercero_nombre = fields.Char('Nombre del Tercero')
     retiro_tercero_documento = fields.Char('Documento del Tercero')
     ecommerce_payment_receipt = fields.Binary(string="Comprobante Pago E-commerce")
+    ecommerce_payment_state = fields.Selection([('paid', 'Pagado'), ('unpaid', 'Pendiente de Pago')],
+                                               string='Estado Pago',
+                                               default='unpaid')
 
     @api.depends('calibration_request_id')
     def _compute_calibration_ids_count(self):
@@ -58,7 +61,7 @@ class SaleOrder(models.Model):
         for rec in self:
             if not rec.invoice_ids:
                 return False
-            if sum(rec.invoice_ids.mapped('residual')) <= 0:
+            if sum(rec.invoice_ids.filtered(lambda inv: inv.state not in ['draft', 'cancel']).mapped('residual')) <= 0:
                 return True
 
     def approve_so(self):

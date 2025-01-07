@@ -71,6 +71,15 @@ class WebsiteSaleInherit(WebsiteSale):
             # Crear la factura
             invoice = self._create_invoice_v12(order)
             if invoice:
+                attachment = request.env['ir.attachment'].sudo().create({
+                    'name': 'Comprobante_transferencia',
+                    'type': 'binary',
+                    'datas': order.ecommerce_payment_receipt,
+                    'res_model': 'account.invoice',
+                    'res_id': invoice.id,
+                })
+                order.ecommerce_invoice_id = invoice.id
+                invoice.ecommerce_payment_receipt = order.ecommerce_payment_receipt
                 _logger.info(f"Factura creada y publicada para la orden {order.name}: {invoice.number}")
 
             # Crear y enviar el correo
@@ -96,19 +105,12 @@ class WebsiteSaleInherit(WebsiteSale):
         )
 
     def _create_invoice_v12(self, sale_order):
+        # Create the draft invoice
         try:
-            invoice_id = sale_order.sudo().action_invoice_create(grouped=True)
+            invoice_id = sale_order.sudo().action_invoice_create()
             invoice = request.env['account.invoice'].sudo().browse(invoice_id)
-            attachment = request.env['ir.attachment'].sudo().create({
-                'name': 'Comprobante_transferencia',
-                'type': 'binary',
-                'datas': sale_order.ecommerce_payment_receipt,
-                'res_model': 'account.invoice',
-                'res_id': invoice.id,
-            })
-            invoice.ecommerce_payment_receipt = sale_order.ecommerce_payment_receipt
             invoice.sudo().action_move_create()
-            invoice.sudo().invoice_validate()
+            # invoice.sudo().invoice_validate()
             return invoice
         except Exception as e:
             _logger.error(f"Error al crear la factura para la orden {sale_order.name}: {e}")

@@ -22,6 +22,7 @@ class AccountInvoice(models.Model):
             if invoice.residual == 0 and invoice.origin and invoice.state == 'open':
                 sale_order_id = self.env['sale.order'].sudo().search([('name', '=', invoice.origin)], limit=1)
                 if sale_order_id and sale_order_id.service_type == 'onn_normas':
+                    sale_order_id.ecommerce_payment_state = 'paid'
                     normas_documents = sale_order_id.order_line.mapped('product_id').mapped('product_tmpl_id').mapped(
                         'norma_document')
 
