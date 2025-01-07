@@ -24,5 +24,18 @@
             </field>
         </record>
 
+        <record id="onn_normas_sale_order_tree_view" model="ir.ui.view">
+            <field name="name">sale.order.tree.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="priority">5</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="inside">
+                    <field name="ecommerce_payment_state"/>
+                </xpath>
+            </field>
+        </record>
+
+
     </data>
 </odoo>
