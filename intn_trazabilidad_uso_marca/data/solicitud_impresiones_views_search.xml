@@ -4,12 +4,10 @@
         <field name="name">Solicitudes de Impresión</field>
         <field name="res_model">solicitud.impresiones</field>
         <field name="view_mode">tree,form</field>
-        <field name="search_view_id" ref="view_solicitud_impresiones_search"/>
-        <field name="view_id" ref="view_solicitud_impresiones_search"/>
         <field name="context">{}</field>
     </record>
 
-    <!-- Vista de búsqueda para solicitud.impresiones -->
+    <!-- Vista de búsqueda para solicitud impresiones -->
     <record id="view_solicitud_impresiones_search" model="ir.ui.view">
         <field name="name">solicitud.impresiones.search</field>
         <field name="model">solicitud.impresiones</field>
@@ -23,13 +21,6 @@
                 <field name="fecha_solicitud" string="Fecha de Solicitud"/>
                 <field name="licencia_id" string="Licencia"/>
                 <field name="imprenta_ids" string="Lugar de Impresión"/>
-<!--                <filter string="Certificados Relacionados"-->
-<!--                    name="filter_certificados"-->
-<!--                        domain="[('certificado_ids', '!=', False)]"/>-->
-<!--                <filter string="Facturas Relacionadas"-->
-<!--                        name="filter_facturas"-->
-<!--                        domain="[('factura_ids', '!=', False)]"/>-->
-
                 <!-- Filtros predefinidos -->
                 <filter string="Nuevas" name="filtro_nuevo" domain="[('state', '=', 'draft')]"/>
                 <filter string="Asignadas" name="filtro_asignado" domain="[('state', '=', 'asignado')]"/>
@@ -40,8 +31,6 @@
                 <filter string="Activas" name="filtro_activas" domain="[('active', '=', True)]"/>
                 <filter string="Lugar de Impresion" name="filtro_con_imprenta"
                         domain="[('imprenta_ids', '!=', False)]"/>
-
-
                 <!-- Agrupaciones -->
                 <group expand="1" string="Agrupar por">
                     <filter string="Estado" name="group_by_estado" context="{'group_by': 'state'}"/>
@@ -52,16 +41,14 @@
                     <filter string="Licencia" name="group_by_licencia" context="{'group_by': 'licencia_id'}"/>
                     <filter string="Fecha de Solicitud" name="group_by_fecha"
                             context="{'group_by': 'fecha_solicitud'}"/>
-<!--                    <field name="certificado_ids" string="Certificados"/>-->
-<!--                    <field name="factura_ids" string="Facturas"/>-->
                 </group>
             </search>
         </field>
     </record>
 
-    <menuitem id="menu_solicitud_impresiones"
-              name="Solicitudes de Impresión"
-              parent="intn_trazabilidad_uso_marca.menu_2"
-              action="action_solicitud_impresiones_search"
-              sequence="10"/>
+<!--    <menuitem id="menu_solicitud_impresiones"-->
+<!--              name="Solicitudes de Impresión"-->
+<!--              parent="intn_trazabilidad_uso_marca.menu_2"-->
+<!--              action="action_solicitud_impresiones_search"-->
+<!--              sequence="10"/>-->
 </odoo>
