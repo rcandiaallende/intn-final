@@ -661,7 +661,9 @@
                 option.setAttribute('data-precio', servicio.price);
 
                 if (servicio.additional_cost) {
-                option.setAttribute('data-additional-cost', servicio.verificacion_insitu);
+                option.setAttribute('data-additional-cost', servicio.additional_cost);
+                } else {
+                option.setAttribute('data-additional-cost', 'No');
                 }
 
                 servicioSelect.appendChild(option);
