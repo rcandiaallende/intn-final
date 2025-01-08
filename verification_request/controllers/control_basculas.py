@@ -1,3 +1,4 @@
+import hashlib
 from odoo import fields, http, _
 from odoo.exceptions import AccessError, MissingError
 from odoo.http import request
@@ -7,7 +8,7 @@ import json
 import datetime
 import pytz
 from datetime import datetime, timedelta
-import base64
+
 
 
 class CustomerPortal(CustomerPortal):
@@ -31,8 +32,28 @@ class CustomerPortal(CustomerPortal):
         if not pdf_content:
             return "Error al generar el PDF"
 
-        return request.make_response(pdf_content, headers=[('Content-Type', content_type), ('Content-Disposition', 'attachment; filename="reporte.pdf"')])
+        return request.make_response(pdf_content, headers=[('Content-Type', content_type), (
+            'Content-Disposition', 'attachment; filename="reporte.pdf"')])
 
+    @http.route('/verification_request/new/solicitud1/', type='http', auth='user', website=True)
+    def new_solicitud(self, **kw):
+        """
+        Renderiza el formulario para una nueva solicitud.
+        """
+        session_uid = request.session.uid
+        partner = None
+        if session_uid:
+            partner = request.env['res.users'].browse(request.session.uid).partner_id
+
+        fecha_actual = datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime("%d/%m/%Y %H:%M")
+        departments = request.env['res.country.state'].search([('country_id', '=', 185)])  # ID de Paraguay
+
+        return request.render('verification_request.nueva_solicitud_portal', {
+            'fecha_actual': fecha_actual,
+            'partner': partner,
+            'page_name': 'solicitud',
+            'departments': departments
+        })
 
     @http.route('/verification_request/save/solicitud', type='http', auth='user', website=True, csrf=True)
     def save_solicitud(self, **kw):
@@ -84,7 +105,7 @@ class CustomerPortal(CustomerPortal):
         return {'months': [{'value': month, 'label': month_labels[month]} for month in months]}
 
     def _prepare_portal_layout_values(self):
-        values = super(CustomerPortal, self)._prepare_portal_layout_values()
+        values = super(IntnCamionesTanque, self)._prepare_portal_layout_values()
         partner = None
 
         session_uid = request.session.uid
@@ -151,72 +172,58 @@ class CustomerPortal(CustomerPortal):
 
     @http.route(['/my/bascule_verification', '/my/bascule_verification/page/<int:page>'], type='http', auth="user",
                 website=True)
-    def listar(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
+    def portal_my_control_bascula(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
-        solicitudes = request.env['verification.request']
+        VerificationRequest = request.env['verification.request']
 
+        # Inicializamos 'domain' con un filtro base
         domain = [
-            ('partner_id', '=', [partner.id]),
-            ('state', 'not in', ['duplicate', 'canceled_due_closure', 'cancel'])
+            ('state', '=', 'pending'),  # Filtro para estado "pending"
         ]
 
         searchbar_sortings = {
-            'request_date': {'label': _('Fecha Solicitud'), 'order': 'request_date desc'},
-            'name': {'label': _('Referencia'), 'order': 'name'},
-            'stage': {'label': _('Estado'), 'order': 'state'},
+            'date': {'label': _('Request Date'), 'order': 'create_date desc'},
+            'name': {'label': _('Reference'), 'order': 'name'},
         }
-
-        # default sortby order
+        # Default sortby order
         if not sortby:
-            sortby = 'request_date'
+            sortby = 'date'
         sort_order = searchbar_sortings[sortby]['order']
 
+        # Archivado y filtrado por fechas
+        archive_groups = self._get_archive_groups('verification.request', domain)
+
+        # Modificamos el dominio si las fechas están presentes
         if date_begin and date_end:
             domain += [('create_date', '>', date_begin), ('create_date', '<=', date_end)]
 
-        # count for pager
-        request_count = solicitudes.search_count(domain)
-        # make pager
+        # Count for pager
+        request_count = VerificationRequest.search_count(domain)
+        # Pager
         pager = portal_pager(
-            url="/my/bascule_verification/",
+            url="/my/bascule_verification",
             url_args={'date_begin': date_begin, 'date_end': date_end, 'sortby': sortby},
             total=request_count,
             page=page,
             step=self._items_per_page
         )
-        # search the count to display, according to the pager data
-        quotations = solicitudes.search(domain, order=sort_order, limit=self._items_per_page,
-                                        offset=pager['offset'])
-        # request.session['my_solicitudes_camiones_history'] = quotations.ids[:100]
+        # Content according to pager and archive selected
+        requests = VerificationRequest.search(domain, order=sort_order, limit=self._items_per_page,
+                                              offset=pager['offset'])
+        request.session['my_requests_history'] = requests.ids[:100]
 
         values.update({
             'date': date_begin,
-            'quotations': quotations.sudo(),
-            'page_name': 'solicitud',
+            'requests': requests.sudo(),
+            'page_name': 'verification_request',
             'pager': pager,
-            'default_url': '/my/camiones',
+            'archive_groups': archive_groups,
+            'default_url': '/my/bascule_verification',
             'searchbar_sortings': searchbar_sortings,
             'sortby': sortby,
         })
-
-        return request.render("verification_request.portal_my_bascule_verification", values)
-
-    # @http.route(['/verification_request/new/solicitud'], type='http', auth="user", website=True)
-    # def new_solicitud(self, **kw):
-    #     session_uid = request.session.uid
-    #     partner = None
-    #     if session_uid:
-    #         partner = request.env['res.users'].browse(request.session.uid).partner_id
-    #
-    #     fecha_actual = datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime("%d/%m/%Y %H:%M")
-    #
-    #     instruments = request.env['instrument'].search([('name', '!=', False)])
-    #
-    #     return http.request.render('verification_request.nueva_solicitud',
-    #                                {'fecha_actual': fecha_actual, 'partner': partner, 'page_name': 'solicitud',
-    #                                 'instruments': instruments,
-    #                                 })
+        return request.render("verification_request.portal_my_bascule_verification1", values)
 
     @http.route('/verification_request/save/solicitud', auth='user', website=True, )
     def save_solicitud_agendamiento(self, **kw):
@@ -313,7 +320,7 @@ def save_camion(self, **kw):
         else:
             camiones = camiones + child_camiones
 
-    return http.request.render('intn_camiones_tanque.nueva_solicitud',
+    return http.request.render('intn_camiones_tanque.nueva_solicitud1',
                                {'fecha_actual': fecha_actual, 'partner': partner, 'page_name': 'solicitud',
                                 'sucursales': sucursales, 'camiones': camiones, 'marcas': marcas,
                                 'modelos': modelos, 'emblemas': emblemas, 'camionC': camion, 'acopladoA': False,
