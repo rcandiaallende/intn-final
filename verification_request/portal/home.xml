@@ -413,6 +413,385 @@
                 </div>
             </xpath>
         </template>
+        <!-- desde aca test       -->
+        <template id="verification_request.portal_my_bascule_verification" name="Mis Solicitudes">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Solicitudes</t>
+                </t>
+                <a role="button" class="btn btn-primary" href="/verification_request/new/solicitud">
+                    <i class="fa fa-plus-square-o"/>
+                    Nueva Solicitud
+                </a>
+                <br></br>
+                <br></br>
+                <t t-if="not quotations">
+                    <p>Actualmente no tiene solicitudes.</p>
+                </t>
+                <t t-if="quotations" t-call="portal.portal_table">
+                    <thead>
+                        <tr class="active">
+                            <th>Solicitud #</th>
+                            <th class="text-right">Fecha de solicitud</th>
+                            <th class="text-right">Técnico</th>
+                            <th class="text-right">Estado</th>
+                            <th class="text-center">Documento</th>
+                        </tr>
+                    </thead>
+                    <t t-foreach="quotations" t-as="solicitud">
+                        <tr>
+                            <td>
+                                <a>
+                                    <t t-esc="solicitud.name"/>
+                                </a>
+                            </td>
+                            <td class="text-right">
+                                <span t-field="solicitud.request_date"/>
+                            </td>
+                            <td class="text-right">
+                                <span t-field="solicitud.designation"/>
+                            </td>
+                            <td class="text-right">
+                                <span t-field="solicitud.state"/>
+                                <i t-att-class="solicitud.get_state_icon(solicitud.state)"/>
+                            </td>
+                            <td class="text-center">
+                                <t t-if="solicitud.state in ['verified', 'impossibility']">
+                                    <a role="button" class="btn btn-info"
+                                       t-att-href="'/my/imprimir-certificado/' + str(solicitud['id'])">
+                                        <i class="fa fa-print"/>
+                                        Descargar
+                                    </a>
+                                </t>
+                                <t t-else="">
+                                    <span class="badge badge-pill badge-secondary">No Disponible</span>
+                                </t>
+                            </td>
+                        </tr>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <template id="nueva_solicitud" name="Nueva Solicitud">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Solicitudes de Verificación</t>
+                </t>
+
+                <div class="o_portal_page_content col-12 col-lg d-flex flex-column shadow"
+                     style="padding:0 !important;background:white;">
+                    <div class="o_portal_page_size">
+                        <div class="container" style="padding:15px !important;margin-left:auto;margin-right:auto;">
+                            <style>
+                                label {
+                                padding-top: 10px;
+                                padding-bottom: 10px;
+                                font-size: 14px;
+                                }
+                                input[type=text], select {
+                                width: 100% !important;
+                                padding: 12px 20px;
+                                margin: 8px 0;
+                                display: inline-block;
+                                border: 1px solid #ccc;
+                                border-radius: 4px;
+                                box-sizing: border-box;
+                                }
+
+                                input[type=submit] {
+                                width: 100%;
+                                background-color: #4CAF50;
+                                color: white;
+                                padding: 14px 20px;
+                                margin: 8px 0;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                }
+
+                                input[type=submit]:hover {
+                                background-color: #45a049;
+                                }
+
+                                .div-form {
+                                border-radius: 5px;
+                                background-color: #f2f2f2;
+                                padding: 20px;
+                                }
+
+                                .title {
+                                font-weight: bold;
+                                font-size: 16px;
+                                margin-top: 15px;
+                                margin-bottom: 15px;
+                                }
+                            </style>
+
+                            <h1 style="text-align:center">Nueva Solicitud de Verificación</h1>
+                            <br/>
+                            <div class="div-form">
+                                <form id="formServicio" action="/verification_request/save/solicitud" method="post"
+                                      enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label for="partner">Cliente:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <input type="text" id="partner" name="partner" t-att-value="partner.name"
+                                                   disabled="disabled" style="width:100%" required="required"/>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label for="department">Departamento:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <select id="department" name="department" required="required"
+                                                    style="width:100%">
+                                                <t t-foreach="departments" t-as="dep">
+                                                    <option t-att-value="dep.id" t-esc="dep.name"/>
+                                                </t>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label for="month">Mes:</label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <select id="month" name="month" required="required" style="width:100%">
+                                                <option value="january">Enero</option>
+                                                <option value="february">Febrero</option>
+                                                <option value="march">Marzo</option>
+                                                <option value="april">Abril</option>
+                                                <option value="may">Mayo</option>
+                                                <option value="june">Junio</option>
+                                                <option value="july">Julio</option>
+                                                <option value="august">Agosto</option>
+                                                <option value="september">Septiembre</option>
+                                                <option value="october">Octubre</option>
+                                                <option value="november">Noviembre</option>
+                                                <option value="december">Diciembre</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label for="observation">Observaciones:</label>
+                                            <input type="text" name="observation" id="observation" style="width:100%"/>
+                                        </div>
+
+                                    </div>
+                                    <br/>
+                                    <div class="col-md-12" id="mensaje" style="font-size:16px;color:red"></div>
+                                    <div class="table-responsive">
+                                        <div style="padding-top:20px">
+                                            <button type="submit" id="guardarSolicitud" class="btn btn-primary">
+                                                Guardar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="solicitud_error" name="Error en la Solicitud">
+            <t t-call="portal.portal_layout">
+                <h2 style="text-align: center; color: red;">¡Error al crear la solicitud!</h2>
+                <p style="text-align: center;">Ocurrió el siguiente error:
+                    <t t-esc="error"/>
+                </p>
+                <p style="text-align: center;">
+                    <a href="/verification_request/new/solicitud" class="btn btn-primary">Volver</a>
+                </p>
+            </t>
+        </template>
+
+        <template id="solicitud_creada" name="Solicitud Creada">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Solicitudes</t>
+                </t>
+
+                <div class="o_portal_page_content col-12 col-lg d-flex flex-column shadow"
+                     style="padding:0 !important;background:white;">
+                    <div class="o_portal_page_size">
+                        <div class="container" style="padding:15px !important;margin-left:auto;margin-right:auto;">
+
+                            <h3 style="text-align:center">SE HA CREADO SU AGENDAMIENTO CORRECTAMENTE CON EL NÚMERO
+                                <a href="/my/bascule_verification">
+                                    <t t-esc="solicitud.name"/>
+                                </a>
+                            </h3>
+                            <!--<h2 style="text-align:center">
+                                Le esperamos en la fecha agendada
+                                <a href="/my/bascule_verification">
+                                    <t t-esc="solicitud.request_date2.strftime('%d/%m/%Y')"/>
+                                </a>
+                                , por favor avisar 48 hs antes si tienen algún inconveniente para asistir.
+
+                            </h2>-->
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="solicitud_agendamiento_portal_template" name="Solicitudes de verificación de camiones"
+                  inherit_id="portal.portal_sidebar" primary="True">
+            <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+                <!--t t-set="o_portal_fullwidth_alert" groups="sales_team.group_sale_salesman">
+                    <t t-call="portal.portal_back_in_edit_mode">
+                        <t t-set="backend_url" t-value="'/web#return_label=Website&amp;model=%s&amp;id=%s&amp;action=%s&amp;view_type=form' % (solicitud.name, solicitud.id)"/>
+                    </t>
+                </t-->
+
+                <div class="row mt16 o_portal_sale_sidebar">
+                    <!-- Sidebar -->
+                    <t t-call="portal.portal_record_sidebar">
+                        <t t-set="classes" t-value="'col-lg-auto d-print-none'"/>
+
+                        <!--                    <t t-set="title">-->
+                        <!--                        <h2 class="mb-0"><b t-field="sale_order.amount_total" data-id="total_amount"/> </h2>-->
+                        <!--                    </t>-->
+                        <t t-set="entries">
+                            <ul class="list-group list-group-flush flex-wrap flex-row flex-lg-column">
+                                <t t-if="solicitud.state in ['pending','draft', 'done','cancel']">
+                                    <li class="list-group-item">
+                                        <div class="card-body text-center pb-2 pt-3">
+
+                                            <h3>
+                                                <t t-esc="solicitud.name"/>
+                                            </h3>
+
+                                            <p>
+                                                Fecha de Solicitud
+                                            </p>
+                                            <p>
+                                                <i class="fa fa-clock-o" aria-title="Fecha de Solicitud"
+                                                   title="Fecha de solicitud"></i>
+                                                <t t-if="solicitud.fecha_solicitud">
+                                                    <t t-esc="solicitud.fecha_solicitud.strftime('%d/%m/%Y')"/>
+                                                </t>
+                                            </p>
+                                            <span t-if="solicitud.state == 'cancel'"
+                                                  class="badge badge-pill badge-secondary">
+                                                <i class="fa fa-fw fa-remove"/>
+                                                Cancelado
+                                            </span>
+                                            <span t-if="solicitud.state == 'done'"
+                                                  class="badge badge-pill badge-success">
+                                                <i class="fa fa-fw fa-check-square-o"/>
+                                                Confirmado
+                                            </span>
+                                            <span t-if="solicitud.state == 'reagendado'"
+                                                  class="badge badge-pill badge-success">
+                                                <i class="fa fa-fw fa-check-square-o"/>
+                                                Reagendado
+                                            </span>
+                                            <span t-if="solicitud.state == 'pending'"
+                                                  class="badge badge-pill badge-primary">
+                                                <i class="fa fa-fw fa-clock-o"/>
+                                                Pendiente
+                                            </span>
+                                        </div>
+                                    </li>
+                                </t>
+
+                                <li class="list-group-item flex-grow-1">
+                                    <div class="o_download_pdf btn-toolbar flex-sm-nowrap">
+                                        <div class="btn-group flex-grow-1 mr-1 mb-1">
+                                            <a class="btn btn-secondary btn-block o_download_btn"
+                                               t-att-href="solicitud.get_portal_url(report_type='pdf', download=True)"
+                                               title="Download">
+                                                <i class="fa fa-download"/>
+                                                Descargar
+                                            </a>
+                                        </div>
+                                        <div class="btn-group flex-grow-1 mb-1">
+                                            <a class="btn btn-secondary btn-block o_print_btn o_portal_invoice_print"
+                                               t-att-href="solicitud.get_portal_url(report_type='pdf')"
+                                               id="print_invoice_report" title="Print" target="_blank">
+                                                <i class="fa fa-print"/>
+                                                Imprimir
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li class="navspy list-group-item pl-0 flex-grow-1" t-ignore="true"
+                                    role="complementary">
+                                    <ul class="nav flex-column bs-sidenav"></ul>
+                                </li>
+
+
+                                <li t-if="solicitud.user_id" class="list-group-item flex-grow-1">
+                                    <div class="small mb-1">
+                                        <strong class="text-muted">Su Contacto</strong>
+                                    </div>
+                                    <div class="row flex-nowrap">
+                                        <div class="col flex-grow-0 pr-2">
+                                            <img class="rounded-circle mr4 float-left o_portal_contact_img"
+                                                 t-if="solicitud.user_id.image"
+                                                 t-att-src="image_data_uri(solicitud.user_id.image)" alt="Contacto"/>
+                                            <img class="rounded-circle mr4 float-left o_portal_contact_img"
+                                                 t-if="not solicitud.user_id.image"
+                                                 src="/web/static/src/img/placeholder.png" alt="Contacto"/>
+                                        </div>
+                                        <div class="col pl-0" style="min-width: user_id">
+                                            <span t-field="solicitud.user_id"
+                                                  t-options='{"widget": "contact", "fields": ["name", "phone"], "no_marker": True}'/>
+                                            <a href="#discussion" class="small">
+                                                <i class="fa fa-comment"></i>
+                                                Enviar mensaje
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </t>
+                    </t>
+
+                    <!-- Page Content -->
+                    <div id="invoice_content"
+                         class="o_portal_page_content col-12 col-lg d-flex flex-column align-items-end">
+                        <div class="o_portal_page_size">
+                            <t t-if="error or warning" t-call="account.portal_invoice_error"/>
+                            <t t-if="success and (not error and not warning)" t-call="account.portal_invoice_success"/>
+
+                            <div class="o_portal_html_view shadow">
+                                <div class="o_portal_html_loader text-center">
+                                    <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw text-black-50"/>
+                                </div>
+                                <iframe style="min-height:800px;" id="invoice_html" class="mt8 mb8" width="100%"
+                                        height="100%" frameborder="0" scrolling="no"
+                                        t-att-src="solicitud.get_portal_url(report_type='html')"/>
+
+                            </div>
+
+                            <div id="sale_order_communication" class="mt-4">
+                                <h2>Comunicación</h2>
+                                <t t-call="portal.message_thread">
+                                    <t t-set="object" t-value="solicitud"/>
+                                </t>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </xpath>
+        </template>
 
 
     </data>
