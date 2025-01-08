@@ -26,7 +26,7 @@
         # 'views/tecnico_metrologia.xml',
         'portal/home.xml',
         # 'portal/registry_portal.xml',
-        # 'portal/solicitud_agendamiento.xml',
+        'portal/solicitud_agendamiento.xml',
         'reports/impossibility_template.xml',
         'views/tecnico_metrologia.xml',
         'views/certificado_calibracion.xml',
