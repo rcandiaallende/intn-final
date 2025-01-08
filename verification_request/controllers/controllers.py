@@ -77,4 +77,4 @@ class IntnCamionesTanque(CustomerPortal):
             'searchbar_sortings': searchbar_sortings,
             'sortby': sortby,
         })
-        return request.render("verification_request.portal_my_control_bascula", values)
+        return request.render("verification_request.portal_my_bascule_verification", values)
