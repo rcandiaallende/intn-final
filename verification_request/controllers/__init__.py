@@ -1,3 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from . import portal, controllers, registry_portal
+from . import registry_portal
+from . import controllers
+from . import portal
