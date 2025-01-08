@@ -105,7 +105,7 @@ class CustomerPortal(CustomerPortal):
         return {'months': [{'value': month, 'label': month_labels[month]} for month in months]}
 
     def _prepare_portal_layout_values(self):
-        values = super(IntnCamionesTanque, self)._prepare_portal_layout_values()
+        values = super(CustomerPortal, self)._prepare_portal_layout_values()
         partner = None
 
         session_uid = request.session.uid
