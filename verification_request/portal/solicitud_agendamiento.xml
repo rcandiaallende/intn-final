@@ -63,130 +63,161 @@
         </template>
 
         <template id="nueva_solicitud1" name="Nueva Solicitud">
-            <t t-call="portal.portal_layout">
-                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <div class="o_portal_wrapper_full">
+                <style>
+                    body {
+                    font-family: 'Roboto', sans-serif;
+                    background: linear-gradient(135deg, #f8f9fa, #e9eff6);
+                    color: #212529;
+                    margin: 0;
+                    padding: 0;
+                    line-height: 1.6;
+                    overflow: hidden;
+                    }
 
-                <t t-call="portal.portal_searchbar">
-                    <t t-set="title">Solicitudes de Verificación</t>
-                </t>
+                    .o_portal_wrapper_full {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    padding: 20px;
+                    background: linear-gradient(135deg, #d8e8f9, #ffffff);
+                    }
 
-                <div class="o_portal_page_content col-12 col-lg d-flex flex-column shadow"
-                     style="padding:0 !important;background:white;">
-                    <div class="o_portal_page_size">
-                        <div class="container" style="padding:15px !important;margin-left:auto;margin-right:auto;">
-                            <style>
-                                label {
-                                padding-top: 10px;
-                                padding-bottom: 10px;
-                                font-size: 14px;
-                                }
-                                input[type=text], select {
-                                width: 100% !important;
-                                padding: 12px 20px;
-                                margin: 8px 0;
-                                display: inline-block;
-                                border: 1px solid #ccc;
-                                border-radius: 4px;
-                                box-sizing: border-box;
-                                }
+                    .card {
+                    width: 100%;
+                    max-width: 1200px;
+                    padding: 30px;
+                    background-color: #ffffff;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+                    overflow: hidden;
+                    transition: box-shadow 0.3s ease-in-out;
+                    }
 
-                                input[type=submit] {
-                                width: 100%;
-                                background-color: #4CAF50;
-                                color: white;
-                                padding: 14px 20px;
-                                margin: 8px 0;
-                                border: none;
-                                border-radius: 4px;
-                                cursor: pointer;
-                                }
+                    h2 {
+                    color: #004aad;
+                    font-weight: 700;
+                    margin-bottom: 25px;
+                    text-align: center;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    }
 
-                                input[type=submit]:hover {
-                                background-color: #45a049;
-                                }
+                    label {
+                    font-weight: 600;
+                    color: #495057;
+                    display: block;
+                    margin-bottom: 10px;
+                    }
 
-                                .div-form {
-                                border-radius: 5px;
-                                background-color: #f2f2f2;
-                                padding: 20px;
-                                }
+                    select,
+                    input[type="text"],
+                    input[type="number"] {
+                    width: 100%;
+                    padding: 12px;
+                    margin-top: 5px;
+                    border: 1px solid #ced4da;
+                    border-radius: 8px;
+                    background-color: #fcfcfc;
+                    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                    }
 
-                                .title {
-                                font-weight: bold;
-                                font-size: 16px;
-                                margin-top: 15px;
-                                margin-bottom: 15px;
-                                }
-                            </style>
+                    select:focus,
+                    input[type="text"]:focus,
+                    input[type="number"]:focus {
+                    border-color: #004aad;
+                    box-shadow: 0 0 10px rgba(0, 74, 173, 0.3);
+                    outline: none;
+                    }
 
-                            <h1 style="text-align:center">Nueva Solicitud de Verificación</h1>
-                            <br/>
-                            <div class="div-form">
-                                <form id="formServicio" action="/verification_request/save/solicitud" method="post"
-                                      enctype="multipart/form-data">
-                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <label for="partner">Cliente:</label>
-                                        </div>
-                                        <div class="col-md-10">
-                                            <input type="text" id="partner" name="partner" t-att-value="partner.name"
-                                                   disabled="disabled" style="width:100%" required="required"/>
-                                        </div>
+                    .btn {
+                    font-weight: 600;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    }
 
-                                        <div class="col-md-2">
-                                            <label for="department">Departamento:</label>
-                                        </div>
-                                        <div class="col-md-10">
-                                            <select id="department" name="department" required="required"
-                                                    style="width:100%">
-                                                <t t-foreach="departments" t-as="dep">
-                                                    <option t-att-value="dep.id" t-esc="dep.name"/>
-                                                </t>
-                                            </select>
-                                        </div>
+                    .btn-primary {
+                    background-color: #007bff;
+                    border: none;
+                    color: #ffffff;
+                    display: block;
+                    margin: 0 auto;
+                    text-transform: uppercase;
+                    }
 
-                                        <div class="col-md-2">
-                                            <label for="month">Mes:</label>
-                                        </div>
-                                        <div class="col-md-10">
-                                            <select id="month" name="month" required="required" style="width:100%">
-                                                <option value="january">Enero</option>
-                                                <option value="february">Febrero</option>
-                                                <option value="march">Marzo</option>
-                                                <option value="april">Abril</option>
-                                                <option value="may">Mayo</option>
-                                                <option value="june">Junio</option>
-                                                <option value="july">Julio</option>
-                                                <option value="august">Agosto</option>
-                                                <option value="september">Septiembre</option>
-                                                <option value="october">Octubre</option>
-                                                <option value="november">Noviembre</option>
-                                                <option value="december">Diciembre</option>
-                                            </select>
-                                        </div>
+                    .btn-primary:hover {
+                    background-color: #0056b3;
+                    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+                    }
 
-                                        <div class="col-md-12">
-                                            <label for="observation">Observaciones:</label>
-                                            <input type="text" name="observation" id="observation" style="width:100%"/>
-                                        </div>
+                    .form-group {
+                    margin-bottom: 20px;
+                    }
 
-                                    </div>
-                                    <br/>
-                                    <div class="col-md-12" id="mensaje" style="font-size:16px;color:red"></div>
-                                    <div class="table-responsive">
-                                        <div style="padding-top:20px">
-                                            <button type="submit" id="guardarSolicitud" class="btn btn-primary">
-                                                Guardar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
+                </style>
+
+                <t t-call="portal.portal_layout">
+                    <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                    <t t-call="portal.portal_searchbar">
+                        <t t-set="title">Solicitudes de Verificación</t>
+                    </t>
+
+                    <div class="card">
+                        <h2>Nueva Solicitud de Verificación</h2>
+                        <form id="formServicio" action="/verification_request/save/solicitud" method="post"
+                              enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="form-group">
+                                <label for="partner">Cliente:</label>
+                                <input type="text" id="partner" name="partner" t-att-value="partner.name"
+                                       disabled="disabled" required="required"/>
                             </div>
-                        </div>
+
+                            <div class="form-group">
+                                <label for="department">Departamento:</label>
+                                <select id="department" name="department" required="required">
+                                    <t t-foreach="departments" t-as="dep">
+                                        <option t-att-value="dep.id" t-esc="dep.name"/>
+                                    </t>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="month">Mes:</label>
+                                <select id="month" name="month" required="required">
+                                    <option value="january">Enero</option>
+                                    <option value="february">Febrero</option>
+                                    <option value="march">Marzo</option>
+                                    <option value="april">Abril</option>
+                                    <option value="may">Mayo</option>
+                                    <option value="june">Junio</option>
+                                    <option value="july">Julio</option>
+                                    <option value="august">Agosto</option>
+                                    <option value="september">Septiembre</option>
+                                    <option value="october">Octubre</option>
+                                    <option value="november">Noviembre</option>
+                                    <option value="december">Diciembre</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="observation">Observaciones:</label>
+                                <input type="text" name="observation" id="observation"/>
+                            </div>
+
+                            <div id="mensaje" style="font-size:16px;color:red"></div>
+
+                            <div class="text-center">
+                                <button type="submit" id="guardarSolicitud" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </form>
                     </div>
-                </div>
-            </t>
+                </t>
+            </div>
         </template>
 
         <template id="solicitud_error" name="Error en la Solicitud">
