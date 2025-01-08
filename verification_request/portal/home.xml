@@ -78,7 +78,7 @@
             </t>
         </template>
 
-        <template id="nueva_solicitud_basculas_portal" name="Nueva Solicitud">
+        <template id="nueva_solicitud" name="Nueva Solicitud">
             <t t-call="portal.portal_layout">
                 <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
