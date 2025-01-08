@@ -52,7 +52,7 @@ class IntnCamionesTanque(CustomerPortal):
         return request.make_response(pdf_content, headers=[('Content-Type', content_type), (
         'Content-Disposition', 'attachment; filename="reporte.pdf"')])
 
-    @http.route('/verification_request/new/solicitud', type='http', auth='user', website=True)
+    @http.route('/verification_request/new/solicitud1/', type='http', auth='user', website=True)
     def new_solicitud(self, **kw):
         """
         Renderiza el formulario para una nueva solicitud.
