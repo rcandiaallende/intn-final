@@ -170,37 +170,35 @@ class CustomerPortal(CustomerPortal):
 
         return request.render('intn_camiones_tanque.solicitud_agendamiento_portal_template', values)
 
-    @http.route(['/my/bascule_verification1', '/my/bascule_verification/page/<int:page>'], type='http', auth="user",
+    @http.route(['/my/bascule_verification1', '/my/bascule_verification1/page/<int:page>'], type='http', auth="user",
                 website=True)
-    def portal_my_control_bascula(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
+    def listar(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
-        VerificationRequest = request.env['verification.request']
+        solicitudes = request.env['verification.request']
 
-        # Inicializamos 'domain' con un filtro base
         domain = [
-            ('state', '=', 'pending'),  # Filtro para estado "pending"
+            ('partner_id', '=', [partner.id]),
+            ('state', 'not in', ['duplicate', 'canceled_due_closure', 'cancel'])
         ]
 
         searchbar_sortings = {
-            'date': {'label': _('Request Date'), 'order': 'create_date desc'},
-            'name': {'label': _('Reference'), 'order': 'name'},
+            'request_date': {'label': _('Fecha Solicitud'), 'order': 'request_date desc'},
+            'name': {'label': _('Referencia'), 'order': 'name'},
+            'stage': {'label': _('Estado'), 'order': 'state'},
         }
-        # Default sortby order
+
+        # default sortby order
         if not sortby:
-            sortby = 'date'
+            sortby = 'request_date'
         sort_order = searchbar_sortings[sortby]['order']
 
-        # Archivado y filtrado por fechas
-        archive_groups = self._get_archive_groups('verification.request', domain)
-
-        # Modificamos el dominio si las fechas están presentes
         if date_begin and date_end:
             domain += [('create_date', '>', date_begin), ('create_date', '<=', date_end)]
 
-        # Count for pager
-        request_count = VerificationRequest.search_count(domain)
-        # Pager
+        # count for pager
+        request_count = solicitudes.search_count(domain)
+        # make pager
         pager = portal_pager(
             url="/my/bascule_verification1",
             url_args={'date_begin': date_begin, 'date_end': date_end, 'sortby': sortby},
@@ -208,21 +206,21 @@ class CustomerPortal(CustomerPortal):
             page=page,
             step=self._items_per_page
         )
-        # Content according to pager and archive selected
-        requests = VerificationRequest.search(domain, order=sort_order, limit=self._items_per_page,
-                                              offset=pager['offset'])
-        request.session['my_requests_history'] = requests.ids[:100]
+        # search the count to display, according to the pager data
+        quotations = solicitudes.search(domain, order=sort_order, limit=self._items_per_page,
+                                        offset=pager['offset'])
+        # request.session['my_solicitudes_camiones_history'] = quotations.ids[:100]
 
         values.update({
             'date': date_begin,
-            'requests': requests.sudo(),
-            'page_name': 'verification_request',
+            'quotations': quotations.sudo(),
+            'page_name': 'solicitud',
             'pager': pager,
-            'archive_groups': archive_groups,
-            'default_url': '/my/bascule_verification',
+            'default_url': '/my/bascule_verification1',
             'searchbar_sortings': searchbar_sortings,
             'sortby': sortby,
         })
+
         return request.render("verification_request.portal_my_bascule_verification1", values)
 
     @http.route('/verification_request/save/solicitud', auth='user', website=True, )
