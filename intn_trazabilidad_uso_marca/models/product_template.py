@@ -26,3 +26,12 @@ class ProductTemplate(models.Model):
     additional_cost = fields.Boolean(string="Aplica a costos adicionales", default=False)
 
     norma_document = fields.Binary(string="Archivo de Norma")
+
+    is_in_grupo_onn_normas = fields.Boolean(
+        compute='_compute_is_in_grupo_onn_normas',
+    )
+
+    def _compute_is_in_grupo_onn_normas(self):
+        grupo = self.env.ref('intn_trazabilidad_uso_marca.grupo_onn_normas')
+        for record in self:
+            record.is_in_grupo_onn_normas = grupo in self.env.user.groups_id

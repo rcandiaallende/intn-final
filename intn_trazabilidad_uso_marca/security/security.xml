@@ -9,5 +9,8 @@
         <record id="intn_trazabilidad_uso_marca.grupo_muestreo" model="res.groups">
             <field name="name">Gestión de Muestreo</field>
         </record>
+        <record id="intn_trazabilidad_uso_marca.grupo_onn_normas" model="res.groups">
+            <field name="name">ONN Normas</field>
+        </record>
     </data>
 </odoo>
