@@ -74,6 +74,8 @@ class GenerarPresupuestoPortal(http.Controller):
             'id': servicio.id,
             'name': servicio.name,
             'price': servicio.list_price,
+            'determinacion': servicio.product_tmpl_id.determinacion if servicio.product_tmpl_id.determinacion else 'N/A',
+            'additional_cost': 'Si' if servicio.product_tmpl_id.verificacion_insitu else 'No'
         } for servicio in servicios]
         return servicios_list
 
