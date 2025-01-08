@@ -36,7 +36,7 @@ class CustomerPortal(CustomerPortal):
             'Content-Disposition', 'attachment; filename="reporte.pdf"')])
 
     @http.route('/verification_request/new/solicitud1/', type='http', auth='user', website=True)
-    def new_solicitud(self, **kw):
+    def new_solicitud_verification_bascula(self, **kw):
         """
         Renderiza el formulario para una nueva solicitud.
         """
