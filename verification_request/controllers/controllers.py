@@ -27,6 +27,26 @@ class IntnCamionesTanque(CustomerPortal):
         palabra = id_documento + "amakakeruriunohirameki"
         return hashlib.sha256(bytes(palabra, 'utf-8')).hexdigest()
 
+    def _prepare_portal_layout_values(self):
+        values = super(IntnCamionesTanque, self)._prepare_portal_layout_values()
+        partner = None
+
+        session_uid = request.session.uid
+        if session_uid:
+            partner = request.env['res.users'].browse(request.session.uid).partner_id
+
+        solicitudes = request.env['verification.request']
+        solicitud_count = solicitudes.search_count([
+            ('partner_id', '=', partner.id),
+            ('state', 'not in', ['duplicate', 'canceled_due_closure', 'cancel'])
+        ])
+
+        values.update({
+            'solicitudes_camiones_count': solicitud_count,
+        })
+
+        return values
+
     @http.route(['/my/bascule_verification', '/my/bascule_verification/page/<int:page>'], type='http', auth="user",
                 website=True)
     def listar(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
