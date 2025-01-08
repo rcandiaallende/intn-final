@@ -1,6 +1,7 @@
 <odoo>
     <data>
-        <template id="verification_request.portal_my_bascule_verification" name="Mis Solicitudes">
+
+        <template id="verification_request.portal_my_bascule_verification1" name="Mis Solicitudes">
             <t t-call="portal.portal_layout">
                 <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
@@ -60,7 +61,7 @@
                 </t>
             </t>
         </template>
-        <template id="nueva_solicitud" name="Nueva Solicitud">
+        <template id="nueva_solicitud1" name="Nueva Solicitud">
             <t t-call="portal.portal_layout">
                 <t t-set="breadcrumbs_searchbar" t-value="True"/>
 
