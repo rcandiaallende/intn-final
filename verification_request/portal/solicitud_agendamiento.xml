@@ -61,6 +61,7 @@
                 </t>
             </t>
         </template>
+
         <template id="nueva_solicitud1" name="Nueva Solicitud">
             <t t-call="portal.portal_layout">
                 <t t-set="breadcrumbs_searchbar" t-value="True"/>
