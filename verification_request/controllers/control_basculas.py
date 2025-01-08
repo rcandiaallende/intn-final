@@ -170,9 +170,9 @@ class CustomerPortal(CustomerPortal):
 
         return request.render('intn_camiones_tanque.solicitud_agendamiento_portal_template', values)
 
-    @http.route(['/my/bascule_verification1', '/my/bascule_verification1/page/<int:page>'], type='http', auth="user",
+    @http.route(['/my/bascule_verification1', '/my/bascule_verification/page/<int:page>'], type='http', auth="user",
                 website=True)
-    def listar(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
+    def portal_my_control_bascula(self, page=1, date_begin=None, date_end=None, sortby=None, **kw):
         values = self._prepare_portal_layout_values()
         partner = request.env.user.partner_id
         solicitudes = request.env['verification.request']
