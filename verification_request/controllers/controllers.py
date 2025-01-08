@@ -94,9 +94,42 @@ class IntnCamionesTanque(CustomerPortal):
         fecha_actual = datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime("%d/%m/%Y %H:%M")
         departments = request.env['res.country.state'].search([('country_id', '=', 185)])  # ID de Paraguay
 
-        return request.render('verification_request.nueva_solicitud', {
+        return request.render('verification_request.nueva_solicitud_basculas_portal', {
             'fecha_actual': fecha_actual,
             'partner': partner,
             'page_name': 'solicitud',
             'departments': departments
         })
+
+    @http.route('/verification_request/save/solicitud', type='http', auth='user', website=True, csrf=True)
+    def save_solicitud(self, **kw):
+        """
+        Guarda la nueva solicitud en el modelo correspondiente.
+        """
+        try:
+            # Obtener la zona horaria del usuario y la fecha actual
+            partner = request.env['res.users'].browse(request.session.uid).partner_id
+            fecha_actual = datetime.now(pytz.timezone(partner.tz or 'GMT')).date()  # Fecha en formato YYYY-MM-DD
+
+            values = {
+                'partner_id': partner.id,
+                'state_id': [(6, 0, [int(dep) for dep in kw.get('department', '').split(',')])],
+                'month': kw.get('month'),
+                'observation': kw.get('observation'),
+                'request_date': fecha_actual,  # Fecha de solicitud automática
+                'request_date2': fecha_actual
+            }
+
+            solicitud = request.env['verification.request'].sudo().create(values)
+
+            return request.render('verification_request.solicitud_creada', {
+                'solicitud': solicitud,
+                'page_name': 'solicitud'
+            })
+        except Exception as e:
+            request.env.cr.rollback()  # Asegúrate de finalizar la transacción fallida
+            return request.render('verification_request.solicitud_error', {
+                'error': str(e),
+                'page_name': 'solicitud'
+            })
+
