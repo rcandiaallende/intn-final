@@ -48,7 +48,7 @@ class CustomerPortal(CustomerPortal):
         fecha_actual = datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime("%d/%m/%Y %H:%M")
         departments = request.env['res.country.state'].search([('country_id', '=', 185)])  # ID de Paraguay
 
-        return request.render('verification_request.nueva_solicitud_portal', {
+        return request.render('verification_request.nueva_solicitud1', {
             'fecha_actual': fecha_actual,
             'partner': partner,
             'page_name': 'solicitud',
