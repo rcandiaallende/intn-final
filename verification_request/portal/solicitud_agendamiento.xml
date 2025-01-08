@@ -246,7 +246,7 @@
                         <div class="container" style="padding:15px !important;margin-left:auto;margin-right:auto;">
 
                             <h3 style="text-align:center">SE HA CREADO SU AGENDAMIENTO CORRECTAMENTE CON EL NÚMERO
-                                <a href="/my/bascule_verification">
+                                <a href="/my/bascule_verification1">
                                     <t t-esc="solicitud.name"/>
                                 </a>
                             </h3>
