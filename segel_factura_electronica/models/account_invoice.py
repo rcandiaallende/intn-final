@@ -197,7 +197,7 @@ class accountInvoice(models.Model):
 
         # produccion FE
         contribuyenteid_producction = 5
-        pass_producction = "3bd7e0750d20f5e6b2d6a462e44e312c450bbf841e20c46b86c2bfef831ce566"
+        # pass_producction = "3bd7e0750d20f5e6b2d6a462e44e312c450bbf841e20c46b86c2bfef831ce566"
 
         # Test FE
         contribuyenteid_test = 4
@@ -230,7 +230,7 @@ class accountInvoice(models.Model):
             payload = json.dumps({
                 "contribuyente": {
                     "contribuyenteid": contribuyenteid_producction,
-                    "pass": pass_producction,
+                    # "pass": pass_producction,
                 },
                 "timbrado": {
                     "timbrado": timbrado_test,
@@ -422,7 +422,7 @@ class accountInvoice(models.Model):
 
         # produccion FE
         contribuyenteid_producction= 5
-        pass_producction= "3bd7e0750d20f5e6b2d6a462e44e312c450bbf841e20c46b86c2bfef831ce566"
+        # pass_producction= "3bd7e0750d20f5e6b2d6a462e44e312c450bbf841e20c46b86c2bfef831ce566"
 
         # Test FE
         contribuyenteid_test= 4
@@ -507,7 +507,7 @@ class accountInvoice(models.Model):
                 payload = json.dumps({
                     "contribuyente": {
                         "contribuyenteid": contribuyenteid_producction,
-                        "pass": pass_producction,
+                       #  "pass": pass_producction,
                     },
                     "timbrado": {
                         "timbrado": "16930296",
@@ -542,7 +542,7 @@ class accountInvoice(models.Model):
                 payload = json.dumps({
                     "contribuyente": {
                         "contribuyenteid": contribuyenteid_producction,
-                        "pass": pass_producction,
+                       #  "pass": pass_producction,
                     },
                     "timbrado": {
                         "timbrado": "16930296",
@@ -570,39 +570,39 @@ class accountInvoice(models.Model):
                     'Content-Type': 'application/json'
                 }
                 print("Json enviado: ", payload)
-            self.guardar_json_enviado(payload)
-            response = requests.request("POST", url, headers=headers, data=payload)
+            # self.guardar_json_enviado(payload)
+            # response = requests.request("POST", url, headers=headers, data=payload)
 
             # Check response
-            if response.status_code == 401:
-                print("Error 401")
-                raise ValidationError(
-                    "Error de Autenticación")
-                continue
-
-            # Load eFactura Record
-            print("Response status : ", response.status_code)
-            if response.status_code == 201 or response.status_code == 200:
-                try:
-                    data = json.loads(response.text)
-                    qr_value = data.get('qr', '')
-                    cdc_value = data.get('cdc', '')
-                    estado_factura_value = "Enviado a Sifen"
-                    print("Respuesta Servicio envio Sifen: ", response.text)
-                    result = json.loads(response.text)
-                    self.update({
-                        'qr_fe': qr_value,
-                        'cdc': cdc_value,
-                        'status_invoice': estado_factura_value,
-                    })
-                except json.JSONDecodeError as e:
-                    print("Error decoding JSON response:", str(e))
-                    raise ("Error decoding JSON response:", str(e))
-            else:
-                print("El resultado del envío no fue exitoso.")
-                print("Response status : ", response.status_code)
-                print("Response : ", response.text)
-                raise ValidationError(payload)
+            # if response.status_code == 401:
+            #     print("Error 401")
+            #     raise ValidationError(
+            #         "Error de Autenticación")
+            #     continue
+            #
+            # # Load eFactura Record
+            # print("Response status : ", response.status_code)
+            # if response.status_code == 201 or response.status_code == 200:
+            #     try:
+            #         data = json.loads(response.text)
+            #         qr_value = data.get('qr', '')
+            #         cdc_value = data.get('cdc', '')
+            #         estado_factura_value = "Enviado a Sifen"
+            #         print("Respuesta Servicio envio Sifen: ", response.text)
+            #         result = json.loads(response.text)
+            #         self.update({
+            #             'qr_fe': qr_value,
+            #             'cdc': cdc_value,
+            #             'status_invoice': estado_factura_value,
+            #         })
+            #     except json.JSONDecodeError as e:
+            #         print("Error decoding JSON response:", str(e))
+            #         raise ("Error decoding JSON response:", str(e))
+            # else:
+            #     print("El resultado del envío no fue exitoso.")
+            #     print("Response status : ", response.status_code)
+            #     print("Response : ", response.text)
+            #     raise ValidationError(payload)
 
     def guardar_json_enviado(self, payload):
         if payload:
@@ -1090,7 +1090,7 @@ class accountInvoice(models.Model):
 
         # produccion FE
         contribuyenteid_producction = 5
-        pass_producction = "3bd7e0750d20f5e6b2d6a462e44e312c450bbf841e20c46b86c2bfef831ce566"
+        # pass_producction = "3bd7e0750d20f5e6b2d6a462e44e312c450bbf841e20c46b86c2bfef831ce566"
 
         # Test FE
         contribuyenteid_test = 4
@@ -1124,7 +1124,7 @@ class accountInvoice(models.Model):
             payload = json.dumps({
                 "contribuyente": {
                     "contribuyenteid": contribuyenteid_producction,
-                    "pass": pass_producction,
+                    # "pass": pass_producction,
                 },
                 "timbrado": {
                     "timbrado": timbrado_test,
@@ -1150,39 +1150,39 @@ class accountInvoice(models.Model):
             })
             headers = {'Content-Type': 'application/json'}
             print("Json enviado: ", payload)
-            self.guardar_json_enviado(payload)
-            response = requests.request("POST", url, headers=headers, data=payload)
+            # self.guardar_json_enviado(payload)
+            # response = requests.request("POST", url, headers=headers, data=payload)
 
             # Check response
-            if response.status_code == 401:
-                print("Error 401")
-                raise ValidationError(
-                    "Error de Autenticación ")
-                continue
+            # if response.status_code == 401:
+            #     print("Error 401")
+            #     raise ValidationError(
+            #         "Error de Autenticación ")
+            #     continue
 
             # Load eFactura Record
-            print("Response status : ", response.status_code)
-            if response.status_code == 201 or response.status_code == 200:
-                try:
-                    data = json.loads(response.text)
-                    qr_value = data.get('qr', '')
-                    cdc_value = data.get('cdc', '')
-                    # estado_factura_value = "Enviado a Sifen"
-                    print("Respuesta Servicio envio Sifen: ", response.text)
-                    result = json.loads(response.text)
-                    self.update({
-                        'qr_fe': qr_value,
-                        'cdc': cdc_value,
-                        # 'estado_factura_electronica': estado_factura_value,
-                    })
-                except json.JSONDecodeError as e:
-                    print("Error decoding JSON response:", str(e))
-                    raise("Error decoding JSON response:", str(e))
-            else:
-                print("El resultado del envío no fue exitoso.")
-                print("Response status : ", response.status_code)
-                print("Response : ", response.text)
-                raise ValidationError(response.text)
+            # print("Response status : ", response.status_code)
+            # if response.status_code == 201 or response.status_code == 200:
+            #     try:
+            #         data = json.loads(response.text)
+            #         qr_value = data.get('qr', '')
+            #         cdc_value = data.get('cdc', '')
+            #         # estado_factura_value = "Enviado a Sifen"
+            #         print("Respuesta Servicio envio Sifen: ", response.text)
+            #         result = json.loads(response.text)
+            #         self.update({
+            #             'qr_fe': qr_value,
+            #             'cdc': cdc_value,
+            #             # 'estado_factura_electronica': estado_factura_value,
+            #         })
+            #     except json.JSONDecodeError as e:
+            #         print("Error decoding JSON response:", str(e))
+            #         raise("Error decoding JSON response:", str(e))
+            # else:
+            #     print("El resultado del envío no fue exitoso.")
+            #     print("Response status : ", response.status_code)
+            #     print("Response : ", response.text)
+            #     raise ValidationError(response.text)
 
     @api.multi
     def invoice_validate(self):
