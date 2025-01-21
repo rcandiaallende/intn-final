@@ -13,18 +13,13 @@ class ListadoNotasCreditoReportWizard(models.TransientModel):
     date_end = fields.Date(string="Fecha Final", required=True, default=fields.Date.today)
     partner_id = fields.Many2one('res.partner', string="Cliente")
 
-    @api.multi
-    def get_report(self):
-        data = {
-            'ids': self.ids,
-            'model': self._name,
-            'form': {
-                'date_start': self.date_start,
-                'date_end': self.date_end,
-                'partner_id': self.partner_id.id,
-            },
-        }
+    def check_report(self):
+        data = {}
+        data['form'] = self.read(['date_start', 'date_end', 'partner_id'])[0]
+        return self._print_report(data)
 
+    def _print_report(self, data):
+        data['form'].update(self.read(['date_start', 'date_end', 'partner_id'])[0])
         return self.env.ref('listado_notas_credito_report.recap_report_sifen').report_action(self, data=data)
 
 
@@ -34,12 +29,13 @@ class ReportListadoNotasCredito(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
+        Model = self.env.context.get('active_model')
+        docs = self.env[Model].browse(self.env.context.get('active_id'))
         date_start = data['form']['date_start']
         date_end = data['form']['date_end']
         date_start_obj = datetime.strptime(date_start, DATE_FORMAT)
         date_end_obj = datetime.strptime(date_end, DATE_FORMAT)
         partner_id = data['form']['partner_id']
-
 
         start_report = date_start_obj.strftime('%d/%m/%Y')
         end_report = date_end_obj.strftime('%d/%m/%Y')
@@ -56,13 +52,13 @@ class ReportListadoNotasCredito(models.AbstractModel):
                  ('date_invoice', '>=', date_start_obj.strftime(DATETIME_FORMAT)),
                  ('date_invoice', '<=', date_end_obj.strftime(DATETIME_FORMAT)), ('tax_line_ids', '!=', False)])
 
-        docs = sorted(facturas, key = lambda x: x.fake_number)
-        docs = sorted(docs, key=lambda x: x.date_invoice)
-        print(docs)
+        facturas_report = sorted(facturas, key=lambda x: x.fake_number)
+        facturas_report = sorted(facturas_report, key=lambda x: x.date_invoice)
         return {
-            'doc_ids': data['ids'],
-            'doc_model': data['model'],
-            'date_start':start_report,
+            'doc_ids': self.ids,
+            'doc_model': Model,
+            'date_start': start_report,
             'date_end': end_report,
             'docs': docs,
+            'facturas_report': facturas_report
         }

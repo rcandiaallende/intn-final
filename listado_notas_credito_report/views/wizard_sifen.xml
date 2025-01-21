@@ -24,7 +24,8 @@
                     </group>
                 </group>
                 <footer>
-                    <button name="get_report" string="Imprimir" type="object" class="oe_highlight"/>
+                    <!--<button name="get_report" string="Imprimir" type="object" class="oe_highlight"/>-->
+                    <button name="check_report" type="object" string="Imprimir" class="oe_highlight"/>
                     <button string="Cancelar" special="cancel"/>
                 </footer>
             </form>
